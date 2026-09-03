@@ -1,0 +1,16 @@
+name: "Cooperativa de Servicios Profesionales de Ingeniería y Software"
+legal_structure: "Sociedad Cooperativa de Consumo / Servicios (S.C.)"
+regime: "Economía Social y Solidaria"
+country: "México"
+mission: >
+  Prestar servicios de ingeniería digital de alta precisión (cálculo eléctrico NOM-001-SEDE,
+  planos ISO, programación de PLC IEC 61131-3 y soluciones de IA aplicada) bajo un modelo
+  de propiedad compartida, remuneración digna y tarifas justas.
+governance:
+  supreme_organ: "Asamblea General de Socios"
+  executive_body: "Consejo de Administración"
+  supervisory_body: "Consejo de Vigilancia"
+statutory_funds:
+  reserve_fund_pct: 10.0
+  social_welfare_fund_pct: 15.0
+  education_fund_pct: 10.0
