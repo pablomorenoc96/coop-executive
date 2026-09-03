@@ -24,7 +24,7 @@ class AIClient:
             return hdrs
         if self.settings.openrouter_api_key:
             hdrs["Authorization"] = f"Bearer {self.settings.openrouter_api_key}"
-            hdrs["HTTP-Referer"] = "https://github.com/morecam/coop-executive"
+            hdrs["HTTP-Referer"] = "https://github.com/pablomorenoc96/coop-executive"
             hdrs["X-Title"] = "CoopExecutive"
         return hdrs
 
