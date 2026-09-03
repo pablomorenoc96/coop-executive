@@ -176,6 +176,16 @@ async def _presupuesto(proyecto: str) -> None:
     console.print("\n")
 
 
+@cli.command("dashboard")
+def dashboard() -> None:
+    """Abrir el Panel de Control Web y Gobernanza Colegiada en el navegador."""
+    import webbrowser
+    from pathlib import Path
+    web_file = Path(__file__).resolve().parent.parent / "web" / "dashboard.html"
+    console.print(f"[bold cyan]🌐 Abriendo Panel de Control Web:[/bold cyan] {web_file}")
+    webbrowser.open(web_file.as_uri())
+
+
 @cli.command("info")
 def info() -> None:
     """Mostrar la información y estatus de la organización activa."""
