@@ -31,6 +31,9 @@ PROHIBITED_CONCEPTS = [
     "liquidar fondo de reserva",
     "repartir fondo de prevision",
     "repartir fondo de previsión",
+    "trabajo no remunerado obligatorio",
+    "renuncia de derechos",
+    "jurisdiccion arbitraria",
 ]
 
 

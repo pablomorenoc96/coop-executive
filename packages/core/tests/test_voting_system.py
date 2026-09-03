@@ -29,12 +29,19 @@ def test_statutory_invariant_rejection(tmp_path, monkeypatch):
     test_db = tmp_path / "test_memory.db"
     monkeypatch.setenv("EPISODIC_DB_PATH", str(test_db))
 
-    # Intentar someter una propuesta violatoria de la LGSC
+    # Intentar someter una propuesta violatoria de la LGSC o de la integridad de los miembros
     with pytest.raises(ValueError, match="Propuesta estatutariamente nula"):
         create_proposal(
             title="Venta de participación a Fondo VC",
             description="Acordar vender acciones de la cooperativa para dilución de capital.",
             category="financiero",
+        )
+
+    with pytest.raises(ValueError, match="Propuesta estatutariamente nula"):
+        create_proposal(
+            title="Imposición de jornadas extraordinarias",
+            description="Exigir trabajo no remunerado obligatorio para cubrir pérdidas operativas.",
+            category="estatutario",
         )
 
 
