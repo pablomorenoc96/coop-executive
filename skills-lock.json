@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "grant-proposal-assistant": {
+      "source": "lyndonkl/claude",
+      "sourceType": "github",
+      "skillPath": "skills/grant-proposal-assistant/SKILL.md",
+      "computedHash": "9ac413a7334373603ec1e9c5492f673dbb5a2a7243ca9dba9853405ea0a041c8"
+    },
+    "grant-proposal-builder": {
+      "source": "travisjneuman/.claude",
+      "sourceType": "github",
+      "skillPath": "skills/grant-proposal-builder/SKILL.md",
+      "computedHash": "73433960bc37fadf05f4e21519728f65793e181e1c620bd05c7155c5136ff123"
+    },
+    "grants": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "research/grants/skills/grants/SKILL.md",
+      "computedHash": "f04d0b0e260c55e05b55e90a92e9c6dad35b352d29d68fa75d630eac42521d29"
+    },
+    "research-grants": {
+      "source": "k-dense-ai/scientific-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/research-grants/SKILL.md",
+      "computedHash": "db7c1d65330051d8ddbb4c1e9ac8b3df1b4e15d63473f17142534870f2f7c373"
+    }
+  }
+}

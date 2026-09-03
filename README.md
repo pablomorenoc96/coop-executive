@@ -76,6 +76,12 @@ uv run coopexecutive evaluar-convocatoria "https://www.fundsforngos.org/..."
 # Structure an auditable project budget:
 uv run coopexecutive presupuesto "Rural Process Automation Microplant"
 
+# Generate a comprehensive grant proposal dossier:
+uv run coopexecutive dossier "Community Clean Energy & Technical Training"
+
+# Open the Interactive Web Dashboard:
+uv run coopexecutive dashboard
+
 # Interactive chat session with the collegiate board:
 uv run coopexecutive chat
 ```

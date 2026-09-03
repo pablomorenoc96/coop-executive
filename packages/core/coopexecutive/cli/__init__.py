@@ -176,6 +176,38 @@ async def _presupuesto(proyecto: str) -> None:
     console.print("\n")
 
 
+@cli.command("dossier")
+@click.argument("proyecto")
+@click.option("--donante", default="Banco Interamericano de Desarrollo / Agencias Multilaterales", help="Agencia donante o cooperante")
+@click.option("--convocatoria", default="Fondo de Transición Sostenible y Economía Social", help="Título de la convocatoria")
+def dossier(proyecto: str, donante: str, convocatoria: str) -> None:
+    """Generar un dossier formal de postulación técnica y financiera."""
+    asyncio.run(_dossier(proyecto, donante, convocatoria))
+
+
+async def _dossier(proyecto: str, donante: str, convocatoria: str) -> None:
+    executive = CoopExecutive()
+    console.print(f"[bold cyan]📁 Generando Dossier Multilateral de Postulación:[/bold cyan] {proyecto}")
+    console.print(f"[dim]Donante: {donante} | Convocatoria: {convocatoria}[/dim]\n")
+
+    prompt = (
+        f"Actúa como el Agente Procurador de Fondos Colegiado de {executive.profile.name}.\n"
+        f"Redacta un Dossier Formal Completo de Postulación para el proyecto '{proyecto}', dirigido a '{donante}' "
+        f"bajo la convocatoria '{convocatoria}'.\n"
+        f"Estructura el documento con el máximo rigor técnico conforme a los estándares de Research Grants y RBM:\n"
+        f"1. Resumen Ejecutivo y Perfil del Proponente (subrayando el modelo cooperativo y asambleario).\n"
+        f"2. Diagnóstico del Problema Central y Línea Base.\n"
+        f"3. Matriz de Marco Lógico 4x4 (Fin, Propósito, Componentes, Actividades) con ODS vinculados.\n"
+        f"4. Plan Presupuestal Consolidado (Fondos Solicitados vs. Contrapartida en Especie).\n"
+        f"5. Salvaguardas Cooperativas y Anticorrupción (Fondo de Reserva 15%, Previsión 10%, Educación 10%).\n"
+        f"6. Estrategia de Sostenibilidad y Salida Post-Donante."
+    )
+
+    async for chunk in executive.stream_chat(prompt, specialist_focus="procurador"):
+        console.print(chunk, end="", highlight=False)
+    console.print("\n")
+
+
 @cli.command("dashboard")
 def dashboard() -> None:
     """Abrir el Panel de Control Web y Gobernanza Colegiada en el navegador."""

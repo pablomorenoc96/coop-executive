@@ -76,6 +76,12 @@ uv run coopexecutive evaluar-convocatoria "https://www.fundsforngos.org/..."
 # Estructurar un presupuesto auditable:
 uv run coopexecutive presupuesto "Microplanta de Automatización Rural"
 
+# Generar un dossier formal de postulación técnica y financiera:
+uv run coopexecutive dossier "Electrificación Limpia de Talleres"
+
+# Abrir el Panel de Control Web y Gobernanza Colegiada:
+uv run coopexecutive dashboard
+
 # Iniciar sesión interactiva con el consejo directivo:
 uv run coopexecutive chat
 ```
