@@ -1,5 +1,8 @@
-# CoopExecutive 🏛️🌱
-> **El Sistema Directivo Colegiado y Agente Procurador de Fondos con IA para Cooperativas, Asociaciones Civiles (A.C. / ONGs) y la Economía Social.**
+# CoopExecutive
+
+![CoopExecutive Banner](assets/banner.png)
+
+> **Sistema Directivo Colegiado y Agente Procurador de Fondos con IA para Cooperativas, Asociaciones Civiles (A.C. / ONGs) y la Economía Social.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
@@ -7,45 +10,51 @@
 [![Modelos Libres](https://img.shields.io/badge/Modelos-OpenRouter%20:free%20%7C%20Ollama-orange.svg)](#configuración-a-costo-cero)
 [![Manifiesto Economía Social](https://img.shields.io/badge/Filosof%C3%ADa-Econom%C3%ADa%20Social-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
 
-[🇺🇸 Read in English](README.md)
+[🇺🇸 Read in English](README.md) | [📢 Kit de Difusión en Redes](docs/KIT_DIFUSION_REDES.md)
 
-**CoopExecutive** nace como una **antítesis directa al modelo de Silicon Valley** encarnado por herramientas como OpenExecutive. Mientras que el software tradicional asume corporaciones con juntas de accionistas, capital de riesgo (VC), búsqueda de *exits* y maximización de utilidades individuales, **CoopExecutive** está diseñado para las **organizaciones democráticas, cooperativas de producción y servicios, asociaciones civiles y proyectos de soberanía comunitaria**.
+**CoopExecutive** es una alternativa de código abierto al modelo corporativo tradicional. Mientras las herramientas convencionales de Silicon Valley asumen juntas de accionistas, capital de riesgo y reparto de utilidades privadas, este sistema está diseñado para **organizaciones democráticas**: asambleas soberanas, fondos de reserva colectivos y proyectos de beneficio común.
 
-Incorpora de forma nativa al **Agente Procurador de Fondos (Grant Procurement Agent)**, especializado en captar fondos no reembolsables y cooperaciones internacionales (a través de plataformas como [FundsforNGOs](https://www.fundsforngos.org/), agencias bilaterales y fundaciones climáticas/sociales).
+Integra un **Agente Procurador de Fondos** para evaluar y redactar propuestas a fondos multilaterales y convocatorias de plataformas como [FundsforNGOs](https://www.fundsforngos.org/), agencias de cooperación internacional y fundaciones ambientales.
 
 ---
 
-## ⚖️ La Antítesis: Silicon Valley vs. CoopExecutive
+## La Antítesis: Silicon Valley vs. CoopExecutive
 
-| Dimensión | OpenExecutive (Silicon Valley) | CoopExecutive (Economía Social y Solidaria) |
+| Dimensión | Enfoque de Silicon Valley | CoopExecutive (Economía Social) |
 | :--- | :--- | :--- |
-| **Poder de Decisión** | *Un dólar, un voto* (Junta de Accionistas / Inversionistas VC). | **Un socio, un voto** (Asamblea General Democrática). |
-| **Órgano de Control** | Comités de auditoría de fondos de inversión privados. | **Consejo de Vigilancia** (auditoría interna democrática y ética). |
-| **Financiamiento** | Deuda predatoria, rondas de capital (Seed, Serie A), dilución. | **Flujo operativo bootstrap + Grants y Convocatorias Internacionales ([FundsforNGOs](https://www.fundsforngos.org/))**. |
-| **Finanzas** | Maximizar EBITDA y dividendos para socios capitalistas. | **Fondos Estatutarios Obligatorios (LGSC):** Fondo de Reserva, Previsión Social y Educación Cooperativa. |
-| **Régimen Legal** | S.A.P.I., S.A. de C.V., Delaware C-Corp. | Ley General de Sociedades Cooperativas (LGSC), Código Civil (A.C.), Donatarias Autorizadas (SAT). |
-| **Tecnología** | Plataformas privativas, licencias caras y vendor lock-in. | **100% Código Abierto, modelos gratuitos (OpenRouter / Ollama).** |
+| **Poder de Decisión** | Ponderado por capital (*un dólar, un voto*). | Democrático (*un socio, un voto* — Asamblea General). |
+| **Supervisión** | Comités de fondos de inversión privados. | **Consejo de Vigilancia** interno e independiente. |
+| **Financiamiento** | Deuda, dilución de capital y búsqueda de venta (*exit*). | Operación sostenible + **Subvenciones no reembolsables ([FundsforNGOs](https://www.fundsforngos.org/))**. |
+| **Excedentes** | Maximización de utilidades para accionistas. | **Fondos Estatutarios Blindados:** Reserva (15%), Previsión Social (10%), Educación (10%). |
+| **Régimen Legal** | Sociedades anónimas mercantiles (S.A., Delaware C-Corp). | Sociedades Cooperativas (LGSC) y Asociaciones Civiles (A.C.). |
+| **Infraestructura** | Software privativo con suscripciones recurrentes. | **100% Código Abierto, modelos libres sin costo ($0.00).** |
 
 ---
 
-## ✨ Capacidades Principales
+## Demostración Visual
+
+![Demostración de CoopExecutive](assets/demo.gif)
+
+---
+
+## Capacidades Principales
 
 ### 1. Agente Procurador de Fondos (*Grant Procurement Agent*)
-* **Evaluación de Convocatorias (0 a 100 puntos):** Analiza bases de convocatorias en segundos extrayendo fechas, montos y requisitos con una rúbrica de 8 dimensiones: *APLICAR*, *EXPLORAR*, *CONDICIONAL* o *NO APLICAR*.
+* **Evaluación de Convocatorias (Rúbrica de 100 Puntos):** Analiza bases de financiamiento en segundos extrayendo fechas límite, montos y criterios mediante 8 dimensiones ponderadas (*APLICAR*, *EXPLORAR*, *CONDICIONAL* o *NO APLICAR*).
 * **Metodología de Marco Lógico (MML):** Genera automáticamente Árboles de Problemas, Árboles de Objetivos y la Matriz de Indicadores de Resultados (MIR) 4x4.
-* **Teoría del Cambio (ToC):** Estructura la cadena causal vinculada a los Objetivos de Desarrollo Sostenible (ODS 7, 8, 9, 12, 13).
-* **Presupuestos Auditables:** Desglose riguroso de CAPEX, OPEX, personal técnico, contrapartidas y gastos administrativos.
+* **Teoría del Cambio (ToC):** Vincula las actividades del proyecto con los Objetivos de Desarrollo Sostenible (ODS 7, 8, 9, 12, 13).
+* **Presupuestación Auditable:** Desglosa con rigor costos de personal, equipamiento (CAPEX), operación de campo (OPEX) y contrapartidas valorizadas.
 
 ### 2. Consejo Directivo y de Vigilancia Colegiado
-* **Consejo de Vigilancia:** Auditoría democrática interna y supervisión estatutaria.
-* **Asesor Jurídico en Economía Social:** Marco legal de cooperativas, donatarias autorizadas y convenios abiertos.
-* **Gestor de Finanzas Solidarias:** Blindaje del Fondo de Reserva, Previsión Social y Educación Cooperativa.
+* **Consejo de Vigilancia:** Auditoría democrática interna y observancia de los estatutos.
+* **Asesor Jurídico en Economía Social:** Marco legal cooperativo, donatarias autorizadas y convenios de tecnología abierta.
+* **Gestor de Finanzas Solidarias:** Control y blindaje de los fondos de reserva, previsión social y educación cooperativa.
 * **Desarrollo Tecnológico Comunitario:** Fomento de infraestructura abierta, energías limpias y formación técnica.
-* **Secretaría de Actas:** Redacción formal de convocatorias, cómputo de quórum y actas de asamblea.
+* **Secretaría de Actas:** Redacción formal de convocatorias, verificación de quórum y minutas de asamblea.
 
 ---
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ```bash
 git clone https://github.com/pablomorenoc96/coop-executive.git
@@ -55,20 +64,41 @@ cp ../../.env.example ../../.env
 
 ### Comandos de Ejemplo:
 ```powershell
-# Ver perfil y fondos estatutarios:
+# Ver perfil institucional y fondos estatutarios activos:
 uv run coopexecutive info
 
-# Generar Marco Lógico completo:
+# Generar una Matriz de Marco Lógico completa:
 uv run coopexecutive marco-logico "Energía Limpia Comunitaria y Capacitación Técnica"
 
-# Evaluar una convocatoria:
+# Evaluar una convocatoria de financiamiento:
 uv run coopexecutive evaluar-convocatoria "https://www.fundsforngos.org/..."
 
-# Sesión interactiva con el consejo:
+# Estructurar un presupuesto auditable:
+uv run coopexecutive presupuesto "Microplanta de Automatización Rural"
+
+# Iniciar sesión interactiva con el consejo directivo:
 uv run coopexecutive chat
 ```
 
 ---
 
-## 📄 Licencia
-[MIT License](LICENSE) — Libre para usar, modificar, cooperativizar y compartir.
+## Configuración a Costo Cero
+
+El sistema opera con dos alternativas libres de costo:
+* **En la Nube (Predeterminada):** Obtén una clave gratuita en [OpenRouter](https://openrouter.ai/keys) y colócala en `.env`. Utiliza modelos gratuitos con soporte de herramientas como `minimax/minimax-m3:free` y `nvidia/nemotron-3-super-120b-a12b:free` con conmutación automática ante saturación temporal.
+* **Localmente (Sin Internet):** Si cuentas con [Ollama](https://ollama.com/), cambia `LOCAL_MODELS_ENABLED=true` en `.env` para operar de forma 100% privada con modelos como `llama3.1` o `qwen2.5`.
+
+---
+
+## Documentación Técnica
+* [Arquitectura del Sistema y Mecanismo de Resiliencia](ARCHITECTURE.md)
+* [Manifiesto de Economía Social](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
+* [Guía Práctica de Marco Lógico](docs/GUIA_MARCO_LOGICO.md)
+* [Guía de Fondos Estatutarios y Gobernanza LGSC](docs/GUIA_FONDOS_ESTATUTARIOS.md)
+* [Guía para Contribuir](CONTRIBUTING.md)
+* [Registro de Versiones](CHANGELOG.md)
+
+---
+
+## Licencia
+Distribuido bajo licencia [MIT](LICENSE). Libre para uso, modificación y distribución comunitaria.
