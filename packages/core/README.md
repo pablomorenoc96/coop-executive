@@ -2,6 +2,7 @@
 > **The Open-Source AI Collegiate Executive Board & Grant Procurement Agent for Cooperatives, Non-Profits, and the Social Economy.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
 [![Zero Cost Models](https://img.shields.io/badge/Models-OpenRouter%20:free%20%7C%20Ollama-orange.svg)](#zero-cost-ai-setup)
 [![Social Economy Manifesto](https://img.shields.io/badge/Philosophy-Social%20Economy-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)

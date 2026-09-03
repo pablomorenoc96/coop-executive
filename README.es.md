@@ -2,6 +2,7 @@
 > **El Sistema Directivo Colegiado y Agente Procurador de Fondos con IA para Cooperativas, Asociaciones Civiles (A.C. / ONGs) y la Economía Social.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
 [![Modelos Libres](https://img.shields.io/badge/Modelos-OpenRouter%20:free%20%7C%20Ollama-orange.svg)](#configuración-a-costo-cero)
 [![Manifiesto Economía Social](https://img.shields.io/badge/Filosof%C3%ADa-Econom%C3%ADa%20Social-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
