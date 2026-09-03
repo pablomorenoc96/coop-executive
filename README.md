@@ -34,7 +34,7 @@ In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Age
      - *Vigilance Board:* Internal democratic audit and compliance oversight.
      - *Legal Counsel:* Cooperative statutes, non-profit tax exemptions, and open licensing.
      - *Solidarity Finance:* Cash flow oversight and statutory fund protection.
-     - *Open Technology:* Open-source hardware, clean energy, and technical standards (ISO/IEC).
+     - *Open Technology:* Open-source software, accessible technical infrastructure, and industry standards (ISO/IEC/NOM).
      - *Assembly Secretariat:* Agendas, accredited roll, legal quorum, and minutes.
 
 3. **Persistent Episodic Memory (SQLite):**

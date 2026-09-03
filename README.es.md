@@ -34,7 +34,7 @@ En términos de arquitectura de software, **CoopExecutive es un Agente de IA Ver
      - *Consejo de Vigilancia:* Auditoría interna y observancia de estatutos.
      - *Asesor Jurídico:* Marco legal cooperativo, donatarias autorizadas y licencias abiertas.
      - *Finanzas Solidarias:* Supervisión del flujo de efectivo y custodia de fondos estatutarios.
-     - *Desarrollo Técnico:* Especificación de hardware libre, energías limpias y normas técnicas (ISO/IEC).
+     - *Desarrollo Técnico:* Herramientas y tecnologías abiertas, infraestructura técnica y normas (ISO/NOM).
      - *Secretaría de Actas:* Convocatorias, registro de asistencia, cuórum legal y minutas.
 
 3. **Memoria Episódica Persistente (SQLite):**

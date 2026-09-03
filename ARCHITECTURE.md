@@ -4,84 +4,99 @@ CoopExecutive is an open-source technical platform designed for cooperatives, ci
 
 ---
 
-## 1. System Architecture Overview
+## 1. End-to-End Operational Pipeline
 
-CoopExecutive is structured as an **Autonomous Vertical AI Agent**. The architecture decouples the operational environment from the core reasoning engine, persistent memory, and deterministic tool execution.
+CoopExecutive is structured as an **Autonomous Vertical AI Agent**. The system operates across a 3-stage deterministic pipeline connecting unstructured environmental inputs to verifiable governance and procurement outputs:
 
-![Architecture Diagram](assets/architecture.png)
+![CoopExecutive Architecture](assets/architecture.png)
 
 ```mermaid
-flowchart TD
-    subgraph ENV["OPERATIONAL ENVIRONMENT (World)"]
-        direction LR
-        P["company/profile.yaml"]
-        L["Cooperative Law (LGSC)"]
-        G["Multilateral Grant Calls (IDB / Horizon)"]
-        UI["CLI / Local Web Dashboard"]
+flowchart LR
+    subgraph STAGE1["1. OPERATIONAL ENVIRONMENT (Inputs)"]
+        direction TB
+        IN1["<b>Grant Opportunities</b><br/>PDF/TXT Calls from Multilateral Funds, Climate Agencies & Donors"]
+        IN2["<b>Institutional Profile</b><br/>company/profile.yaml, Bylaws, SAT Donee Status & LGSC"]
+        IN3["<b>Assembly Governance</b><br/>Proposals, Member Roll & Secret Ballots via Web / CLI"]
     end
 
-    ENV -->|"Perception (Sensors & Ingestion)"| ORCH
-    ACT -->|"Action (Tools & Deliverables)"| ENV
+    STAGE1 -->|"Perception & Ingestion"| ORCH
 
-    subgraph AGENT["CoopExecutive CORE ENGINE"]
-        ORCH["Collegiate Executive Orchestrator (Role Router)<br/><i>Procurement | Vigilance | Legal | Finance | Tech | Assembly</i>"]
-
-        subgraph SUBSYSTEMS["Core Execution Subsystems"]
+    subgraph STAGE2["2. COLLEGIATE CORE ENGINE & TOOL-USE"]
+        direction TB
+        ORCH["<b>Collegiate Executive Orchestrator (Role Router)</b><br/><i>Procurement | Vigilance Board | Legal Counsel | Solidarity Finance | Open Tech | Assembly Secretariat</i>"]
+        
+        subgraph SUBSYSTEMS["Execution & Deliberation Pillars"]
             direction LR
             MEM["<b>Episodic Memory (SQLite)</b><br/>• assembly_decisions<br/>• assembly_proposals<br/>• assembly_votes (1 Member = 1 Vote)<br/>• grant_evaluations"]
-            INF["<b>Universal Inference</b><br/>• Free Cloud (OpenRouter)<br/>• Offline Local (Ollama)<br/>• Commercial APIs<br/>• 429 Rate-Limit Fallback"]
-            TOOL["<b>Deterministic Tool-Use</b><br/>• 100-Point Rubric<br/>• 4x4 Logical Framework (LFM)<br/>• Budgeting & Matching Funds<br/>• Proposal Dossier Compiler"]
+            INF["<b>Universal Inference</b><br/>• Free Cloud: OpenRouter (:free)<br/>• Offline Local: Ollama (llama3.1)<br/>• Commercial: OpenAI / Anthropic / Gemini<br/>• Resilience: HTTP 429 Fallback"]
+            TOOL["<b>Deterministic Tools</b><br/>• 100-Point Rubric (8 Dimensions)<br/>• 4x4 Logical Framework (MIR)<br/>• Budget Builder & In-Kind Matcher<br/>• Quorum Engine (>50% + 1)"]
         end
 
-        ORCH --> MEM
-        ORCH --> INF
-        ORCH --> TOOL
-        TOOL --> ACT["Action Execution & Output Generation"]
-
-        GUARD["<b>Hard Statutory Guardrails & Invariants</b><br/>15% Reserve Fund | 10% Welfare Fund | 0% Equity Dilution | 0% Mandatory Unpaid Labor"]
+        ORCH --> SUBSYSTEMS
+        
+        GUARD["<b>Hard Statutory Guardrails (Code Invariants)</b><br/>15% Reserve Fund | 10% Welfare Fund | 0% Equity Dilution Veto | 0% Unpaid Labor Veto"]
         SUBSYSTEMS -.->|"Mandatory Pre-Execution Validation"| GUARD
+    end
+
+    SUBSYSTEMS -->|"Action & Output Synthesis"| STAGE3
+
+    subgraph STAGE3["3. AUDITABLE DELIVERABLES (Outputs)"]
+        direction TB
+        OUT1["<b>Multilateral Grant Dossier</b><br/>Full Proposal (Executive Summary, 4x4 LogFrame, Objectives & Risk Matrix)"]
+        OUT2["<b>Certified Assembly Minutes</b><br/>Formal Resolution with Verified Quorum, Nominal Tally & SHA-256 Seal"]
+        OUT3["<b>Statutory Project Budget</b><br/>Line-Item Budget (CAPEX, OPEX, Personnel & Matching Funds)"]
+        OUT4["<b>Interactive Web Dashboard & CLI</b><br/>Live Voting Station, Quorum Monitor & Collegiate Advisor Chat"]
     end
 ```
 
 ---
 
-## 2. Functional Layers
+## 2. Detailed Pipeline Specifications
 
-### Layer 1: Operational Environment & Perception
-* **Data Sources:** Reads local configuration files (`company/profile.yaml`), statutory documents, and grant specifications.
-* **Perception Channels:** Ingests unstructured documents (PDF and text files) and user directives issued through the CLI or the local web dashboard.
+### Stage 1: Operational Environment & Perception
+* **Grant Notices:** Ingests raw text and PDF calls for proposals from international platforms (FundsforNGOs, IDB, Horizon Europe, climate foundations).
+* **Institutional Context:** Parses `company/profile.yaml`, accredited legal status (e.g., Authorized Donee under SAT Title III, Cooperative under LGSC), and internal bylaws.
+* **Assembly Participation:** Receives member motions and individual secret ballots via the command-line interface or the interactive web station.
 
-### Layer 2: Collegiate Executive Orchestrator
-* Routes tasks dynamically based on functional domain:
-  * **`procurador_fondos`:** Evaluates calls and drafts grant proposals.
-  * **`vigilancia`:** Verifies that actions comply with internal statutes and prevent conflicts of interest.
-  * **`legal_social`:** Ensures compliance with cooperative law and non-profit tax regulations.
-  * **`finanzas_solidarias`:** Audits cash flow and enforces the separation of statutory reserves.
-  * **`desarrollo_tecnico`:** Assesses hardware specifications and open licensing.
-  * **`secretaria_asamblea`:** Manages meeting agendas, roll calls, and official minutes.
+### Stage 2: Collegiate Core Engine & Deliberation
+1. **Collegiate Orchestrator (`coopexecutive.orchestrator`):**
+   - Routes user and system queries to specialized functional hats:
+     - `procurador_fondos`: Grant search, rubric qualification, and proposal drafting.
+     - `vigilancia`: Internal democratic audit, conflict-of-interest checks, and statutory compliance.
+     - `legal_social`: Cooperative law (LGSC), non-profit corporate governance, and open licensing.
+     - `finanzas_solidarias`: Cash flow monitoring, budget controls, and statutory reserve preservation.
+     - `desarrollo_tecnico`: Open-source tooling, appropriate technology, and standards compliance (ISO/IEC/NOM).
+     - `secretaria_asamblea`: Meeting convocations, quorum computation, and certified minutes drafting.
 
-### Layer 3: Persistent Episodic Memory (`coopexecutive.memory.episodic`)
-* SQLite relational database (`coop_memory.db`) storing:
-  * `assembly_decisions`: Formally adopted assembly resolutions.
-  * `assembly_proposals`: Motions submitted for member vote.
-  * `assembly_votes`: Individual ballots, indexed with unique constraints on `(proposal_id, member_id)` to guarantee one vote per member.
-  * `grant_evaluations`: Historical rubric scores and verdicts.
+2. **Persistent Episodic Memory (`coopexecutive.memory.episodic`):**
+   - SQLite relational database (`coop_memory.db`) storing:
+     - `assembly_decisions`: Historical ratified resolutions.
+     - `assembly_proposals`: Registered motions for member voting.
+     - `assembly_votes`: Individual ballots with a composite primary key / unique constraint `(proposal_id, member_id)` enforcing strictly one vote per member.
+     - `grant_evaluations`: Evaluated calls and historical scoring records.
 
-### Layer 4: Universal Inference Engine (`coopexecutive.providers.client`)
-* Decoupled client handling multi-provider LLM requests:
-  * OpenRouter free tier with automatic retry and model fallback upon HTTP 429.
-  * Local Ollama instance for fully offline air-gapped environments.
-  * Commercial provider endpoints (OpenAI, Anthropic, Gemini, Groq, DeepSeek) through a unified interface.
+3. **Universal Inference Engine (`coopexecutive.providers.client`):**
+   - Unified multi-model routing:
+     - *Zero-Cost Cloud:* OpenRouter free tier (`minimax/minimax-m3:free`, `nvidia/nemotron-3-super-120b-a12b:free`).
+     - *Offline Local:* Private air-gapped execution via Ollama (`llama3.1`, `qwen2.5`).
+     - *Commercial Endpoints:* OpenAI (`gpt-4o`), Anthropic (`claude-3-7-sonnet`), Google Gemini, Groq, Mistral, and DeepSeek.
+     - *Rate-Limit Resilience:* Automatic exponential backoff and transparent fallback to secondary models upon receiving HTTP 429 errors.
 
-### Layer 5: Execution Tool-Use Layer (`coopexecutive.grant_tools`)
-* Deterministic modules providing verifiable outputs:
-  * **`eligibility_evaluator.py`:** Computes weighted scores across 8 dimensions (0–100 points) and outputs binding status verdicts (`APLICAR`, `OBSERVAR`, `RECHAZAR`).
-  * **`logical_framework.py`:** Generates 4x4 Results-Based Management matrices with verifiable indicators and assumptions.
-  * **`budget_builder.py`:** Structures expenses by category (Personnel, CAPEX, OPEX, Audit) and calculates matching fund ratios.
-  * **`dossier_generator.py`:** Assembles all components into structured markdown/PDF technical dossiers.
+4. **Deterministic Tool-Use Layer (`coopexecutive.grant_tools`):**
+   - Verifiable, non-hallucinatory algorithms:
+     - 100-point rubric across 8 dimensions (Eligibility, Relevance, Technical Design, Sustainability, Budget, Risk, Team Capacity, Impact) issuing binding verdicts (`APLICAR`, `OBSERVAR`, `RECHAZAR`).
+     - 4x4 Logical Framework Matrix (LFM / MIR) aligning objectives, indicators, means of verification, and assumptions with UN SDGs.
+     - Multi-category budget builder with explicit cash and in-kind matching contributions.
+     - Digital scrutiny engine computing statutory quorum (>50% + 1 members).
 
-### Layer 6: Hard Statutory Guardrails (`coopexecutive.governance.voting`)
-* Enforces structural invariants before recording motions or proposals:
-  * Invariant 1: Mandatory protection of statutory reserves (Reserve, Welfare, Education funds).
-  * Invariant 2: Immediate nullification of any proposal containing clauses for equity dilution or private stock issuance.
-  * Invariant 3: Immediate rejection of any motion attempting to enforce mandatory unpaid labor or rights waivers.
+5. **Hard Statutory Guardrails (`coopexecutive.governance.voting`):**
+   - Immutable code-level checks preventing the registration or adoption of prohibited terms:
+     - Veto against equity dilution, stock issuance, or corporate privatization.
+     - Veto against liquidation or diversion of mandatory statutory funds (15% Reserve, 10% Welfare, 10% Education).
+     - Veto against mandatory unpaid labor or rights waivers.
+
+### Stage 3: Auditable Deliverables & Effectors
+* **Multilateral Proposal Dossier:** Comprehensive, audit-ready Markdown and exportable PDF technical proposals.
+* **Cryptographically Sealed Minutes:** Certified scrutiny reports (*Actas de Escrutinio*) stamped with SHA-256 digital hashes for immutable internal audit trails.
+* **Structured Budgets:** Detailed financial tables segregating direct costs, administrative caps, and community co-financing.
+* **Interactive Local Web Station:** Real-time dashboard (`localhost:8000`) for assembly deliberation, live vote counting, and direct advisor interaction.
