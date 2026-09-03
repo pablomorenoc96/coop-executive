@@ -88,11 +88,12 @@ uv run coopexecutive chat
 
 ---
 
-## Zero-Cost AI Setup
+## AI Model Setup (Free, Local, and Paid Options)
 
-CoopExecutive supports two free execution routes:
-* **Cloud (Default):** Add a free API key from [OpenRouter](https://openrouter.ai/keys) to `.env`. Preconfigured with tool-capable free models (`minimax/minimax-m3:free` and `nvidia/nemotron-3-super-120b-a12b:free`) with automatic rate-limit fallback.
-* **Local Offline:** Set `LOCAL_MODELS_ENABLED=true` in `.env` to execute fully offline via [Ollama](https://ollama.com/) with models like `llama3.1` or `qwen2.5`.
+CoopExecutive is a sovereign multi-provider AI engine supporting three flexible execution routes:
+1. **Free Cloud Tier ($0.00):** Add a free API key from [OpenRouter](https://openrouter.ai/keys) to `.env` (no credit card required). Access high-performance free models like `minimax/minimax-m3:free` and `nvidia/nemotron-3-super-120b-a12b:free` with automatic 429 rate-limit fallback.
+2. **Local Offline Tier (100% Private & Free):** Set `LOCAL_MODELS_ENABLED=true` in `.env` to execute completely offline via [Ollama](https://ollama.com/) with models like `llama3.1` or `qwen2.5`.
+3. **Commercial & Paid APIs (Optional):** If your cooperative or non-profit has commercial accounts or institutional credits, you can directly configure API keys for **OpenAI** (`gpt-4o`, `o1`, `o3-mini`), **Anthropic** (`claude-3-7-sonnet`, `claude-3-5-sonnet`), **Google Gemini** (`gemini-2.0-flash`), **Groq**, **Mistral**, **DeepSeek**, or custom OpenAI-compatible enterprise gateways (`vLLM`, `Azure OpenAI`). The engine automatically routes requests based on the selected model and active keys.
 
 ---
 

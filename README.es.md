@@ -88,11 +88,12 @@ uv run coopexecutive chat
 
 ---
 
-## Configuración a Costo Cero
+## Configuración de Modelos de IA (Gratis, Locales y de Pago)
 
-El sistema opera con dos alternativas libres de costo:
-* **En la Nube (Predeterminada):** Obtén una clave gratuita en [OpenRouter](https://openrouter.ai/keys) y colócala en `.env`. Utiliza modelos gratuitos con soporte de herramientas como `minimax/minimax-m3:free` y `nvidia/nemotron-3-super-120b-a12b:free` con conmutación automática ante saturación temporal.
-* **Localmente (Sin Internet):** Si cuentas con [Ollama](https://ollama.com/), cambia `LOCAL_MODELS_ENABLED=true` en `.env` para operar de forma 100% privada con modelos como `llama3.1` o `qwen2.5`.
+CoopExecutive es un motor multimodelo soberano. Ofrece tres vías de conexión configurables en `.env`:
+1. **Ruta Gratuita en la Nube ($0.00):** Obtén una clave sin costo en [OpenRouter](https://openrouter.ai/keys) (no requiere tarjeta bancaria). Accede a modelos con soporte de herramientas como `minimax/minimax-m3:free` y `nvidia/nemotron-3-super-120b-a12b:free` con conmutación automática ante errores 429.
+2. **Ruta Local Desconectada (100% Privada y Gratis):** Si cuentas con [Ollama](https://ollama.com/), cambia `LOCAL_MODELS_ENABLED=true` para operar sin conexión con modelos locales como `llama3.1` o `qwen2.5`.
+3. **APIs Comerciales y de Pago (Opcional):** Si tu cooperativa u organización dispone de suscripciones o créditos institucionales, puedes conectar directamente tus claves de **OpenAI** (`gpt-4o`, `o1`, `o3-mini`), **Anthropic** (`claude-3-7-sonnet`, `claude-3-5-sonnet`), **Google Gemini** (`gemini-2.0-flash`), **Groq**, **Mistral**, **DeepSeek** o gateways compatibles con OpenAI (`vLLM`, `Azure OpenAI`). El sistema enruta automáticamente cada consulta según el proveedor activo.
 
 ---
 
