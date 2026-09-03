@@ -20,6 +20,14 @@ from rich.markdown import Markdown
 from coopexecutive.config import get_settings
 from coopexecutive.memory.company_profile import CoopProfile
 from coopexecutive.orchestrator.coop_executive import CoopExecutive
+from coopexecutive.governance.voting import (
+    create_proposal,
+    cast_vote,
+    tally_votes,
+    list_proposals,
+    get_proposal,
+    VoteChoice,
+)
 from coopexecutive.grant_tools.eligibility_evaluator import evaluate_grant_opportunity
 
 console = Console(legacy_windows=False)
@@ -227,6 +235,97 @@ def info() -> None:
         title=f"🏛️ Organización Activa: {executive.profile.name}",
         border_style="cyan"
     ))
+
+
+
+# ------------------------------------------------------------------------------
+# Comandos de Gobernanza Democrática y Votaciones (Un Socio = Un Voto)
+# ------------------------------------------------------------------------------
+
+@cli.command("propuesta")
+@click.argument("titulo", type=str)
+@click.option("--descripcion", "-d", required=True, type=str, help="Materia detallada de la propuesta a votar.")
+@click.option("--categoria", "-c", default="subvencion", type=click.Choice(["subvencion", "estatutario", "financiero", "operativo"]), help="Categoría estatutaria.")
+def cmd_propuesta(titulo: str, descripcion: str, categoria: str) -> None:
+    """Registrar una nueva propuesta a someter a votación de la Asamblea."""
+    try:
+        prop_id = create_proposal(titulo, descripcion, categoria)
+        body = (
+            f"[bold green]✓ Propuesta registrada con éxito[/bold green]\n\n"
+            f"[bold]Folio Oficial:[/bold] #{prop_id}\n"
+            f"[bold]Título:[/bold] {titulo}\n"
+            f"[bold]Categoría:[/bold] {categoria.upper()}\n"
+            f"[bold]Descripción:[/bold] {descripcion}\n\n"
+            f"[dim]Para emitir un voto ejecute:[/dim]\n"
+            f"[cyan]uv run coopexecutive votar {prop_id} --socio-id SOC-001 --socio-nombre \"Nombre\" --voto A_FAVOR[/cyan]"
+        )
+        console.print(Panel(body, title="🗳️ Nueva Propuesta de Asamblea", border_style="green"))
+    except ValueError as e:
+        console.print(Panel(f"[bold red]✗ Error Estatutario:[/bold red] {e}", title="Alerta LGSC", border_style="red"))
+
+
+@cli.command("propuestas")
+@click.option("--estatus", default=None, help="Filtrar por estatus (abierta, aprobada, rechazada)")
+def cmd_propuestas(estatus: str | None) -> None:
+    """Listar las propuestas de asamblea registradas."""
+    props = list_proposals(estatus)
+    if not props:
+        console.print("[dim]No hay propuestas registradas en la memoria.[/dim]")
+        return
+
+    table = Table(title="🗳️ Propuestas de Asamblea General", show_header=True, header_style="bold cyan")
+    table.add_column("Folio", style="dim", width=8)
+    table.add_column("Categoría", width=14)
+    table.add_column("Título", width=36)
+    table.add_column("Estatus", width=12)
+    table.add_column("Fecha", width=20)
+
+    for p in props:
+        status_color = "green" if p["status"] == "abierta" else ("cyan" if p["status"] == "aprobada" else "red")
+        table.add_row(
+            f"#{p['id']}",
+            p["category"].upper(),
+            p["title"],
+            f"[{status_color}]{p['status'].upper()}[/{status_color}]",
+            p["created_at"]
+        )
+    console.print(table)
+
+
+@cli.command("votar")
+@click.argument("propuesta_id", type=int)
+@click.option("--socio-id", "-s", required=True, type=str, help="ID o número de socio acreditado.")
+@click.option("--socio-nombre", "-n", required=True, type=str, help="Nombre completo del socio.")
+@click.option("--voto", "-v", required=True, type=click.Choice(["A_FAVOR", "EN_CONTRA", "ABSTENCION"], case_sensitive=False), help="Sentido del voto.")
+@click.option("--justificacion", "-j", default="", type=str, help="Fundamentación opcional del voto.")
+def cmd_votar(propuesta_id: int, socio_id: str, socio_nombre: str, voto: str, justificacion: str) -> None:
+    """Emitir voto soberano en una propuesta de asamblea (Un Socio = Un Voto)."""
+    try:
+        res = cast_vote(propuesta_id, socio_id, socio_nombre, voto, justificacion)
+        color = "green" if res["choice"] == "A_FAVOR" else ("red" if res["choice"] == "EN_CONTRA" else "yellow")
+        body = (
+            f"[bold green]✓ Cédula de Voto Recibida y Registrada[/bold green]\n\n"
+            f"[bold]Propuesta Folio:[/bold] #{propuesta_id}\n"
+            f"[bold]Socio Acreditado:[/bold] {socio_nombre} ([dim]{socio_id}[/dim])\n"
+            f"[bold]Sentido del Voto:[/bold] [{color}]{res['choice']}[/{color}]\n"
+            f"[dim]Principio LGSC salvaguardado: Un socio = Un voto.[/dim]"
+        )
+        console.print(Panel(body, title="🗳️ Acreditación de Voto", border_style="cyan"))
+    except ValueError as e:
+        console.print(Panel(f"[bold red]✗ Rechazo de Cédula:[/bold red] {e}", title="Error de Votación", border_style="red"))
+
+
+@cli.command("escrutinio")
+@click.argument("propuesta_id", type=int)
+@click.option("--padron", "-p", default=12, type=int, help="Número total de socios activos en el padrón.")
+def cmd_escrutinio(propuesta_id: int, padron: int) -> None:
+    """Efectuar el escrutinio de votos y emitir el Acta de Resolución."""
+    try:
+        tally = tally_votes(propuesta_id, total_census_members=padron)
+        console.print("\n")
+        console.print(Markdown(tally["acta_md"]))
+    except ValueError as e:
+        console.print(Panel(f"[bold red]✗ Error en Escrutinio:[/bold red] {e}", title="Error", border_style="red"))
 
 
 if __name__ == "__main__":

@@ -2,55 +2,102 @@
 
 ![CoopExecutive Banner](assets/banner_en.png)
 
-> **Open-Source AI Collegiate Executive Board & Grant Procurement Agent for Cooperatives, Non-Profits (NGOs), and the Social Economy.**
+> **Collegiate Executive Board & Grant Procurement AI Agent for Cooperatives, Civil Associations (Non-Profits / NGOs), and the Social Economy.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
-[![Zero Cost Models](https://img.shields.io/badge/Models-OpenRouter%20:free%20%7C%20Ollama-orange.svg)](#zero-cost-ai-setup)
+[![Free & Paid AI](https://img.shields.io/badge/Models-Free%20%26%20Commercial-orange.svg)](#ai-model-setup-free-local-and-paid-options)
 [![Social Economy Manifesto](https://img.shields.io/badge/Philosophy-Social%20Economy-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
 
-[🇪🇸 Leer en Español](README.es.md) | [📢 Social Media Outreach Kit](docs/KIT_DIFUSION_REDES.md)
+[🇲🇽 Leer en Español](README.es.md) | [📢 Social Media & Outreach Kit](docs/KIT_DIFUSION_REDES.md)
 
-**CoopExecutive** is an open-source alternative to conventional corporate governance software. While traditional Silicon Valley tools assume private venture capital, shareholder primacy, and stock dilution, CoopExecutive is built for **democratic member-led organizations**: sovereign assemblies, collective reserve funds, and social utility.
+**CoopExecutive** is an open-source alternative to the traditional corporate management model. While conventional Silicon Valley AI tools assume private equity, shareholder primacy, and venture capital, this system is engineered for **democratic organizations**: sovereign assemblies, collective statutory reserves, and non-profit public impact.
 
-It includes a dedicated **Grant Procurement Agent** designed to evaluate, plan, and draft multilateral funding proposals for platforms like [FundsforNGOs](https://www.fundsforngos.org/), international development agencies, and environmental foundations.
+---
+
+## What is CoopExecutive Technically?
+
+In software and AI engineering terms, **CoopExecutive is not a simple chatbot or passive text generator**: it is an **Autonomous Vertical AI Agent** built on five formal architectural pillars:
+
+```
+                   ┌────────────────────────────────────────────────────────┐
+                   │                     ENVIRONMENT (World)                │
+                   │  (profile.yaml, LGSC Law, Multilateral Grants, CLI/Web)│
+                   └───────────────▲────────────────────────┬───────────────┘
+                                   │                        │
+                          Perception (Sensors)         Action (Actuators)
+                                   │                        │
+       ┌───────────────────────────┴────────────────────────▼───────────────────────────┐
+       │                            CoopExecutive AGENT                                 │
+       │                                                                                │
+       │   ┌────────────────────────────────────────────────────────────────────────┐   │
+       │   │                    COLLEGIATE EXECUTIVE ORCHESTRATOR                   │   │
+       │   │   (Role Router: Procurement, Vigilance, Legal, Finance, Assembly)      │   │
+       │   └──────┬───────────────────────┬──────────────────────────┬──────────────┘   │
+       │          │                       │                          │                  │
+       │   ┌──────▼──────┐         ┌──────▼──────┐            ┌──────▼──────┐           │
+       │   │  EPISODIC   │         │  UNIVERSAL  │            │   EXECUTION │           │
+       │   │   MEMORY    │         │  INFERENCE  │            │  TOOL-USE   │           │
+       │   │  (SQLite)   │         │  (Resilient │            │             │           │
+       │   │ - Assembly  │         │   Fallback) │            │ - 4x4 MML   │           │
+       │   │ - Ballots   │         │             │            │ - 100pt Rub.│           │
+       │   │ - Dossiers  │         │             │            │ - Budgeting │           │
+       │   └─────────────┘         └─────────────┘            └─────────────┘           │
+       │                                                                                │
+       │   ┌────────────────────────────────────────────────────────────────────────┐   │
+       │   │                   HARD STATUTORY GUARDRAILS & INVARIANTS               │   │
+       │   │      Cooperative Law: 15% Reserve, 10% Welfare, 0% Equity Dilution     │   │
+       │   └────────────────────────────────────────────────────────────────────────┘   │
+       └────────────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Perception:** Inspects institutional state (`company/profile.yaml`), parses statutory laws, and ingests multilateral grant guidelines in real-time.
+2. **Action Space & Tool-Use:** Executes deterministic code: builds auditable budgets with matching funds, computes 4x4 Logical Frameworks, and compiles official proposal dossiers.
+3. **Episodic & Persistent Memory:** Relational SQLite database (`coop_memory.db`) storing assembly agreements, grant evaluations, and voting ballots across sessions.
+4. **Deliberation & Autonomous Reasoning:** Applies an 8-dimension 100-point multicriteria rubric to issue binding strategic verdicts (`APPLY`, `EXPLORE`, `REJECT`).
+5. **Hard Statutory Guardrails (Invariants):** Code-enforced legal protections: preserves mandatory collective funds (15% Reserve, 10% Welfare, 10% Education) and vetoes capital dilution attempts.
 
 ---
 
 ## The Antithesis: Silicon Valley vs. CoopExecutive
 
-| Dimension | Silicon Valley Model | CoopExecutive (Social Economy) |
+| Dimension | Silicon Valley Approach | CoopExecutive (Social Economy) |
 | :--- | :--- | :--- |
 | **Decision Power** | Weighted by capital (*one dollar, one vote*). | Democratic (*one member, one vote* — General Assembly). |
-| **Oversight** | Private venture capital investor boards. | Independent internal **Vigilance Board**. |
-| **Financing** | Equity dilution, debt, and pressure for an exit. | Sustainable cashflow + **Non-reimbursable grants ([FundsforNGOs](https://www.fundsforngos.org/))**. |
-| **Surplus / Profits** | Capital extraction for external shareholders. | **Protected Statutory Funds:** Reserve (15%), Welfare (10%), Education (10%). |
-| **Legal Framework** | For-profit corporations (Delaware C-Corp, S.A.). | Cooperative Societies and Non-Profit Civil Associations. |
-| **Infrastructure** | Proprietary tools with recurring seat fees. | **100% Open Source, zero-cost AI models ($0.00).** |
+| **Oversight** | Private board of directors representing venture funds. | Independent **Vigilance Board** elected by members. |
+| **Financing** | Debt, capital dilution, and exit orientation (*liquidity events*). | Sustainable operation + **Non-reimbursable grants ([FundsforNGOs](https://www.fundsforngos.org/))**. |
+| **Surplus** | Maximizing dividend distributions to investors. | **Protected Statutory Funds:** Reserve (15%), Welfare (10%), Education (10%). |
+| **Legal Regime** | For-profit corporations (Delaware C-Corp, S.A. de C.V.). | Cooperative Societies (LGSC) and Civil Associations (NGOs). |
+| **Infrastructure** | Proprietary SaaS with expensive subscription lock-in. | **100% Open Source (MIT), free ($0.00) models and optional commercial APIs.** |
 
 ---
 
-## Visual Demonstration
+## Visual Demo
 
-![CoopExecutive Showcase](assets/demo_en.gif)
+![CoopExecutive Demo](assets/demo_en.gif)
 
 ---
 
 ## Core Capabilities
 
-### 1. Grant Procurement Agent
-* **Eligibility Evaluation (100-Point Rubric):** Assesses funding opportunities in seconds across 8 dimensions (*APPLY*, *EXPLORE*, *CONDITIONAL*, or *DO NOT APPLY*).
-* **Logical Framework Approach (LFA / MML):** Generates structured 4x4 matrix (Goal, Purpose, Outputs, Activities) with Objectively Verifiable Indicators (OVIs).
-* **Theory of Change (ToC):** Connects project inputs and outputs with the UN Sustainable Development Goals (SDGs 7, 8, 9, 12, 13).
-* **Auditable Budgets:** Categorizes personnel, equipment (CAPEX), fieldwork (OPEX), and institutional matching funds.
+### 1. Multilateral Grant Procurement Agent
+* **100-Point Evaluation Rubric:** Automatically evaluates funding opportunities across 8 weighted criteria (*APPLY*, *EXPLORE*, *CONDITIONAL*, or *DO NOT APPLY*).
+* **Logical Framework Methodology (LFM / RBM):** Automatically generates Problem Trees, Objective Trees, and 4x4 Result Matrices.
+* **Theory of Change (ToC):** Aligns project activities directly with UN Sustainable Development Goals (SDGs 7, 8, 9, 12, 13).
+* **Multilateral Proposal Dossier Generator:** Compiles audit-ready technical dossiers for the Inter-American Development Bank (IDB), Horizon Europe, and international foundations.
 
-### 2. Collegiate Social Council
-* **Vigilance Board:** Democratic internal auditing and statutory compliance.
-* **Social Legal Counsel:** Cooperative law, non-profit tax exemptions, and open technology licenses.
-* **Solidarity Finance:** Calculation and protection of statutory reserve, welfare, and education funds.
-* **Community Technology:** Promotion of open hardware, renewable microgrids, and vocational training.
-* **Assembly Secretariat:** Drafting formal meeting notices, quorum checks, and official minutes.
+### 2. Democratic Assembly Voting System (One Member = One Vote)
+* **Sovereign Ballot Casting:** Credentials members, prevents duplicate voting, and records official choices (`A_FAVOR`, `EN_CONTRA`, `ABSTENCION`).
+* **Live Quorum Calculation:** Enforces statutory minimum attendance (50% + 1 members) under cooperative law.
+* **Cryptographic Scrutiny Certificate:** Issues formal Assembly Minutes with verification SHA-256 hashes.
+* **Anti-Dilution Statutory Veto:** Automatically rejects and nullifies any motion aiming to privatize collective funds or sell cooperative shares.
+
+### 3. Collegiate Executive & Vigilance Board
+* **Vigilance Board:** Internal democratic audit, ethical compliance, and conflict-of-interest prevention.
+* **Social Legal Counsel:** Cooperative legal framework, authorized donee compliance, and open-technology licensing.
+* **Solidarity Finance:** Manages and shields mandatory statutory funds (Reserve, Social Welfare, Cooperative Education).
+* **Assembly Secretariat:** Drafts agendas, records accredited rolls, and certfies assembly resolutions.
 
 ---
 
@@ -59,30 +106,28 @@ It includes a dedicated **Grant Procurement Agent** designed to evaluate, plan, 
 ```bash
 git clone https://github.com/pablomorenoc96/coop-executive.git
 cd coop-executive/packages/core
-cp ../../.env.example ../../.env
-```
 
-### CLI Commands:
-```powershell
-# Display active organization profile and statutory funds:
-uv run coopexecutive info
+# Install dependencies with uv:
+uv sync --all-groups --extra dev
 
-# Generate a complete 4x4 Logical Framework matrix:
-uv run coopexecutive marco-logico "Community Clean Energy & Technical Training"
+# Configure environment variables:
+cp ../../.env.example .env
 
-# Evaluate any grant opportunity:
-uv run coopexecutive evaluar-convocatoria "https://www.fundsforngos.org/..."
+# Evaluate a grant opportunity with the 100-point rubric:
+uv run coopexecutive evaluar "Clean_Energy_Grant_Call.txt"
 
-# Structure an auditable project budget:
-uv run coopexecutive presupuesto "Rural Process Automation Microplant"
+# Generate a complete multilateral proposal dossier:
+uv run coopexecutive dossier "Community Clean Microgrids" --donante "IDB"
 
-# Generate a comprehensive grant proposal dossier:
-uv run coopexecutive dossier "Community Clean Energy & Technical Training"
+# Register and vote on a General Assembly motion (One Member = One Vote):
+uv run coopexecutive propuesta "IDB Clean Energy Proposal Approval" -d "Approval of technical matching commitment"
+uv run coopexecutive votar 1 --socio-id "SOC-001" --socio-nombre "Elena Gomez" --voto "A_FAVOR"
+uv run coopexecutive escrutinio 1 --padron 12
 
-# Open the Interactive Web Dashboard:
+# Open the interactive Web Dashboard:
 uv run coopexecutive dashboard
 
-# Interactive chat session with the collegiate board:
+# Start an interactive session with the collegiate board:
 uv run coopexecutive chat
 ```
 
@@ -108,4 +153,4 @@ CoopExecutive is a sovereign multi-provider AI engine supporting three flexible 
 ---
 
 ## License
-Released under the [MIT License](LICENSE). Free for cooperatives, non-profits, and communities worldwide.
+Distributed under the [MIT](LICENSE) License. Free for community use, modification, and collective ownership.

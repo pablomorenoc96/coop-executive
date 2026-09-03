@@ -7,14 +7,56 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
-[![Modelos Libres](https://img.shields.io/badge/Modelos-OpenRouter%20:free%20%7C%20Ollama-orange.svg)](#configuración-a-costo-cero)
+[![Modelos Libres](https://img.shields.io/badge/Modelos-Gratis%20y%20Comerciales-orange.svg)](#configuración-de-modelos-de-ia-gratis-locales-y-de-pago)
 [![Manifiesto Economía Social](https://img.shields.io/badge/Filosof%C3%ADa-Econom%C3%ADa%20Social-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
 
 [🇺🇸 Read in English](README.md) | [📢 Kit de Difusión en Redes](docs/KIT_DIFUSION_REDES.md)
 
 **CoopExecutive** es una alternativa de código abierto al modelo corporativo tradicional. Mientras las herramientas convencionales de Silicon Valley asumen juntas de accionistas, capital de riesgo y reparto de utilidades privadas, este sistema está diseñado para **organizaciones democráticas**: asambleas soberanas, fondos de reserva colectivos y proyectos de beneficio común.
 
-Integra un **Agente Procurador de Fondos** para evaluar y redactar propuestas a fondos multilaterales y convocatorias de plataformas como [FundsforNGOs](https://www.fundsforngos.org/), agencias de cooperación internacional y fundaciones ambientales.
+---
+
+## ¿Qué es técnicamente CoopExecutive?
+
+En términos de ingeniería de software e inteligencia artificial, **CoopExecutive no es un simple chatbot ni un generador de texto pasivo**: es un **Agente Autónomo de Inteligencia Artificial (Vertical AI Agent)** construido sobre 5 pilares arquitectónicos formales:
+
+```
+                   ┌────────────────────────────────────────────────────────┐
+                   │                     ENTORNO (World)                    │
+                   │  (profile.yaml, LGSC, Convocatorias BID, CLI, Web)     │
+                   └───────────────▲────────────────────────┬───────────────┘
+                                   │                        │
+                          Percepción (Sensores)        Acción (Efectores)
+                                   │                        │
+       ┌───────────────────────────┴────────────────────────▼───────────────────────────┐
+       │                             AGENTE CoopExecutive                               │
+       │                                                                                │
+       │   ┌────────────────────────────────────────────────────────────────────────┐   │
+       │   │                       ORQUESTADOR COLEGIADO                            │   │
+       │   │  (Router de roles: Procurador, Vigilancia, Legal, Finanzas, Asamblea)  │   │
+       │   └──────┬───────────────────────┬──────────────────────────┬──────────────┘   │
+       │          │                       │                          │                  │
+       │   ┌──────▼──────┐         ┌──────▼──────┐            ┌──────▼──────┐           │
+       │   │   MEMORIA   │         │    MOTOR    │            │ HERRAMIENTAS│           │
+       │   │  EPISÓDICA  │         │ INFERENCIA  │            │ (TOOL-USE)  │           │
+       │   │  (SQLite)   │         │  Universal  │            │             │           │
+       │   │ - Acuerdos  │         │  (Fallback  │            │ - MML 4x4   │           │
+       │   │ - Votaciones│         │  Resiliente)│            │ - Rúbrica   │           │
+       │   │ - Dossiers  │         │             │            │ - Presupuesto│          │
+       │   └─────────────┘         └─────────────┘            └─────────────┘           │
+       │                                                                                │
+       │   ┌────────────────────────────────────────────────────────────────────────┐   │
+       │   │              SALVAGUARDAS ESTATUTARIAS (Guardrails Duros)              │   │
+       │   │      Invariantes LGSC: 15% Reserva, 10% Previsión, 0% Dilución         │   │
+       │   └────────────────────────────────────────────────────────────────────────┘   │
+       └────────────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Percepción del Entorno (*Perception*):** Inspecciona el estado institucional (`company/profile.yaml`), analiza las leyes cooperativas vigentes y procesa convocatorias internacionales en tiempo real.
+2. **Espacio de Acción y Herramientas (*Tool-Use / Actuation*):** Ejecuta código determinista: calcula presupuestos auditables con contrapartidas en especie, genera matrices de Marco Lógico 4x4 y compila expedientes técnicos oficiales (*dossiers*).
+3. **Memoria Episódica Persistente (*Episodic Memory*):** Base de datos relacional SQLite (`coop_memory.db`) que almacena acuerdos asamblearios, evaluaciones de convocatorias y cédulas de votación entre sesiones.
+4. **Deliberación y Toma de Decisiones (*Reasoning*):** Aplica rúbricas multicriterio de 100 puntos y emite dictámenes de negocio vinculantes (`APLICAR`, `OBSERVAR` o `RECHAZAR`).
+5. **Salvaguardas Estatutarias Duras (*Invariants & Guardrails*):** Reglas inviolables programadas en el núcleo: blindaje de fondos irrepartibles (15% Reserva, 10% Previsión, 10% Educación) y veto inmediato ante propuestas de dilución de capital.
 
 ---
 
@@ -27,7 +69,7 @@ Integra un **Agente Procurador de Fondos** para evaluar y redactar propuestas a 
 | **Financiamiento** | Deuda, dilución de capital y búsqueda de venta (*exit*). | Operación sostenible + **Subvenciones no reembolsables ([FundsforNGOs](https://www.fundsforngos.org/))**. |
 | **Excedentes** | Maximización de utilidades para accionistas. | **Fondos Estatutarios Blindados:** Reserva (15%), Previsión Social (10%), Educación (10%). |
 | **Régimen Legal** | Sociedades anónimas mercantiles (S.A., Delaware C-Corp). | Sociedades Cooperativas (LGSC) y Asociaciones Civiles (A.C.). |
-| **Infraestructura** | Software privativo con suscripciones recurrentes. | **100% Código Abierto, modelos libres sin costo ($0.00).** |
+| **Infraestructura** | Software privativo con suscripciones recurrentes. | **100% Código Abierto, modelos libres sin costo ($0.00) y de pago opcionales.** |
 
 ---
 
@@ -43,14 +85,19 @@ Integra un **Agente Procurador de Fondos** para evaluar y redactar propuestas a 
 * **Evaluación de Convocatorias (Rúbrica de 100 Puntos):** Analiza bases de financiamiento en segundos extrayendo fechas límite, montos y criterios mediante 8 dimensiones ponderadas (*APLICAR*, *EXPLORAR*, *CONDICIONAL* o *NO APLICAR*).
 * **Metodología de Marco Lógico (MML):** Genera automáticamente Árboles de Problemas, Árboles de Objetivos y la Matriz de Indicadores de Resultados (MIR) 4x4.
 * **Teoría del Cambio (ToC):** Vincula las actividades del proyecto con los Objetivos de Desarrollo Sostenible (ODS 7, 8, 9, 12, 13).
-* **Presupuestación Auditable:** Desglosa con rigor costos de personal, equipamiento (CAPEX), operación de campo (OPEX) y contrapartidas valorizadas.
+* **Expediente Técnico Multilateral (Dossier):** Ensambla expedientes completos listos para postular ante el BID, Horizonte Europa y fundaciones filantrópicas.
 
-### 2. Consejo Directivo y de Vigilancia Colegiado
+### 2. Gobernanza Democrática y Votación Soberana (Un Socio = Un Voto)
+* **Emisión de Votos:** Registro y acreditación de cédulas de voto de socios con verificación de unicidad (prohibido votar dos veces).
+* **Cálculo Automático de Cuórum Legal:** Verificación en tiempo real del umbral legal mínimo (50% + 1 socios del padrón conforme a la LGSC).
+* **Escrutinio Criptográfico:** Emisión de actas oficiales resolutivas con firma y hash SHA-256 inmutable.
+* **Veto Programático Anti-Dilución:** Rechazo automático de propuestas que intenten privatizar fondos irrepartibles o vender participaciones societarias.
+
+### 3. Consejo Directivo y de Vigilancia Colegiado
 * **Consejo de Vigilancia:** Auditoría democrática interna y observancia de los estatutos.
 * **Asesor Jurídico en Economía Social:** Marco legal cooperativo, donatarias autorizadas y convenios de tecnología abierta.
 * **Gestor de Finanzas Solidarias:** Control y blindaje de los fondos de reserva, previsión social y educación cooperativa.
-* **Desarrollo Tecnológico Comunitario:** Fomento de infraestructura abierta, energías limpias y formación técnica.
-* **Secretaría de Actas:** Redacción formal de convocatorias, verificación de quórum y minutas de asamblea.
+* **Secretaría de Actas:** Redacción formal de convocatorias, verificación de cuórum y minutas de asamblea.
 
 ---
 
@@ -59,27 +106,25 @@ Integra un **Agente Procurador de Fondos** para evaluar y redactar propuestas a 
 ```bash
 git clone https://github.com/pablomorenoc96/coop-executive.git
 cd coop-executive/packages/core
-cp ../../.env.example ../../.env
-```
 
-### Comandos de Ejemplo:
-```powershell
-# Ver perfil institucional y fondos estatutarios activos:
-uv run coopexecutive info
+# Instalar dependencias con uv:
+uv sync --all-groups --extra dev
 
-# Generar una Matriz de Marco Lógico completa:
-uv run coopexecutive marco-logico "Energía Limpia Comunitaria y Capacitación Técnica"
+# Configurar variables de entorno:
+cp ../../.env.example .env
 
-# Evaluar una convocatoria de financiamiento:
-uv run coopexecutive evaluar-convocatoria "https://www.fundsforngos.org/..."
+# Evaluar una convocatoria con la rúbrica de 100 puntos:
+uv run coopexecutive evaluar "Convocatoria_Energia_Limpia_BID.txt"
 
-# Estructurar un presupuesto auditable:
-uv run coopexecutive presupuesto "Microplanta de Automatización Rural"
+# Generar un expediente técnico completo para postulación multilateral:
+uv run coopexecutive dossier "Microrredes Rurales Comunitarias" --donante "BID"
 
-# Generar un dossier formal de postulación técnica y financiera:
-uv run coopexecutive dossier "Electrificación Limpia de Talleres"
+# Registrar y votar una propuesta en Asamblea General (Un Socio = Un Voto):
+uv run coopexecutive propuesta "Postulación al Fondo BID 2026" -d "Aprobación de la contrapartida técnica comunal"
+uv run coopexecutive votar 1 --socio-id "SOC-001" --socio-nombre "Elena Gómez" --voto "A_FAVOR"
+uv run coopexecutive escrutinio 1 --padron 12
 
-# Abrir el Panel de Control Web y Gobernanza Colegiada:
+# Abrir el Panel de Control Web interactivo:
 uv run coopexecutive dashboard
 
 # Iniciar sesión interactiva con el consejo directivo:

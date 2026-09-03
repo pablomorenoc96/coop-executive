@@ -522,20 +522,107 @@ El modelo alcanza punto de equilibrio financiero al mes 18 mediante las cuotas d
           </div>
         </div>
 
-        <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5">
-          <h2 id="txt-motion-title" class="text-sm font-semibold text-white mb-1">Resolución Asamblearia en Votación</h2>
-          <p id="txt-motion-sub" class="text-xs text-zinc-400 mb-4">Punto 4 del Orden del Día: Dictamen de postulación multilateral.</p>
-          
+        <!-- Interactive Democratic Voting Station (Un Socio = Un Voto) -->
+        <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h2 id="txt-motion-title" class="text-sm font-semibold text-white">Estación de Votación Democrática</h2>
+              </div>
+              <p id="txt-motion-sub" class="text-xs text-zinc-400 mt-0.5">Asamblea General Soberana · Principio LGSC: Un Socio = Un Voto</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label id="lbl-select-prop" class="text-xs text-zinc-400 font-mono">Propuesta:</label>
+              <select id="select-active-prop" onchange="changeVotingProposal()" class="bg-zinc-950 border border-zinc-700 text-xs rounded px-2.5 py-1 text-zinc-200 font-mono focus:border-emerald-500 outline-none">
+                <option value="1">#1: Postulación BID $120k USD</option>
+                <option value="2">#2: Dotación Fondos LGSC 2026</option>
+                <option value="3">#3: Certificación Hardware Comunal</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Proposal details card -->
           <div class="p-3.5 rounded bg-zinc-950 border border-zinc-800 text-xs space-y-3">
             <p id="txt-motion-text" class="text-zinc-200 leading-relaxed font-sans">
               "Se somete a aprobación de la Asamblea General la postulación oficial al Fondo de Transición Energética del BID por $120,000 USD y el compromiso de contrapartida técnica valorizada de $25,000 USD."
             </p>
-            <div class="flex items-center space-x-6 pt-2 border-t border-zinc-800 font-mono">
-              <span id="txt-vote-pro" class="text-emerald-400 font-semibold">A FAVOR: 50 (100%)</span>
-              <span class="text-rose-400">EN CONTRA: 0</span>
-              <span class="text-zinc-500">ABSTENCIONES: 0</span>
+            
+            <!-- Quorum progress bar -->
+            <div>
+              <div class="flex justify-between text-[11px] font-mono text-zinc-400 mb-1">
+                <span id="lbl-quorum-status">Cuórum de Asamblea (Mínimo Legal: 50% + 1):</span>
+                <span id="val-quorum-pct" class="text-emerald-400 font-bold">75.0% (9 / 12 Socios)</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-zinc-800 overflow-hidden relative">
+                <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-amber-500/60 z-10" title="Umbral Legal 50%"></div>
+                <div id="bar-quorum" class="h-full bg-emerald-500 transition-all duration-300" style="width: 75%;"></div>
+              </div>
             </div>
-            <p id="txt-vote-attestation" class="text-[11px] text-zinc-500 italic">Certificado con fe de hechos por el Consejo de Vigilancia conforme al Art. 45 de la LGSC.</p>
+
+            <!-- Vote Tally Stats -->
+            <div class="grid grid-cols-3 gap-2 pt-1 font-mono text-center">
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div id="tally-favor" class="text-emerald-400 font-bold text-sm">7</div>
+                <div id="lbl-favor" class="text-[10px] text-zinc-400 uppercase">A Favor (77.8%)</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div id="tally-contra" class="text-rose-400 font-bold text-sm">1</div>
+                <div id="lbl-contra" class="text-[10px] text-zinc-400 uppercase">En Contra (11.1%)</div>
+              </div>
+              <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                <div id="tally-abstencion" class="text-amber-400 font-bold text-sm">1</div>
+                <div id="lbl-abstencion" class="text-[10px] text-zinc-400 uppercase">Abstención (11.1%)</div>
+              </div>
+            </div>
+
+            <!-- Resolution Verdict Badge -->
+            <div class="flex items-center justify-between p-2 rounded bg-zinc-900/90 border border-zinc-800 font-mono text-xs">
+              <span id="lbl-resolution-status" class="text-zinc-400">Dictamen Resolutivo:</span>
+              <span id="badge-resolution" class="px-2.5 py-0.5 rounded font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">✓ APROBADA CON CUÓRUM</span>
+            </div>
+          </div>
+
+          <!-- Cast Vote Action Form -->
+          <div class="p-3.5 rounded bg-zinc-950/80 border border-zinc-800 text-xs space-y-3">
+            <div class="font-medium text-zinc-300 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+              <span id="lbl-cast-box">Mesa de Emisión de Cédula de Voto</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label id="lbl-voter-select" class="block text-[11px] font-mono text-zinc-400 mb-1">Socio Acreditado:</label>
+                <select id="voter-identity" class="w-full bg-zinc-900 border border-zinc-700 text-xs rounded px-2.5 py-1.5 text-zinc-200 font-mono focus:border-emerald-500 outline-none">
+                  <option value="SOC-010">SOC-010: Lucía Vargas (Comisión Técnica)</option>
+                  <option value="SOC-011">SOC-011: Raúl Hernández (Socio Fundador)</option>
+                  <option value="SOC-012">SOC-012: Andrea Morales (Socia Productora)</option>
+                </select>
+              </div>
+
+              <div>
+                <label id="lbl-voter-choice" class="block text-[11px] font-mono text-zinc-400 mb-1">Sentido de la Cédula:</label>
+                <div class="flex gap-1.5">
+                  <button type="button" onclick="selectBallotChoice('A_FAVOR')" id="btn-choice-favor" class="flex-1 py-1.5 rounded border border-emerald-500/50 bg-emerald-500/20 text-emerald-300 font-mono font-semibold text-xs transition">✓ A Favor</button>
+                  <button type="button" onclick="selectBallotChoice('EN_CONTRA')" id="btn-choice-contra" class="flex-1 py-1.5 rounded border border-zinc-700 bg-zinc-900 text-zinc-400 font-mono text-xs hover:text-white transition">✗ En Contra</button>
+                  <button type="button" onclick="selectBallotChoice('ABSTENCION')" id="btn-choice-abstencion" class="flex-1 py-1.5 rounded border border-zinc-700 bg-zinc-900 text-zinc-400 font-mono text-xs hover:text-white transition">— Abstención</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span id="txt-vote-feedback" class="text-[11px] font-mono text-emerald-400">Cédula lista para ser asentada en memoria.</span>
+              <button type="button" onclick="submitLiveVote()" class="px-4 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                <span id="btn-submit-vote">Asentar Cédula de Voto</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Digital Attestation & Hash -->
+          <div class="flex items-center justify-between text-[11px] font-mono text-zinc-500 pt-1">
+            <span id="txt-hash-cert">Hash de Escrutinio: SHA256:8F42A9B10E</span>
+            <span id="txt-vote-attestation">Certificado por Consejo de Vigilancia (LGSC Art. 45)</span>
           </div>
         </div>
 
@@ -811,6 +898,119 @@ El modelo alcanza punto de equilibrio financiero al mes 18 mediante las cuotas d
     if (urlParams.get('lang') === 'en') {
       setLanguage('en');
     }
+  
+    // --- Sistema Interactivo de Votación Democrática ---
+    let selectedBallot = 'A_FAVOR';
+    const votingProposals = {
+      1: {
+        titleEs: "Se somete a aprobación de la Asamblea General la postulación oficial al Fondo de Transición Energética del BID por $120,000 USD y el compromiso de contrapartida técnica valorizada de $25,000 USD.",
+        titleEn: "Submitted for General Assembly approval: official application to IDB Clean Energy Transition Fund for $120,000 USD with committed technical in-kind matching of $25,000 USD.",
+        census: 12,
+        favor: 7,
+        contra: 1,
+        abstencion: 1,
+        hash: "ASAMBLEA-0001-8F42A9B1"
+      },
+      2: {
+        titleEs: "Aprobación de la distribución del excedente 2025 de $1,000,000 MXN para dotar los 3 fondos estatutarios: $150,000 a Reserva (15%), $100,000 a Previsión Social (10%) y $100,000 a Educación Cooperativa (10%).",
+        titleEn: "Approval of 2025 surplus allocation of $1,000,000 MXN into 3 mandatory funds: $150k to Reserve (15%), $100k to Social Welfare (10%), and $100k to Cooperative Education (10%).",
+        census: 12,
+        favor: 10,
+        contra: 0,
+        abstencion: 0,
+        hash: "ASAMBLEA-0002-3B71F2C9"
+      },
+      3: {
+        titleEs: "Dictamen favorable para adopción de esquemas de hardware abierto y auditoría ciudadana para el sistema de control de microrredes comunales.",
+        titleEn: "Favorable resolution adopting open-hardware architecture and community audits for the rural microgrid energy control system.",
+        census: 12,
+        favor: 6,
+        contra: 2,
+        abstencion: 1,
+        hash: "ASAMBLEA-0003-9E40DA17"
+      }
+    };
+
+    function selectBallotChoice(choice) {
+      selectedBallot = choice;
+      const bFavor = document.getElementById('btn-choice-favor');
+      const bContra = document.getElementById('btn-choice-contra');
+      const bAbst = document.getElementById('btn-choice-abstencion');
+
+      bFavor.className = "flex-1 py-1.5 rounded border text-xs font-mono transition " + (choice === 'A_FAVOR' ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-300 font-semibold" : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-white");
+      bContra.className = "flex-1 py-1.5 rounded border text-xs font-mono transition " + (choice === 'EN_CONTRA' ? "border-rose-500/50 bg-rose-500/20 text-rose-300 font-semibold" : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-white");
+      bAbst.className = "flex-1 py-1.5 rounded border text-xs font-mono transition " + (choice === 'ABSTENCION' ? "border-amber-500/50 bg-amber-500/20 text-amber-300 font-semibold" : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-white");
+    }
+
+    function changeVotingProposal() {
+      const propId = document.getElementById('select-active-prop').value;
+      const p = votingProposals[propId];
+      if (!p) return;
+
+      document.getElementById('txt-motion-text').textContent = currentLang === 'es' ? p.titleEs : p.titleEn;
+      updateVotingStats(p);
+    }
+
+    function updateVotingStats(p) {
+      const totalVotes = p.favor + p.contra + p.abstencion;
+      const quorumPct = Math.round((totalVotes / p.census) * 100);
+      const isQuorum = totalVotes > (p.census / 2);
+      const isApproved = isQuorum && (p.favor > p.contra);
+
+      document.getElementById('val-quorum-pct').textContent = `${quorumPct}% (${totalVotes} / ${p.census} ${currentLang === 'es' ? 'Socios' : 'Members'})`;
+      document.getElementById('bar-quorum').style.width = `${Math.min(quorumPct, 100)}%`;
+
+      const pctFavor = totalVotes > 0 ? Math.round((p.favor / totalVotes) * 100) : 0;
+      const pctContra = totalVotes > 0 ? Math.round((p.contra / totalVotes) * 100) : 0;
+      const pctAbst = totalVotes > 0 ? Math.round((p.abstencion / totalVotes) * 100) : 0;
+
+      document.getElementById('tally-favor').textContent = p.favor;
+      document.getElementById('lbl-favor').textContent = (currentLang === 'es' ? 'A Favor' : 'In Favor') + ` (${pctFavor}%)`;
+      document.getElementById('tally-contra').textContent = p.contra;
+      document.getElementById('lbl-contra').textContent = (currentLang === 'es' ? 'En Contra' : 'Against') + ` (${pctContra}%)`;
+      document.getElementById('tally-abstencion').textContent = p.abstencion;
+      document.getElementById('lbl-abstencion').textContent = (currentLang === 'es' ? 'Abstención' : 'Abstention') + ` (${pctAbst}%)`;
+
+      const badge = document.getElementById('badge-resolution');
+      if (isApproved) {
+        badge.textContent = currentLang === 'es' ? "✓ APROBADA CON CUÓRUM" : "✓ APPROVED WITH QUORUM";
+        badge.className = "px-2.5 py-0.5 rounded font-bold bg-emerald-950 text-emerald-300 border border-emerald-800";
+      } else {
+        badge.textContent = currentLang === 'es' ? "✗ RECHAZADA O SIN CUÓRUM" : "✗ REJECTED OR NO QUORUM";
+        badge.className = "px-2.5 py-0.5 rounded font-bold bg-rose-950 text-rose-300 border border-rose-800";
+      }
+
+      document.getElementById('txt-hash-cert').textContent = `Hash: SHA256:${p.hash}`;
+    }
+
+    function submitLiveVote() {
+      const propId = document.getElementById('select-active-prop').value;
+      const voterSelect = document.getElementById('voter-identity');
+      const voterName = voterSelect.options[voterSelect.selectedIndex].text;
+      const p = votingProposals[propId];
+
+      if (selectedBallot === 'A_FAVOR') p.favor++;
+      else if (selectedBallot === 'EN_CONTRA') p.contra++;
+      else if (selectedBallot === 'ABSTENCION') p.abstencion++;
+
+      // Remove voted member from dropdown
+      voterSelect.remove(voterSelect.selectedIndex);
+
+      updateVotingStats(p);
+
+      const feedback = document.getElementById('txt-vote-feedback');
+      const msg = currentLang === 'es' 
+        ? `✓ Voto registrado para ${voterName.split(':')[0]} (${selectedBallot}). Principio: 1 Socio = 1 Voto.`
+        : `✓ Vote cast for ${voterName.split(':')[0]} (${selectedBallot}). Principle: 1 Member = 1 Vote.`;
+      feedback.textContent = msg;
+      feedback.className = "text-[11px] font-mono text-emerald-400 font-semibold animate-pulse";
+
+      if (voterSelect.options.length === 0) {
+        voterSelect.innerHTML = `<option>${currentLang === 'es' ? 'Todos los socios acreditados han votado' : 'All credentialed members have voted'}</option>`;
+        voterSelect.disabled = true;
+      }
+    }
+
   </script>
 </body>
 </html>
