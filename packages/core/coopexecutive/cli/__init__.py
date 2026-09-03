@@ -150,6 +150,32 @@ async def _marco_logico(proyecto: str) -> None:
     console.print("\n")
 
 
+@cli.command("presupuesto")
+@click.argument("proyecto", type=str)
+def presupuesto(proyecto: str) -> None:
+    """Generar un presupuesto auditable y desglose de costos para un proyecto."""
+    asyncio.run(_presupuesto(proyecto))
+
+
+async def _presupuesto(proyecto: str) -> None:
+    executive = CoopExecutive()
+    console.print(f"\n[bold cyan]💰 Estructurando Presupuesto Auditable para: {proyecto}[/bold cyan]\n")
+    
+    prompt = (
+        f"Actúa como el Agente Procurador de Fondos de {executive.profile.name}. "
+        f"Estructura un presupuesto detallado y auditable para el proyecto: '{proyecto}'.\n"
+        f"Incluye:\n"
+        f"1. Tabla de costos desglosada por rubros estándar de cooperación internacional: "
+        f"Personal Técnico, Equipamiento/CAPEX, Gastos Operativos/OPEX, Auditoría Externa y Costos Indirectos (máx 7-10%).\n"
+        f"2. Distinción clara entre Fondos Solicitados al Donante y Contrapartida Institucional (en especie o valorizada).\n"
+        f"3. Resumen financiero total y notas de justificación presupuestal."
+    )
+
+    async for chunk in executive.stream_chat(prompt, specialist_focus="procurador"):
+        console.print(chunk, end="", highlight=False)
+    console.print("\n")
+
+
 @cli.command("info")
 def info() -> None:
     """Mostrar la información y estatus de la organización activa."""
