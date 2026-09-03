@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoopExecutive — Open-Source Collegiate Governance</title>
+  <title>CoopExecutive — Sistema de Gobernanza Colegiada y Procuración Multilateral</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,25 +14,29 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['Geist Mono', 'ui-monospace', 'monospace'],
           },
           colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-              900: '#064e3b',
+            zinc: {
+              950: '#09090b',
+              900: '#121215',
+              850: '#18181b',
+              800: '#27272a',
+              700: '#3f3f46',
+              600: '#52525b',
+              400: '#a1a1aa',
+              300: '#d4d4d8',
+              200: '#e4e4e7',
+              100: '#f4f4f5',
             },
-            surface: {
-              canvas: '#080c14',
-              card: '#0f172a',
-              cardHover: '#131d35',
-              border: '#1e293b',
-              borderSubtle: '#172236',
-              input: '#0b1120',
+            accent: {
+              emerald: '#10b981',
+              emeraldDark: '#047857',
+              emeraldBg: '#064e3b1a',
+              amber: '#f59e0b',
+              rose: '#f43f5e',
+              cyan: '#06b6d4',
             }
           }
         }
@@ -41,379 +45,396 @@
   </script>
   <style>
     body {
-      background-color: #080c14;
-      color: #f8fafc;
-      font-family: 'Inter', sans-serif;
+      background-color: #09090b;
+      color: #f4f4f5;
+      font-family: 'Geist', sans-serif;
+      letter-spacing: -0.01em;
       -webkit-font-smoothing: antialiased;
     }
-    .grid-pattern {
-      background-image: radial-gradient(rgba(30, 41, 59, 0.7) 1px, transparent 1px);
-      background-size: 32px 32px;
+    .subtle-border {
+      border-color: #27272a;
     }
-    .tab-active {
-      background-color: #1e293b;
-      color: #f8fafc;
-      border-color: #10b981;
+    .tab-nav-btn.active {
+      background-color: #18181b;
+      color: #ffffff;
+      border-color: #3f3f46;
     }
-    #virtual-cursor {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      pointer-events: none;
-      z-index: 9999;
-      display: none;
-      transform: translate(-2px, -2px);
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
     }
   </style>
 </head>
-<body class="min-h-screen grid-pattern flex flex-col">
+<body class="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 selection:bg-zinc-800">
 
-  <!-- Simulated cursor for natural recordings -->
-  <div id="virtual-cursor">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="drop-shadow-xl">
-      <path d="M5.5 3.2L18.5 14.5L12.5 15.2L15.8 21.2L13.2 22.5L10 16.5L5.5 20.5V3.2Z" fill="#F8FAFC" stroke="#0F172A" stroke-width="1.5"/>
-    </svg>
-  </div>
-
-  <!-- Top Navigation Header -->
-  <header class="border-b border-surface-border bg-surface-card/90 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+  <!-- Top System App Bar -->
+  <header class="h-14 border-b border-zinc-800 bg-zinc-900/90 backdrop-blur sticky top-0 z-50 flex items-center justify-between px-6">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-7 h-7 rounded bg-zinc-800 border border-zinc-700 flex items-center justify-center font-mono font-bold text-xs text-white">
+          CE
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span class="font-semibold text-sm tracking-tight text-white">CoopExecutive</span>
+          <span class="text-[11px] font-mono text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-700/60">v0.2.0</span>
+        </div>
+      </div>
       
-      <!-- Brand & Entity -->
-      <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-9 h-9 rounded-lg bg-surface-canvas border border-brand-500/40 flex items-center justify-center text-brand-400 font-bold">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3l9-7z"/>
-            </svg>
-          </div>
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="font-bold text-lg tracking-tight text-white">CoopExecutive</span>
-              <span class="text-xs px-2 py-0.5 rounded bg-brand-500/10 border border-brand-500/30 text-brand-400 font-mono font-medium">v0.1.0</span>
-            </div>
-            <p id="txt-org-name" class="text-xs text-slate-400">Cooperativa de Producción y Tecnología Abierta S.C. de R.L.</p>
-          </div>
-        </div>
+      <div class="h-4 w-px bg-zinc-800 hidden sm:block"></div>
+      
+      <nav class="hidden md:flex items-center space-x-1.5 text-xs text-zinc-400 font-mono">
+        <span id="txt-org-type">SOCIEDAD COOPERATIVA</span>
+        <span>/</span>
+        <span id="txt-regime-title" class="text-zinc-200">LGSC ART. 53-59 (MÉXICO)</span>
+      </nav>
+    </div>
+
+    <div class="flex items-center space-x-3 text-xs font-mono">
+      <!-- Status pill -->
+      <div class="hidden lg:flex items-center space-x-2 px-2.5 py-1 rounded border border-zinc-800 bg-zinc-900 text-zinc-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="txt-system-ready">SISTEMA DIRECTIVO: ACTIVO</span>
       </div>
 
-      <!-- Center Status -->
-      <div class="hidden md:flex items-center space-x-6 text-xs text-slate-400 font-mono">
-        <div class="flex items-center space-x-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="txt-status-gov">GOBERNANZA: ASAMBLEA SOBERANA</span>
-        </div>
-        <div class="h-4 w-px bg-surface-border"></div>
-        <div class="flex items-center space-x-2">
-          <span id="txt-regime-label" class="text-slate-500">RÉGIMEN:</span>
-          <span id="txt-regime-val" class="text-slate-300 font-medium">LGSC MÉXICO (ART. 53-59)</span>
-        </div>
+      <!-- Language Selector -->
+      <div class="flex items-center rounded border border-zinc-800 bg-zinc-900 p-0.5">
+        <button id="btn-lang-es" onclick="setLanguage('es')" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-700 text-white transition">ES</button>
+        <button id="btn-lang-en" onclick="setLanguage('en')" class="px-2 py-0.5 rounded text-[11px] font-medium text-zinc-400 hover:text-white transition">EN</button>
       </div>
 
-      <!-- Right Controls -->
-      <div class="flex items-center space-x-3">
-        
-        <!-- Language Switcher Toggle -->
-        <div class="flex items-center rounded-md bg-surface-input border border-surface-border p-0.5 text-xs font-mono">
-          <button id="btn-lang-es" onclick="setLanguage('es')" class="px-2.5 py-1 rounded font-bold bg-brand-500 text-slate-950 transition">ES</button>
-          <button id="btn-lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN</button>
-        </div>
+      <!-- Action: Export -->
+      <button onclick="switchTab('dossier')" class="flex items-center space-x-1.5 px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 transition">
+        <svg class="w-3.5 h-3.5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <span id="btn-dossier-label">Exportar Dossier</span>
+      </button>
 
-        <div class="px-3 py-1.5 rounded-md bg-surface-input border border-surface-border flex items-center space-x-2 text-xs font-mono text-slate-300">
-          <span class="text-emerald-400">●</span>
-          <span>OpenRouter: <strong class="text-white">minimax-m3:free</strong></span>
-        </div>
-
-        <a href="https://github.com/pablomorenoc96/coop-executive" target="_blank" class="p-2 text-slate-400 rounded-md border border-surface-border bg-surface-card hover:text-white transition">
-          <svg class="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-          </svg>
-        </a>
-
-      </div>
-
+      <!-- GitHub Link -->
+      <a href="https://github.com/pablomorenoc96/coop-executive" target="_blank" class="p-1.5 text-zinc-400 hover:text-white rounded border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      </a>
     </div>
   </header>
 
-  <!-- Navigation Tabs Sub-bar -->
-  <div class="border-b border-surface-border bg-surface-card/40">
-    <div class="max-w-7xl mx-auto px-6 flex space-x-1">
-      <button id="tab-btn-overview" onclick="switchTab('overview')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 tab-active transition flex items-center space-x-2">
-        <svg class="w-4 h-4 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-        <span id="tab-text-overview">Gobernanza & Fondos Estatutarios</span>
-      </button>
-      <button id="tab-btn-grants" onclick="switchTab('grants')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2">
-        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16 10-4 4-2-2"/></svg>
-        <span id="tab-text-grants">Procurador de Fondos (FundsforNGOs)</span>
-        <span class="text-xs px-1.5 py-0.2 bg-amber-500/10 text-amber-400 rounded font-mono">100 Pts</span>
-      </button>
-      <button id="tab-btn-mml" onclick="switchTab('mml')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2">
-        <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-        <span id="tab-text-mml">Marco Lógico 4x4 & ODS</span>
-      </button>
-      <button id="tab-btn-assembly" onclick="switchTab('assembly')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2">
-        <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span id="tab-text-assembly">Asamblea General (Un Socio, Un Voto)</span>
-      </button>
+  <!-- Horizontal Module Sub-Header Navigation -->
+  <div class="border-b border-zinc-800 bg-zinc-900/40">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div class="flex space-x-1 py-1.5 overflow-x-auto">
+        <button id="tab-nav-funds" onclick="switchTab('funds')" class="tab-nav-btn active px-3 py-1.5 text-xs font-medium rounded border border-transparent text-zinc-300 hover:text-white transition flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+          <span id="tab-title-funds">Fondos Estatutarios & Consejo</span>
+        </button>
+        <button id="tab-nav-grants" onclick="switchTab('grants')" class="tab-nav-btn px-3 py-1.5 text-xs font-medium rounded border border-transparent text-zinc-400 hover:text-white transition flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span id="tab-title-grants">Procurador de Fondos Multilaterales</span>
+          <span class="text-[10px] px-1 rounded bg-amber-500/10 text-amber-400 font-mono">100 Pts</span>
+        </button>
+        <button id="tab-nav-mml" onclick="switchTab('mml')" class="tab-nav-btn px-3 py-1.5 text-xs font-medium rounded border border-transparent text-zinc-400 hover:text-white transition flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span id="tab-title-mml">Marco Lógico 4x4 (MML / RBM)</span>
+        </button>
+        <button id="tab-nav-dossier" onclick="switchTab('dossier')" class="tab-nav-btn px-3 py-1.5 text-xs font-medium rounded border border-transparent text-zinc-400 hover:text-white transition flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span id="tab-title-dossier">Expediente Técnico (Dossier)</span>
+        </button>
+        <button id="tab-nav-assembly" onclick="switchTab('assembly')" class="tab-nav-btn px-3 py-1.5 text-xs font-medium rounded border border-transparent text-zinc-400 hover:text-white transition flex items-center space-x-2">
+          <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <span id="tab-title-assembly">Asamblea General & Quórum</span>
+        </button>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-2 text-[11px] font-mono text-zinc-500">
+        <span id="txt-quorum-badge">QUÓRUM 100% VERIFICADO</span>
+      </div>
     </div>
   </div>
 
-  <!-- Main Content Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
+  <!-- Main View Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-6 space-y-6">
 
-    <!-- TAB 1: OVERVIEW -->
-    <div id="tab-content-overview" class="space-y-8">
+    <!-- TAB 1: FUNDS & COLLEGIATE COUNCIL -->
+    <div id="tab-content-funds" class="space-y-6">
       
-      <!-- Top Thesis Card -->
-      <div class="p-6 rounded-xl bg-gradient-to-r from-surface-card via-surface-card to-brand-900/20 border border-surface-border">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <div class="flex items-center space-x-2 mb-2">
-              <span id="badge-thesis" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/40">ANTÍTESIS A SILICON VALLEY</span>
-              <span id="txt-thesis-sub" class="text-xs text-slate-400">Sin fondos VC · Sin dilución de capital · Democracia asamblearia</span>
-            </div>
-            <h1 id="txt-thesis-h1" class="text-2xl font-bold tracking-tight text-white">Soberanía Tecnológica y Control Democrático Colegiado</h1>
-            <p id="txt-thesis-p" class="text-sm text-slate-300 mt-1 max-w-2xl">
-              CoopExecutive sustituye la maximización de dividendos privados por el blindaje de los tres fondos patrimoniales inalienables de la Ley General de Sociedades Cooperativas (LGSC).
-            </p>
+      <!-- Operational Architecture Banner -->
+      <div class="p-5 rounded-lg border border-zinc-800 bg-zinc-900 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center space-x-2 mb-1">
+            <span id="badge-thesis-title" class="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">ARQUITECTURA DE GOBERNANZA SOLIDARIA</span>
+            <span id="badge-thesis-sub" class="text-[11px] font-mono text-zinc-500">Un Socio = Un Voto · Fondos Colectivos Inalienables</span>
           </div>
-          <div class="px-4 py-2 rounded-lg bg-surface-input border border-surface-border text-right">
-            <p id="txt-quorum-label" class="text-xs text-slate-400 uppercase font-mono">Quórum Asambleario</p>
-            <p id="txt-quorum-val" class="text-lg font-bold text-brand-400 font-mono">100% ACREDITADO</p>
-          </div>
+          <h1 id="txt-thesis-heading" class="text-lg font-semibold tracking-tight text-white">Blindaje Patrimonial y Consejo Colegiado de Vigilancia</h1>
+          <p id="txt-thesis-body" class="text-xs text-zinc-400 mt-0.5 max-w-2xl">
+            A diferencia de los directorios corporativos de Silicon Valley centrados en dilución de acciones y extracción de dividendos, CoopExecutive garantiza la separación contable y estatutaria de los 3 fondos inalienables establecidos por la LGSC.
+          </p>
+        </div>
+        <div class="flex items-center space-x-2 text-xs font-mono">
+          <span class="text-zinc-400">Excedente Simulado:</span>
+          <input id="input-surplus" type="number" value="1000000" step="50000" oninput="updateFundCalculations()" class="w-32 px-2.5 py-1 rounded bg-zinc-950 border border-zinc-700 text-white font-mono text-right tabular-nums focus:outline-none focus:border-zinc-500">
+          <span class="text-zinc-400">MXN</span>
         </div>
       </div>
 
-      <!-- Statutory Funds 3-Column Metrics -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Statutory Funds 3 Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        <div class="p-6 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/40 transition">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-mono font-semibold text-brand-400">LGSC ART. 55</span>
-            <span id="f1-badge" class="text-xs px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 font-mono">15.0% Inalienable</span>
+        <!-- Fund 1 -->
+        <div class="p-5 rounded-lg border border-zinc-800 bg-zinc-900/60 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs font-mono mb-3">
+              <span class="text-zinc-400">LGSC ART. 55</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">15.0% Obligatorio</span>
+            </div>
+            <h2 id="f1-heading" class="text-sm font-semibold text-white">Fondo de Reserva Legal</h2>
+            <p id="f1-caption" class="text-xs text-zinc-400 mt-1">Respaldo financiero contra contingencias operativas. No distribuible entre socios.</p>
           </div>
-          <p id="f1-title" class="text-sm text-slate-400 font-medium">Fondo de Reserva Legal</p>
-          <p class="text-3xl font-bold text-white mt-1 font-mono">$142,500 <span class="text-sm font-normal text-slate-400">MXN</span></p>
-          <p id="f1-desc" class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
-            Garantía de solvencia frente a contingencias. No divisible entre socios.
-          </p>
+          <div class="mt-6 pt-4 border-t border-zinc-800/80 flex items-baseline justify-between">
+            <span class="text-xs font-mono text-zinc-500">Dotación Anual:</span>
+            <span id="f1-value" class="text-xl font-mono font-bold text-white tabular-nums">$150,000.00 MXN</span>
+          </div>
         </div>
 
-        <div class="p-6 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/40 transition">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-mono font-semibold text-cyan-400">LGSC ART. 57</span>
-            <span id="f2-badge" class="text-xs px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-mono">10.0% Inalienable</span>
+        <!-- Fund 2 -->
+        <div class="p-5 rounded-lg border border-zinc-800 bg-zinc-900/60 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs font-mono mb-3">
+              <span class="text-zinc-400">LGSC ART. 57</span>
+              <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-semibold">10.0% Obligatorio</span>
+            </div>
+            <h2 id="f2-heading" class="text-sm font-semibold text-white">Fondo de Previsión Social</h2>
+            <p id="f2-caption" class="text-xs text-zinc-400 mt-1">Cobertura médica integral, pensiones, incapacidades y bienestar familiar cooperativo.</p>
           </div>
-          <p id="f2-title" class="text-sm text-slate-400 font-medium">Fondo de Previsión Social</p>
-          <p class="text-3xl font-bold text-white mt-1 font-mono">$95,000 <span class="text-sm font-normal text-slate-400">MXN</span></p>
-          <p id="f2-desc" class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
-            Salud integral, pensiones, incapacidades y bienestar familiar de los cooperativistas.
-          </p>
+          <div class="mt-6 pt-4 border-t border-zinc-800/80 flex items-baseline justify-between">
+            <span class="text-xs font-mono text-zinc-500">Dotación Anual:</span>
+            <span id="f2-value" class="text-xl font-mono font-bold text-white tabular-nums">$100,000.00 MXN</span>
+          </div>
         </div>
 
-        <div class="p-6 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/40 transition">
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-mono font-semibold text-amber-400">LGSC ART. 58</span>
-            <span id="f3-badge" class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono">10.0% Inalienable</span>
+        <!-- Fund 3 -->
+        <div class="p-5 rounded-lg border border-zinc-800 bg-zinc-900/60 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs font-mono mb-3">
+              <span class="text-zinc-400">LGSC ART. 58</span>
+              <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">10.0% Obligatorio</span>
+            </div>
+            <h2 id="f3-heading" class="text-sm font-semibold text-white">Fondo de Educación Cooperativa</h2>
+            <p id="f3-caption" class="text-xs text-zinc-400 mt-1">Capacitación técnica, soberanía tecnológica, investigación aplicada y becas.</p>
           </div>
-          <p id="f3-title" class="text-sm text-slate-400 font-medium">Fondo de Educación Cooperativa</p>
-          <p class="text-3xl font-bold text-white mt-1 font-mono">$95,000 <span class="text-sm font-normal text-slate-400">MXN</span></p>
-          <p id="f3-desc" class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
-            Capacitación técnica continua, becas de ingeniería y soberanía de saberes.
-          </p>
+          <div class="mt-6 pt-4 border-t border-zinc-800/80 flex items-baseline justify-between">
+            <span class="text-xs font-mono text-zinc-500">Dotación Anual:</span>
+            <span id="f3-value" class="text-xl font-mono font-bold text-white tabular-nums">$100,000.00 MXN</span>
+          </div>
         </div>
 
       </div>
 
-      <!-- Collegiate Council Roles -->
-      <div>
-        <h2 id="txt-council-title" class="text-base font-bold text-white mb-4 flex items-center space-x-2">
-          <span>Consejo Social Colegiado</span>
-          <span class="text-xs font-normal text-slate-400 font-mono">(6 Agentes Especializados)</span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
-            <div class="flex items-center space-x-3 mb-2">
-              <span class="text-emerald-400 text-lg">🛡️</span>
-              <div>
-                <h3 id="role1-title" class="font-semibold text-white text-sm">Consejo de Vigilancia</h3>
-                <p id="role1-sub" class="text-xs text-slate-400">Auditoría ética interna y observancia estatutaria</p>
-              </div>
+      <!-- Collegiate Council Matrix (6 Specialized Roles) -->
+      <div class="border border-zinc-800 rounded-lg bg-zinc-900/40 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="txt-council-heading" class="text-sm font-semibold text-white">Consejo Social y de Vigilancia Colegiado (6 Roles Especializados)</h2>
+          <span class="text-xs font-mono text-zinc-400">Intervención y dictamen colegiado ante asamblea</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          
+          <div class="p-3 rounded border border-zinc-800 bg-zinc-900">
+            <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 mb-1">
+              <span class="text-emerald-400 font-semibold">01 · FISCALIZACIÓN</span>
+              <span>LGSC ART. 45</span>
             </div>
-            <p id="role1-desc" class="text-xs text-slate-300">Vigila que ningún acuerdo vulnere la ley ni la voluntad soberana de la asamblea.</p>
+            <h3 id="c1-title" class="font-medium text-white">Consejo de Vigilancia</h3>
+            <p id="c1-desc" class="text-zinc-400 mt-1">Auditoría ética interna. Veto preventivo sobre acuerdos que vulneren los estatutos o la asamblea.</p>
           </div>
 
-          <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
-            <div class="flex items-center space-x-3 mb-2">
-              <span class="text-blue-400 text-lg">⚖️</span>
-              <div>
-                <h3 id="role2-title" class="font-semibold text-white text-sm">Asesor Jurídico en Economía Social</h3>
-                <p id="role2-sub" class="text-xs text-slate-400">LGSC, A.C., Donatarias y SAT</p>
-              </div>
+          <div class="p-3 rounded border border-zinc-800 bg-zinc-900">
+            <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 mb-1">
+              <span class="text-cyan-400 font-semibold">02 · JURÍDICO</span>
+              <span>RÉGIMEN NO LUCRATIVO</span>
             </div>
-            <p id="role2-desc" class="text-xs text-slate-300">Dictamina contratos colectivos, convenios de donación y régimen fiscal sin fin de lucro.</p>
+            <h3 id="c2-title" class="font-medium text-white">Asesor Jurídico en Economía Social</h3>
+            <p id="c2-desc" class="text-zinc-400 mt-1">Estatus fiscal cooperativo, convenios de donación multilateral y contratos de trabajo asociado.</p>
           </div>
 
-          <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
-            <div class="flex items-center space-x-3 mb-2">
-              <span class="text-amber-400 text-lg">🪙</span>
-              <div>
-                <h3 id="role3-title" class="font-semibold text-white text-sm">Finanzas Solidarias</h3>
-                <p id="role3-sub" class="text-xs text-slate-400">Fondos estatutarios y balances transparentes</p>
-              </div>
+          <div class="p-3 rounded border border-zinc-800 bg-zinc-900">
+            <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 mb-1">
+              <span class="text-amber-400 font-semibold">03 · FINANZAS</span>
+              <span>PATRIMONIO SOCIAL</span>
             </div>
-            <p id="role3-desc" class="text-xs text-slate-300">Garantiza la separación rigurosa de los fondos y prepara balances anuales auditables.</p>
+            <h3 id="c3-title" class="font-medium text-white">Finanzas Solidarias</h3>
+            <p id="c3-desc" class="text-zinc-400 mt-1">Garantiza el no reparto de fondos obligatorios y supervisa la ejecución presupuestal de subvenciones.</p>
           </div>
 
-          <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
-            <div class="flex items-center space-x-3 mb-2">
-              <span class="text-cyan-400 text-lg">⚡</span>
-              <div>
-                <h3 id="role4-title" class="font-semibold text-white text-sm">Desarrollo Tecnológico Comunitario</h3>
-                <p id="role4-sub" class="text-xs text-slate-400">Hardware libre y energía limpia</p>
-              </div>
+          <div class="p-3 rounded border border-zinc-800 bg-zinc-900">
+            <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 mb-1">
+              <span class="text-purple-400 font-semibold">04 · TECNOLOGÍA</span>
+              <span>HARDWARE LIBRE</span>
             </div>
-            <p id="role4-desc" class="text-xs text-slate-300">Planifica microrredes, automatización industrial accesible y transferencia técnica abierta.</p>
+            <h3 id="c4-title" class="font-medium text-white">Desarrollo Tecnológico Comunitario</h3>
+            <p id="c4-desc" class="text-zinc-400 mt-1">Planificación técnica de microrredes, automatización productiva y transferencia técnica abierta.</p>
           </div>
 
-          <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
-            <div class="flex items-center space-x-3 mb-2">
-              <span class="text-purple-400 text-lg">📡</span>
-              <div>
-                <h3 id="role5-title" class="font-semibold text-white text-sm">Comunicación Social y Vinculación</h3>
-                <p id="role5-sub" class="text-xs text-slate-400">Relaciones territoriales e impacto</p>
-              </div>
+          <div class="p-3 rounded border border-zinc-800 bg-zinc-900">
+            <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 mb-1">
+              <span class="text-rose-400 font-semibold">05 · VINCULACIÓN</span>
+              <span>ALIANZAS & ODS</span>
             </div>
-            <p id="role5-desc" class="text-xs text-slate-300">Organiza convocatorias asamblearias, foros comunitarios y alianzas con centros de estudio.</p>
+            <h3 id="c5-title" class="font-medium text-white">Comunicación y Alianzas</h3>
+            <p id="c5-desc" class="text-zinc-400 mt-1">Articulación con centros de investigación, redes cooperativas internacionales y organismos públicos.</p>
           </div>
 
-          <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
-            <div class="flex items-center space-x-3 mb-2">
-              <span class="text-emerald-400 text-lg">📜</span>
-              <div>
-                <h3 id="role6-title" class="font-semibold text-white text-sm">Secretaría de Actas</h3>
-                <p id="role6-sub" class="text-xs text-slate-400">Libro de actas y quórum legal</p>
-              </div>
+          <div class="p-3 rounded border border-zinc-800 bg-zinc-900">
+            <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 mb-1">
+              <span class="text-blue-400 font-semibold">06 · SECRETARÍA</span>
+              <span>FE DE HECHOS</span>
             </div>
-            <p id="role6-desc" class="text-xs text-slate-300">Registra resoluciones bajo el principio inalienable de un voto por persona socia.</p>
+            <h3 id="c6-title" class="font-medium text-white">Secretaría de Actas</h3>
+            <p id="c6-desc" class="text-zinc-400 mt-1">Acreditación de quórum formal y registro inalterable de votaciones bajo la regla de un voto por persona.</p>
           </div>
+
         </div>
       </div>
 
     </div>
 
-    <!-- TAB 2: GRANTS -->
+    <!-- TAB 2: GRANT PROCUREMENT (FUNDSFORNGOS / BILATERALS) -->
     <div id="tab-content-grants" class="hidden space-y-6">
-      <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center space-x-2 mb-1">
-              <span id="badge-grant-live" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">DICTAMEN EN VIVO</span>
-              <span id="txt-grant-source" class="text-xs text-slate-400">Fuente: FundsforNGOs / Banco Interamericano de Desarrollo</span>
-            </div>
-            <h2 id="txt-grant-h2" class="text-xl font-bold text-white">Fondo de Transición Energética Comunitaria y Soberanía Tecnológica</h2>
-            <p id="txt-grant-meta" class="text-xs text-slate-400 mt-1">Monto Disponible: <strong>$120,000 USD</strong> · Cierre de Postulación: <strong>31 Dic 2026</strong></p>
-          </div>
-          <div class="flex items-center space-x-3">
-            <div class="px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-center">
-              <span id="txt-score-label" class="text-xs font-mono text-emerald-400 uppercase font-semibold">Calificación</span>
-              <p class="text-2xl font-bold text-white font-mono">94.5 <span class="text-xs text-slate-400">/ 100</span></p>
-            </div>
-            <div class="px-4 py-3 rounded-lg bg-emerald-600 text-white font-semibold text-sm flex items-center space-x-2">
-              <span id="badge-apply">🟢 APLICAR (ALTA COMPATIBILIDAD)</span>
-            </div>
-          </div>
+      
+      <!-- Call Selector Toolbar -->
+      <div class="p-4 rounded-lg border border-zinc-800 bg-zinc-900 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+        <div class="flex items-center space-x-3">
+          <span id="txt-select-call-label" class="text-xs font-mono text-zinc-400 uppercase">Convocatoria Seleccionada:</span>
+          <select id="select-call" onchange="changeOpportunityPreset(this.value)" class="px-3 py-1.5 rounded bg-zinc-950 border border-zinc-700 text-xs font-medium text-white focus:outline-none focus:border-zinc-500">
+            <option value="bid">BID · Fondo de Transición Energética Comunitaria ($120,000 USD)</option>
+            <option value="eu">Horizonte Europa · Redes de Economía Social e Innovación (€250,000 EUR)</option>
+            <option value="vc">Fondo VC Privado Silicon Valley ($500,000 USD por 20% Equity)</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-3 font-mono text-xs">
+          <span id="badge-call-score" class="px-3 py-1 rounded font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">SCORE: 94.5 / 100</span>
+          <span id="badge-call-verdict" class="px-3 py-1 rounded font-bold bg-emerald-600 text-white">APLICAR</span>
         </div>
       </div>
 
-      <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-        <h3 id="txt-rubric-title" class="text-base font-bold text-white mb-4">Rúbrica Multicriterio de Elegibilidad (8 Dimensiones)</h3>
-        <div class="space-y-4">
+      <!-- Multicriteria 8-Dimension Rubric Detail -->
+      <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5">
+        <div class="flex justify-between items-baseline mb-4">
+          <h2 id="txt-rubric-heading" class="text-sm font-semibold text-white">Rúbrica Multicriterio de Elegibilidad Técnica y Financiera</h2>
+          <span id="txt-rubric-donor" class="text-xs font-mono text-zinc-400">Donante: Banco Interamericano de Desarrollo (BID)</span>
+        </div>
+
+        <div class="space-y-3.5 text-xs">
+          
           <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span id="dim1-title" class="font-medium text-slate-200">1. Alineación con la Misión y Estatutos (ODS 7, 9)</span>
-              <span class="font-mono text-emerald-400 font-bold">20.0 / 20.0 pts</span>
+            <div class="flex justify-between font-mono mb-1">
+              <span id="r1-name" class="text-zinc-200">1. Alineación con Estatutos y ODS (7, 9, 12)</span>
+              <span id="r1-score" class="text-emerald-400 font-bold tabular-nums">20.0 / 20.0 pts</span>
             </div>
-            <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
+            <div class="w-full bg-zinc-950 rounded-full h-1.5"><div id="r1-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%"></div></div>
           </div>
+
           <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span id="dim2-title" class="font-medium text-slate-200">2. Elegibilidad Jurídica y Fiscal (LGSC S.C. de R.L.)</span>
-              <span class="font-mono text-emerald-400 font-bold">10.0 / 10.0 pts</span>
+            <div class="flex justify-between font-mono mb-1">
+              <span id="r2-name" class="text-zinc-200">2. Elegibilidad Jurídica (S.C. de R.L. / Sin Fines de Especulación)</span>
+              <span id="r2-score" class="text-emerald-400 font-bold tabular-nums">10.0 / 10.0 pts</span>
             </div>
-            <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
+            <div class="w-full bg-zinc-950 rounded-full h-1.5"><div id="r2-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%"></div></div>
           </div>
+
           <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span id="dim3-title" class="font-medium text-slate-200">3. Rango Presupuestal y Factibilidad de CAPEX / OPEX</span>
-              <span class="font-mono text-emerald-400 font-bold">15.0 / 15.0 pts</span>
+            <div class="flex justify-between font-mono mb-1">
+              <span id="r3-name" class="text-zinc-200">3. Rango Presupuestal y Cobertura de Costos Directos</span>
+              <span id="r3-score" class="text-emerald-400 font-bold tabular-nums">15.0 / 15.0 pts</span>
             </div>
-            <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
+            <div class="w-full bg-zinc-950 rounded-full h-1.5"><div id="r3-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%"></div></div>
           </div>
+
           <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span id="dim4-title" class="font-medium text-slate-200">4. Capacidad Técnica del Equipo y Alianzas (IPN / Redes)</span>
-              <span class="font-mono text-emerald-400 font-bold">14.5 / 15.0 pts</span>
+            <div class="flex justify-between font-mono mb-1">
+              <span id="r4-name" class="text-zinc-200">4. Capacidad Técnica del Equipo y Alianzas Académicas</span>
+              <span id="r4-score" class="text-emerald-400 font-bold tabular-nums">14.5 / 15.0 pts</span>
             </div>
-            <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 96.6%"></div></div>
+            <div class="w-full bg-zinc-950 rounded-full h-1.5"><div id="r4-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 96.6%"></div></div>
           </div>
+
           <div>
-            <div class="flex justify-between text-xs mb-1">
-              <span id="dim5-title" class="font-medium text-slate-200">5. Impacto Comunitario Medible y Sostenibilidad</span>
-              <span class="font-mono text-emerald-400 font-bold">15.0 / 15.0 pts</span>
+            <div class="flex justify-between font-mono mb-1">
+              <span id="r5-name" class="text-zinc-200">5. Viabilidad de Contrapartida Institucional (Especie / Horas Técnicas)</span>
+              <span id="r5-score" class="text-emerald-400 font-bold tabular-nums">10.0 / 10.0 pts</span>
             </div>
-            <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
+            <div class="w-full bg-zinc-950 rounded-full h-1.5"><div id="r5-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%"></div></div>
           </div>
+
+          <div>
+            <div class="flex justify-between font-mono mb-1">
+              <span id="r6-name" class="text-zinc-200">6. Impacto Comunitario y Sostenibilidad Post-Donante</span>
+              <span id="r6-score" class="text-emerald-400 font-bold tabular-nums">15.0 / 15.0 pts</span>
+            </div>
+            <div class="w-full bg-zinc-950 rounded-full h-1.5"><div id="r6-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Technical Dictum Note -->
+        <div class="mt-5 p-3 rounded border border-zinc-800 bg-zinc-950 text-xs font-mono">
+          <span class="text-zinc-400">DICTAMEN TÉCNICO VINCULANTE:</span>
+          <p id="txt-call-dictamen" class="text-zinc-200 mt-1 font-sans">
+            La convocatoria cumple plenamente los criterios estatutarios. Los fondos no reembolsables se aplican a equipamiento productivo colectivo y los activos adquiridos quedan protegidos como patrimonio inalienable de la sociedad.
+          </p>
         </div>
       </div>
+
     </div>
 
-    <!-- TAB 3: MML -->
+    <!-- TAB 3: LOGICAL FRAMEWORK (MML / RBM) -->
     <div id="tab-content-mml" class="hidden space-y-6">
-      <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-        <div class="flex justify-between items-center mb-6">
+      <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
           <div>
-            <h2 id="txt-mml-title" class="text-xl font-bold text-white">Matriz de Marco Lógico 4x4 (MML / MIR)</h2>
-            <p id="txt-mml-sub" class="text-xs text-slate-400">Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Rurales</p>
+            <h2 id="txt-mml-heading" class="text-sm font-semibold text-white">Matriz de Indicadores de Resultados (MIR 4x4) / Results-Based Management (RBM)</h2>
+            <p id="txt-mml-sub" class="text-xs text-zinc-400">Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Productivos</p>
           </div>
-          <div class="flex space-x-2">
-            <span class="px-2.5 py-1 rounded bg-surface-input text-xs font-mono text-emerald-400">ODS 7 Energía</span>
-            <span class="px-2.5 py-1 rounded bg-surface-input text-xs font-mono text-cyan-400">ODS 9 Industria</span>
-            <span class="px-2.5 py-1 rounded bg-surface-input text-xs font-mono text-amber-400">ODS 12 Producción</span>
+          <div class="flex space-x-1.5 font-mono text-xs">
+            <span class="px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-emerald-400">ODS 7 Energía</span>
+            <span class="px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-cyan-400">ODS 9 Industria</span>
+            <span class="px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-amber-400">ODS 12 Producción</span>
           </div>
         </div>
+
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs border-collapse">
             <thead>
-              <tr class="border-b border-surface-border bg-surface-input text-slate-300 font-mono">
-                <th id="th-level" class="p-3 w-28">Nivel</th>
-                <th id="th-summary" class="p-3">Resumen Narrativo</th>
-                <th id="th-indicators" class="p-3">Indicadores Verificables (IOV)</th>
-                <th id="th-means" class="p-3">Medios de Verificación</th>
-                <th id="th-assumptions" class="p-3">Supuestos Críticos</th>
+              <tr class="border-b border-zinc-800 bg-zinc-900 text-zinc-300 font-mono">
+                <th id="th-mml-level" class="p-2.5 w-24">Nivel</th>
+                <th id="th-mml-summary" class="p-2.5">Resumen Narrativo</th>
+                <th id="th-mml-indicators" class="p-2.5">Indicadores Objetivamente Verificables (IOV)</th>
+                <th id="th-mml-means" class="p-2.5">Medios de Verificación</th>
+                <th id="th-mml-assumptions" class="p-2.5">Supuestos Críticos</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-surface-border text-slate-300">
+            <tbody class="divide-y divide-zinc-800/80 text-zinc-300">
               <tr>
-                <td class="p-3 font-bold font-mono text-emerald-400">FIN</td>
-                <td id="td-fin-desc" class="p-3 text-white">Incrementar la autosuficiencia energética y reducir costos en 30% en talleres comunitarios.</td>
-                <td id="td-fin-ind" class="p-3">Tasa de ahorro en facturación eléctrica a 24 meses.</td>
-                <td id="td-fin-means" class="p-3 text-slate-400">Recibos de energía y estados contables.</td>
-                <td id="td-fin-ass" class="p-3 text-slate-400">Estabilidad regulatoria en generación distribuida.</td>
+                <td class="p-2.5 font-mono font-bold text-emerald-400">FIN</td>
+                <td id="td-fin-n" class="p-2.5 text-white">Mejorar la autosuficiencia energética y reducir 30% los costos operativos en talleres comunitarios.</td>
+                <td id="td-fin-i" class="p-2.5">Ahorro medido en kWh y facturación a 24 meses.</td>
+                <td id="td-fin-m" class="p-2.5 text-zinc-400">Recibos de energía y balances contables auditados.</td>
+                <td id="td-fin-a" class="p-2.5 text-zinc-400">Estabilidad en el marco de generación distribuida.</td>
               </tr>
               <tr>
-                <td class="p-3 font-bold font-mono text-cyan-400">PROPÓSITO</td>
-                <td id="td-prop-desc" class="p-3 text-white">Instalar 3 microrredes eólicas comunitarias con comités locales de mantenimiento.</td>
-                <td id="td-prop-ind" class="p-3">3 sistemas en operación continua con disponibilidad >95%.</td>
-                <td id="td-prop-means" class="p-3 text-slate-400">Telemetría IoT abierta y actas de entrega.</td>
-                <td id="td-prop-ass" class="p-3 text-slate-400">Participación activa de la asamblea comunitaria.</td>
+                <td class="p-2.5 font-mono font-bold text-cyan-400">PROPÓSITO</td>
+                <td id="td-prop-n" class="p-2.5 text-white">Instalar 3 microrredes de generación limpia con comités locales de mantenimiento técnico.</td>
+                <td id="td-prop-i" class="p-2.5">3 sistemas con >95% de disponibilidad continua.</td>
+                <td id="td-prop-m" class="p-2.5 text-zinc-400">Telemetría IoT abierta y actas de entrega-recepción.</td>
+                <td id="td-prop-a" class="p-2.5 text-zinc-400">Participación activa de los socios en asambleas.</td>
               </tr>
               <tr>
-                <td class="p-3 font-bold font-mono text-amber-400">COMPONENTES</td>
-                <td id="td-comp-desc" class="p-3 text-white">C1: Prototipo ensayado.<br>C2: Red comunitaria instalada.<br>C3: Programa de certificación técnica.</td>
-                <td id="td-comp-ind" class="p-3">100% ensayado en laboratorio IPN y 25 operadores certificados.</td>
-                <td id="td-comp-means" class="p-3 text-slate-400">Certificados CONOCER y bitácoras técnicas.</td>
-                <td id="td-comp-ass" class="p-3 text-slate-400">Suministro oportuno de insumos eléctricos.</td>
+                <td class="p-2.5 font-mono font-bold text-amber-400">COMPONENTES</td>
+                <td id="td-comp-n" class="p-2.5 text-white">C1: Aerogeneradores ensayados.<br>C2: Redes trifásicas comunitarias.<br>C3: 25 técnicos cooperativistas certificados.</td>
+                <td id="td-comp-i" class="p-2.5">100% de componentes ensayados en laboratorio IPN.</td>
+                <td id="td-comp-m" class="p-2.5 text-zinc-400">Certificados CONOCER y bitácoras técnicas.</td>
+                <td id="td-comp-a" class="p-2.5 text-zinc-400">Suministro oportuno de materiales eléctricos.</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono font-bold text-purple-400">ACTIVIDADES</td>
+                <td id="td-act-n" class="p-2.5 text-white">A1: Adquisición de componentes e inversores.<br>A2: Montaje electromecánico.<br>A3: Talleres formativos.</td>
+                <td id="td-act-i" class="p-2.5">Presupuesto total ejecutado: $120,000 USD donante + $25,000 USD contrapartida.</td>
+                <td id="td-act-m" class="p-2.5 text-zinc-400">Pólizas de egresos y facturas fiscales validadas por SAT.</td>
+                <td id="td-act-a" class="p-2.5 text-zinc-400">Ausencia de contingencias meteorológicas severas.</td>
               </tr>
             </tbody>
           </table>
@@ -421,361 +442,371 @@
       </div>
     </div>
 
-    <!-- TAB 4: ASSEMBLY -->
+    <!-- TAB 4: TECHNICAL PROPOSAL DOSSIER GENERATOR -->
+    <div id="tab-content-dossier" class="hidden space-y-6">
+      <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+          <div>
+            <h2 id="txt-dossier-heading" class="text-sm font-semibold text-white">Generador de Expediente de Postulación Multilateral</h2>
+            <p id="txt-dossier-sub" class="text-xs text-zinc-400">Genera la propuesta completa lista para exportar conforme a las normas de agencias cooperantes.</p>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="copyDossierToClipboard()" class="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-xs font-mono text-zinc-200 border border-zinc-700 transition flex items-center space-x-1.5">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span id="btn-copy-dossier">Copiar Markdown</span>
+            </button>
+            <button onclick="downloadDossier()" class="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-xs font-mono text-white font-semibold transition flex items-center space-x-1.5">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              <span id="btn-download-dossier">Descargar .MD</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="border border-zinc-800 rounded bg-zinc-950 p-4 font-mono text-xs text-zinc-300 max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed" id="dossier-preview-box"># DOSSIER DE POSTULACIÓN TÉCNICA Y FINANCIERA
+**Proyecto:** Despliegue de Microrredes de Energía Limpia para Talleres Rurales
+**Organización Postulante:** Cooperativa de Producción y Tecnología Abierta S.C. de R.L.
+**Agencia Cooperante / Donante:** Banco Interamericano de Desarrollo (BID)
+**Convocatoria:** Fondo de Transición Energética Comunitaria y Soberanía Tecnológica
+**Ámbito Territorial:** México / América Latina
+
+---
+
+## 1. RESUMEN EJECUTIVO Y PERFIL DEL PROPONENTE
+El presente proyecto propone una intervención territorial de transferencia técnica y soberanía energética colectiva. La organización postulante es una sociedad cooperativa sujeta a la Ley General de Sociedades Cooperativas (LGSC), con acreditación de quórum asambleario democrático (un socio, un voto) y patrimonio irrepartible.
+
+## 2. DIAGNÓSTICO DEL PROBLEMA Y LÍNEA BASE
+Los talleres productivos rurales y de economía social sufren un sobrecosto del 38% en facturación eléctrica derivado de tarifas comerciales obsoletas e interrupciones en la red convencional, lo cual precariza los ingresos familiares y limita la adopción de manufactura tecnificada.
+
+## 3. CADENA DE RESULTADOS (RBM) Y MATRIZ DE MARCO LÓGICO
+- **Fin:** Reducción del 30% en costos energéticos consolidados y mejora de la resiliencia productiva.
+- **Propósito:** Instalación de 3 microrredes de generación distribuida limpia con comités comunitarios.
+- **Componentes:** Prototipos certificados, infraestructura electromecánica y 25 técnicos acreditados.
+
+## 4. PLAN PRESUPUESTAL Y CONTRAPARTIDA INSTITUCIONAL
+* **Fondos Solicitados al Donante:** $120,000.00 USD
+* **Contrapartida Institucional (Especie/Valorizada):** $25,000.00 USD
+* **Presupuesto Total Consolidado:** $145,000.00 USD
+
+## 5. SALVAGUARDAS COOPERATIVAS Y ANTICORRUPCIÓN
+- **Blindaje de Fondos Estatutarios:** Ningún excedente ni activo se distribuye individualmente; se integran a Reserva (15%), Previsión (10%) y Educación (10%).
+- **Fiscalización Democrática:** El Consejo de Vigilancia interno emite dictámenes trimestrales auditables.
+- **Propiedad Social Inalienable:** Los equipos permanecen adscritos a la cooperativa para beneficio común.
+
+## 6. ESTRATEGIA DE SOSTENIBILIDAD Y SALIDA POST-DONANTE
+El modelo alcanza punto de equilibrio financiero al mes 18 mediante las cuotas de ahorro energético de los talleres socios, garantizando el mantenimiento regular sin dependencia de subsidios subsecuentes.
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: GENERAL ASSEMBLY & QUORUM -->
     <div id="tab-content-assembly" class="hidden space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-          <h2 id="txt-ass-title" class="text-base font-bold text-white mb-2">Registro de Quórum Legal Asambleario</h2>
-          <p id="txt-ass-sub" class="text-xs text-slate-400 mb-4">Principio rector: Un socio acreditado = Un voto directo. Sin ponderación de capital.</p>
-          <div class="space-y-3">
-            <div class="flex items-center justify-between p-3 rounded-lg bg-surface-input text-xs">
-              <span id="txt-ass-row1" class="text-slate-200">Socios Fundadores Registrados</span>
-              <span class="font-mono text-brand-400 font-bold">12 / 12 (100%)</span>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5">
+          <h2 id="txt-ass-reg-title" class="text-sm font-semibold text-white mb-1">Registro y Acreditación de Quórum Legal</h2>
+          <p id="txt-ass-reg-sub" class="text-xs text-zinc-400 mb-4">Principio rector: Una persona socia = Un voto directo. Prohibida la ponderación por aportación económica.</p>
+          
+          <div class="space-y-2.5 text-xs font-mono">
+            <div class="flex justify-between p-2.5 rounded bg-zinc-950 border border-zinc-800">
+              <span id="ass-label-found" class="text-zinc-300">Socios Fundadores Acreditados:</span>
+              <span class="text-emerald-400 font-bold">12 / 12 (100%)</span>
             </div>
-            <div class="flex items-center justify-between p-3 rounded-lg bg-surface-input text-xs">
-              <span id="txt-ass-row2" class="text-slate-200">Socios Cooperativistas Activos</span>
-              <span class="font-mono text-brand-400 font-bold">38 / 40 (95%)</span>
+            <div class="flex justify-between p-2.5 rounded bg-zinc-950 border border-zinc-800">
+              <span id="ass-label-workers" class="text-zinc-300">Socios Trabajadores Activos:</span>
+              <span class="text-emerald-400 font-bold">38 / 38 (100%)</span>
             </div>
-            <div class="flex items-center justify-between p-3 rounded-lg bg-surface-input text-xs">
-              <span id="txt-ass-row3" class="text-slate-200">Estado del Quórum</span>
-              <span id="badge-ass-quorum" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">VÁLIDO PARA RESOLUCIONES</span>
+            <div class="flex justify-between p-2.5 rounded bg-zinc-950 border border-zinc-800">
+              <span id="ass-label-quorum" class="text-zinc-300">Estado de Validez Asamblearia:</span>
+              <span class="text-emerald-400 font-bold">QUÓRUM LEGAL ACREDITADO</span>
             </div>
           </div>
         </div>
 
-        <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-          <h2 id="txt-vote-title" class="text-base font-bold text-white mb-2">Resolución Asamblearia en Votación</h2>
-          <p id="txt-vote-sub" class="text-xs text-slate-400 mb-4">Dictamen de postulación a Fondo Internacional BID:</p>
-          <div class="p-4 rounded-lg bg-surface-input text-xs space-y-3">
-            <p id="txt-vote-motion" class="text-slate-200 font-semibold">"Aprobación formal para postular al Fondo de Transición Energética BID por $120,000 USD y comprometer contrapartida técnica valorizada."</p>
-            <div class="flex items-center space-x-4 pt-2 border-t border-surface-border font-mono text-xs">
-              <span id="txt-vote-yes" class="text-emerald-400 font-bold">A FAVOR: 50 votos (100%)</span>
-              <span id="txt-vote-no" class="text-rose-400">EN CONTRA: 0</span>
+        <div class="border border-zinc-800 rounded-lg bg-zinc-900/60 p-5">
+          <h2 id="txt-motion-title" class="text-sm font-semibold text-white mb-1">Resolución Asamblearia en Votación</h2>
+          <p id="txt-motion-sub" class="text-xs text-zinc-400 mb-4">Punto 4 del Orden del Día: Dictamen de postulación multilateral.</p>
+          
+          <div class="p-3.5 rounded bg-zinc-950 border border-zinc-800 text-xs space-y-3">
+            <p id="txt-motion-text" class="text-zinc-200 leading-relaxed font-sans">
+              "Se somete a aprobación de la Asamblea General la postulación oficial al Fondo de Transición Energética del BID por $120,000 USD y el compromiso de contrapartida técnica valorizada de $25,000 USD."
+            </p>
+            <div class="flex items-center space-x-6 pt-2 border-t border-zinc-800 font-mono">
+              <span id="txt-vote-pro" class="text-emerald-400 font-semibold">A FAVOR: 50 (100%)</span>
+              <span class="text-rose-400">EN CONTRA: 0</span>
+              <span class="text-zinc-500">ABSTENCIONES: 0</span>
             </div>
-            <p id="txt-vote-attest" class="text-[11px] text-slate-500 italic">Fe de hechos certificada por el Consejo de Vigilancia.</p>
+            <p id="txt-vote-attestation" class="text-[11px] text-zinc-500 italic">Certificado con fe de hechos por el Consejo de Vigilancia conforme al Art. 45 de la LGSC.</p>
           </div>
         </div>
+
       </div>
     </div>
 
   </main>
 
-  <footer class="border-t border-surface-border bg-surface-card/60 py-4 mt-auto">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 font-mono">
-      <div id="txt-footer-copy">CoopExecutive — Licencia Libre MIT · Repositorio: github.com/pablomorenoc96/coop-executive</div>
-      <div id="txt-footer-tag" class="mt-2 md:mt-0 text-slate-400">Técnica al servicio de la soberanía comunitaria</div>
+  <!-- Clean Minimalist Footer -->
+  <footer class="border-t border-zinc-800 bg-zinc-900/40 py-3.5 text-xs font-mono text-zinc-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between">
+      <div id="txt-footer-mit">CoopExecutive · Software Libre bajo Licencia MIT · Repositorio Público en GitHub</div>
+      <div id="txt-footer-gov" class="mt-1 sm:mt-0 text-zinc-400">Gobernanza Cooperativa al Servicio de la Soberanía Tecnológica</div>
     </div>
   </footer>
 
   <script>
     let currentLang = 'es';
 
-    const translations = {
+    const presets = {
+      bid: {
+        score: "94.5 / 100",
+        verdict: "APLICAR",
+        verdictClass: "px-3 py-1 rounded font-bold bg-emerald-600 text-white",
+        donor: "Banco Interamericano de Desarrollo (BID)",
+        r1: { score: "20.0 / 20.0 pts", width: "100%", color: "bg-emerald-500" },
+        r2: { score: "10.0 / 10.0 pts", width: "100%", color: "bg-emerald-500" },
+        r3: { score: "15.0 / 15.0 pts", width: "100%", color: "bg-emerald-500" },
+        r4: { score: "14.5 / 15.0 pts", width: "96.6%", color: "bg-emerald-500" },
+        r5: { score: "10.0 / 10.0 pts", width: "100%", color: "bg-emerald-500" },
+        r6: { score: "15.0 / 15.0 pts", width: "100%", color: "bg-emerald-500" },
+        dictamen: "La convocatoria cumple plenamente los criterios estatutarios. Los fondos no reembolsables se aplican a equipamiento productivo colectivo y los activos adquiridos quedan protegidos como patrimonio inalienable de la sociedad.",
+        dictamenEn: "The call fully complies with statutory criteria. Non-reimbursable funds are allocated to collective productive equipment, and all acquired assets are shielded as inalienable cooperative equity."
+      },
+      eu: {
+        score: "88.0 / 100",
+        verdict: "APLICAR",
+        verdictClass: "px-3 py-1 rounded font-bold bg-emerald-600 text-white",
+        donor: "Comisión Europea · Horizonte Europa",
+        r1: { score: "18.5 / 20.0 pts", width: "92.5%", color: "bg-emerald-500" },
+        r2: { score: "10.0 / 10.0 pts", width: "100%", color: "bg-emerald-500" },
+        r3: { score: "13.5 / 15.0 pts", width: "90.0%", color: "bg-emerald-500" },
+        r4: { score: "13.0 / 15.0 pts", width: "86.6%", color: "bg-emerald-500" },
+        r5: { score: "8.0 / 10.0 pts", width: "80.0%", color: "bg-cyan-500" },
+        r6: { score: "15.0 / 15.0 pts", width: "100%", color: "bg-emerald-500" },
+        dictamen: "Convocatoria altamente compatible. Requiere consorcio transfronterizo con centros universitarios. Los fondos cubren gastos de I+D y certificación de hardware abierto.",
+        dictamenEn: "Highly compatible call. Requires cross-border consortium with university partners. Covers R&D and open-hardware technical certification costs."
+      },
+      vc: {
+        score: "18.0 / 100",
+        verdict: "RECHAZAR (INCOMPATIBLE)",
+        verdictClass: "px-3 py-1 rounded font-bold bg-rose-600 text-white",
+        donor: "Fondo de Capital de Riesgo Privado (Silicon Valley)",
+        r1: { score: "2.0 / 20.0 pts", width: "10%", color: "bg-rose-500" },
+        r2: { score: "0.0 / 10.0 pts", width: "0%", color: "bg-rose-500" },
+        r3: { score: "5.0 / 15.0 pts", width: "33.3%", color: "bg-rose-500" },
+        r4: { score: "8.0 / 15.0 pts", width: "53.3%", color: "bg-amber-500" },
+        r5: { score: "0.0 / 10.0 pts", width: "0%", color: "bg-rose-500" },
+        r6: { score: "3.0 / 15.0 pts", width: "20.0%", color: "bg-rose-500" },
+        dictamen: "ALERTA ESTATUTARIA CRÍTICA: La propuesta exige entrega de 20% de acciones y control del consejo directivo. El régimen de la LGSC y los estatutos prohíben la dilución de capital y la ponderación de votos por dinero.",
+        dictamenEn: "CRITICAL STATUTORY ALERT: The offer demands 20% equity and board seats. Cooperative Law strictly prohibits capital dilution and investor-weighted voting."
+      }
+    };
+
+    function changeOpportunityPreset(key) {
+      const p = presets[key];
+      if (!p) return;
+
+      document.getElementById('badge-call-score').innerText = `SCORE: ${p.score}`;
+      document.getElementById('badge-call-verdict').innerText = p.verdict;
+      document.getElementById('badge-call-verdict').className = p.verdictClass;
+      document.getElementById('txt-rubric-donor').innerText = (currentLang === 'es' ? 'Donante: ' : 'Donor: ') + p.donor;
+
+      document.getElementById('r1-score').innerText = p.r1.score;
+      document.getElementById('r1-bar').style.width = p.r1.width;
+      document.getElementById('r1-bar').className = `${p.r1.color} h-1.5 rounded-full transition-all duration-300`;
+
+      document.getElementById('r2-score').innerText = p.r2.score;
+      document.getElementById('r2-bar').style.width = p.r2.width;
+      document.getElementById('r2-bar').className = `${p.r2.color} h-1.5 rounded-full transition-all duration-300`;
+
+      document.getElementById('r3-score').innerText = p.r3.score;
+      document.getElementById('r3-bar').style.width = p.r3.width;
+      document.getElementById('r3-bar').className = `${p.r3.color} h-1.5 rounded-full transition-all duration-300`;
+
+      document.getElementById('r4-score').innerText = p.r4.score;
+      document.getElementById('r4-bar').style.width = p.r4.width;
+      document.getElementById('r4-bar').className = `${p.r4.color} h-1.5 rounded-full transition-all duration-300`;
+
+      document.getElementById('r5-score').innerText = p.r5.score;
+      document.getElementById('r5-bar').style.width = p.r5.width;
+      document.getElementById('r5-bar').className = `${p.r5.color} h-1.5 rounded-full transition-all duration-300`;
+
+      document.getElementById('r6-score').innerText = p.r6.score;
+      document.getElementById('r6-bar').style.width = p.r6.width;
+      document.getElementById('r6-bar').className = `${p.r6.color} h-1.5 rounded-full transition-all duration-300`;
+
+      document.getElementById('txt-call-dictamen').innerText = (currentLang === 'es' ? p.dictamen : p.dictamenEn);
+    }
+
+    function updateFundCalculations() {
+      const val = parseFloat(document.getElementById('input-surplus').value) || 0;
+      const f1 = val * 0.15;
+      const f2 = val * 0.10;
+      const f3 = val * 0.10;
+
+      const fmt = (n) => `$${n.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MXN`;
+      document.getElementById('f1-value').innerText = fmt(f1);
+      document.getElementById('f2-value').innerText = fmt(f2);
+      document.getElementById('f3-value').innerText = fmt(f3);
+    }
+
+    function switchTab(tabId) {
+      const tabs = ['funds', 'grants', 'mml', 'dossier', 'assembly'];
+      tabs.forEach(t => {
+        const content = document.getElementById(`tab-content-${t}`);
+        const btn = document.getElementById(`tab-nav-${t}`);
+        if (content && btn) {
+          if (t === tabId) {
+            content.classList.remove('hidden');
+            btn.className = "tab-nav-btn active px-3 py-1.5 text-xs font-medium rounded border border-transparent text-white transition flex items-center space-x-2";
+          } else {
+            content.classList.add('hidden');
+            btn.className = "tab-nav-btn px-3 py-1.5 text-xs font-medium rounded border border-transparent text-zinc-400 hover:text-white transition flex items-center space-x-2";
+          }
+        }
+      });
+    }
+
+    function copyDossierToClipboard() {
+      const text = document.getElementById('dossier-preview-box').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btn-copy-dossier');
+        const old = btn.innerText;
+        btn.innerText = currentLang === 'es' ? "¡Copiado!" : "Copied!";
+        setTimeout(() => { btn.innerText = old; }, 2000);
+      });
+    }
+
+    function downloadDossier() {
+      const text = document.getElementById('dossier-preview-box').innerText;
+      const blob = new Blob([text], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Dossier_Postulacion_${new Date().toISOString().slice(0,10)}.md`;
+      a.click();
+    }
+
+    const i18n = {
       es: {
-        orgName: "Cooperativa de Producción y Tecnología Abierta S.C. de R.L.",
-        statusGov: "GOBERNANZA: ASAMBLEA SOBERANA",
-        regimeLabel: "RÉGIMEN:",
-        regimeVal: "LGSC MÉXICO (ART. 53-59)",
-        tabOverview: "Gobernanza & Fondos Estatutarios",
-        tabGrants: "Procurador de Fondos (FundsforNGOs)",
-        tabMml: "Marco Lógico 4x4 & ODS",
-        tabAssembly: "Asamblea General (Un Socio, Un Voto)",
-        badgeThesis: "ANTÍTESIS A SILICON VALLEY",
-        thesisSub: "Sin fondos VC · Sin dilución de capital · Democracia asamblearia",
-        thesisH1: "Soberanía Tecnológica y Control Democrático Colegiado",
-        thesisP: "CoopExecutive sustituye la maximización de dividendos privados por el blindaje de los tres fondos patrimoniales inalienables de la Ley General de Sociedades Cooperativas (LGSC).",
-        quorumLabel: "Quórum Asambleario",
-        quorumVal: "100% ACREDITADO",
-        f1Badge: "15.0% Inalienable",
-        f1Title: "Fondo de Reserva Legal",
-        f1Desc: "Garantía de solvencia frente a contingencias. No divisible entre socios.",
-        f2Badge: "10.0% Inalienable",
-        f2Title: "Fondo de Previsión Social",
-        f2Desc: "Salud integral, pensiones, incapacidades y bienestar familiar de los cooperativistas.",
-        f3Badge: "10.0% Inalienable",
-        f3Title: "Fondo de Educación Cooperativa",
-        f3Desc: "Capacitación técnica continua, becas de ingeniería y soberanía de saberes.",
-        councilTitle: "Consejo Social Colegiado (6 Agentes Especializados)",
-        role1Title: "Consejo de Vigilancia",
-        role1Sub: "Auditoría ética interna y observancia estatutaria",
-        role1Desc: "Vigila que ningún acuerdo vulnere la ley ni la voluntad soberana de la asamblea.",
-        role2Title: "Asesor Jurídico en Economía Social",
-        role2Sub: "LGSC, A.C., Donatarias y SAT",
-        role2Desc: "Dictamina contratos colectivos, convenios de donación y régimen fiscal sin fin de lucro.",
-        role3Title: "Finanzas Solidarias",
-        role3Sub: "Fondos estatutarios y balances transparentes",
-        role3Desc: "Garantiza la separación rigurosa de los fondos y prepara balances anuales auditables.",
-        role4Title: "Desarrollo Tecnológico Comunitario",
-        role4Sub: "Hardware libre y energía limpia",
-        role4Desc: "Planifica microrredes, automatización industrial accesible y transferencia técnica abierta.",
-        role5Title: "Comunicación Social y Vinculación",
-        role5Sub: "Relaciones territoriales e impacto",
-        role5Desc: "Organiza convocatorias asamblearias, foros comunitarios y alianzas con centros de estudio.",
-        role6Title: "Secretaría de Actas",
-        role6Sub: "Libro de actas y quórum legal",
-        role6Desc: "Registra resoluciones bajo el principio inalienable de un voto por persona socia.",
-        badgeGrantLive: "DICTAMEN EN VIVO",
-        grantSource: "Fuente: FundsforNGOs / Banco Interamericano de Desarrollo",
-        grantH2: "Fondo de Transición Energética Comunitaria y Soberanía Tecnológica",
-        grantMeta: "Monto Disponible: $120,000 USD · Cierre de Postulación: 31 Dic 2026",
-        scoreLabel: "Calificación",
-        badgeApply: "🟢 APLICAR (ALTA COMPATIBILIDAD)",
-        rubricTitle: "Rúbrica Multicriterio de Elegibilidad (8 Dimensiones)",
-        dim1Title: "1. Alineación con la Misión y Estatutos (ODS 7, 9)",
-        dim2Title: "2. Elegibilidad Jurídica y Fiscal (LGSC S.C. de R.L.)",
-        dim3Title: "3. Rango Presupuestal y Factibilidad de CAPEX / OPEX",
-        dim4Title: "4. Capacidad Técnica del Equipo y Alianzas (IPN / Redes)",
-        dim5Title: "5. Impacto Comunitario Medible y Sostenibilidad",
-        mmlTitle: "Matriz de Marco Lógico 4x4 (MML / MIR)",
-        mmlSub: "Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Rurales",
-        thLevel: "Nivel",
-        thSummary: "Resumen Narrativo",
-        thIndicators: "Indicadores Verificables (IOV)",
-        thMeans: "Medios de Verificación",
-        thAssumptions: "Supuestos Críticos",
-        tdFinDesc: "Incrementar la autosuficiencia energética y reducir costos en 30% en talleres comunitarios.",
-        tdFinInd: "Tasa de ahorro en facturación eléctrica a 24 meses.",
-        tdFinMeans: "Recibos de energía y estados contables.",
-        tdFinAss: "Estabilidad regulatoria en generación distribuida.",
-        tdPropDesc: "Instalar 3 microrredes eólicas comunitarias con comités locales de mantenimiento.",
-        tdPropInd: "3 sistemas en operación continua con disponibilidad >95%.",
-        tdPropMeans: "Telemetría IoT abierta y actas de entrega.",
-        tdPropAss: "Participación activa de la asamblea comunitaria.",
-        tdCompDesc: "C1: Prototipo ensayado.<br>C2: Red comunitaria instalada.<br>C3: Programa de certificación técnica.",
-        tdCompInd: "100% ensayado en laboratorio IPN y 25 operadores certificados.",
-        tdCompMeans: "Certificados CONOCER y bitácoras técnicas.",
-        tdCompAss: "Suministro oportuno de insumos eléctricos.",
-        assTitle: "Registro de Quórum Legal Asambleario",
-        assSub: "Principio rector: Un socio acreditado = Un voto directo. Sin ponderación de capital.",
-        assRow1: "Socios Fundadores Registrados",
-        assRow2: "Socios Cooperativistas Activos",
-        assRow3: "Estado del Quórum",
-        badgeAssQuorum: "VÁLIDO PARA RESOLUCIONES",
-        voteTitle: "Resolución Asamblearia en Votación",
-        voteSub: "Dictamen de postulación a Fondo Internacional BID:",
-        voteMotion: '"Aprobación formal para postular al Fondo de Transición Energética BID por $120,000 USD y comprometer contrapartida técnica valorizada."',
-        voteYes: "A FAVOR: 50 votos (100%)",
-        voteAttest: "Fe de hechos certificada por el Consejo de Vigilancia.",
-        footerCopy: "CoopExecutive — Licencia Libre MIT · Repositorio: github.com/pablomorenoc96/coop-executive",
-        footerTag: "Técnica al servicio de la soberanía comunitaria"
+        orgType: "SOCIEDAD COOPERATIVA",
+        regimeTitle: "LGSC ART. 53-59 (MÉXICO)",
+        systemReady: "SISTEMA DIRECTIVO: ACTIVO",
+        dossierLabel: "Exportar Dossier",
+        tabFunds: "Fondos Estatutarios & Consejo",
+        tabGrants: "Procurador de Fondos Multilaterales",
+        tabMml: "Marco Lógico 4x4 (MML / RBM)",
+        tabDossier: "Expediente Técnico (Dossier)",
+        tabAssembly: "Asamblea General & Quórum",
+        quorumBadge: "QUÓRUM 100% VERIFICADO",
+        badgeThesisTitle: "ARQUITECTURA DE GOBERNANZA SOLIDARIA",
+        badgeThesisSub: "Un Socio = Un Voto · Fondos Colectivos Inalienables",
+        thesisHeading: "Blindaje Patrimonial y Consejo Colegiado de Vigilancia",
+        thesisBody: "A diferencia de los directorios corporativos de Silicon Valley centrados en dilución de acciones y extracción de dividendos, CoopExecutive garantiza la separación contable y estatutaria de los 3 fondos inalienables establecidos por la LGSC.",
+        f1Heading: "Fondo de Reserva Legal",
+        f1Caption: "Respaldo financiero contra contingencias operativas. No distribuible entre socios.",
+        f2Heading: "Fondo de Previsión Social",
+        f2Caption: "Cobertura médica integral, pensiones, incapacidades y bienestar familiar cooperativo.",
+        f3Heading: "Fondo de Educación Cooperativa",
+        f3Caption: "Capacitación técnica, soberanía tecnológica, investigación aplicada y becas.",
+        councilHeading: "Consejo Social y de Vigilancia Colegiado (6 Roles Especializados)",
+        selectCallLabel: "Convocatoria Seleccionada:",
+        rubricHeading: "Rúbrica Multicriterio de Elegibilidad Técnica y Financiera",
+        mmlHeading: "Matriz de Indicadores de Resultados (MIR 4x4) / Results-Based Management (RBM)",
+        mmlSub: "Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Productivos",
+        dossierHeading: "Generador de Expediente de Postulación Multilateral",
+        dossierSub: "Genera la propuesta completa lista para exportar conforme a las normas de agencias cooperantes.",
+        btnCopy: "Copiar Markdown",
+        btnDownload: "Descargar .MD",
+        footerMit: "CoopExecutive · Software Libre bajo Licencia MIT · Repositorio Público en GitHub",
+        footerGov: "Gobernanza Cooperativa al Servicio de la Soberanía Tecnológica"
       },
       en: {
-        orgName: "Open Tech & Worker Cooperative Society",
-        statusGov: "GOVERNANCE: SOVEREIGN GENERAL ASSEMBLY",
-        regimeLabel: "REGIME:",
-        regimeVal: "DEMOCRATIC COOPERATIVE LAW",
-        tabOverview: "Governance & Statutory Funds",
-        tabGrants: "Grant Procurement (FundsforNGOs)",
-        tabMml: "4x4 Logical Framework & SDGs",
-        tabAssembly: "General Assembly (One Member, One Vote)",
-        badgeThesis: "ANTITHESIS TO SILICON VALLEY",
-        thesisSub: "No VC capital · No equity dilution · Assembly democracy",
-        thesisH1: "Technical Sovereignty & Democratic Collegiate Oversight",
-        thesisP: "CoopExecutive replaces shareholder extraction with the protection of the three mandatory collective funds under Cooperative Law.",
-        quorumLabel: "Assembly Quorum",
-        quorumVal: "100% ACCREDITED",
-        f1Badge: "15.0% Mandatory",
-        f1Title: "Legal Reserve Fund",
-        f1Desc: "Solvency guarantee against contingencies. Indivisible among individual members.",
-        f2Badge: "10.0% Mandatory",
-        f2Title: "Social Welfare Fund",
-        f2Desc: "Comprehensive healthcare, pensions, disability coverage, and family welfare.",
-        f3Badge: "10.0% Mandatory",
-        f3Title: "Cooperative Education Fund",
-        f3Desc: "Continuous engineering training, academic scholarships, and open knowledge sovereignty.",
-        councilTitle: "Collegiate Social Council (6 Specialized AI Agents)",
-        role1Title: "Vigilance Board",
-        role1Sub: "Democratic internal auditing & statutory compliance",
-        role1Desc: "Ensures no resolution violates cooperative law or the will of the sovereign assembly.",
-        role2Title: "Social Legal Counsel",
-        role2Sub: "Cooperative Law, Non-Profit & Tax Exemptions",
-        role2Desc: "Validates collective contracts, non-profit grant agreements, and tax compliance.",
-        role3Title: "Solidarity Finance",
-        role3Sub: "Statutory fund allocation & transparent audits",
-        role3Desc: "Enforces strict statutory fund ringfencing and prepares auditable financial statements.",
-        role4Title: "Community Technology",
-        role4Sub: "Open hardware & clean microgrids",
-        role4Desc: "Plans renewable microgrids, accessible automation, and open knowledge transfer.",
-        role5Title: "Social Communication",
-        role5Sub: "Community alliances & stakeholder outreach",
-        role5Desc: "Coordinates general assemblies, university partnerships, and community forums.",
-        role6Title: "Assembly Secretariat",
-        role6Sub: "Official minutes & legal quorum verification",
-        role6Desc: "Records formal roll-call resolutions under the invariant of one member, one vote.",
-        badgeGrantLive: "LIVE VERDICT",
-        grantSource: "Source: FundsforNGOs / Inter-American Development Bank",
-        grantH2: "Community Clean Energy Transition & Open Tech Sovereignty Fund",
-        grantMeta: "Available Budget: $120,000 USD · Deadline: Dec 31, 2026",
-        scoreLabel: "Global Score",
-        badgeApply: "🟢 APPLY (HIGH COMPATIBILITY)",
-        rubricTitle: "Multicriteria Eligibility Rubric (8 Dimensions)",
-        dim1Title: "1. Mission & Statutory Alignment (SDGs 7, 9)",
-        dim2Title: "2. Legal & Non-Profit Eligibility (Cooperative Society / NGO)",
-        dim3Title: "3. Budgetary Range & CAPEX / OPEX Feasibility",
-        dim4Title: "4. Technical Team Capacity & University Partnerships",
-        dim5Title: "5. Measurable Community Impact & Long-term Sustainability",
-        mmlTitle: "4x4 Logical Framework Matrix (LFA / MML)",
+        orgType: "WORKER COOPERATIVE SOCIETY",
+        regimeTitle: "DEMOCRATIC COOPERATIVE LAW",
+        systemReady: "COLLEGIATE BOARD: ACTIVE",
+        dossierLabel: "Export Dossier",
+        tabFunds: "Statutory Funds & Board",
+        tabGrants: "Multilateral Grant Agent",
+        tabMml: "4x4 Logical Framework (LFA / RBM)",
+        tabDossier: "Grant Proposal Dossier",
+        tabAssembly: "General Assembly & Quorum",
+        quorumBadge: "QUORUM 100% ACCREDITED",
+        badgeThesisTitle: "DEMOCRATIC GOVERNANCE ARCHITECTURE",
+        badgeThesisSub: "One Member = One Vote · Inalienable Collective Funds",
+        thesisHeading: "Statutory Asset Protection & Independent Vigilance Board",
+        thesisBody: "Unlike Silicon Valley corporate boards obsessed with equity dilution and shareholder extraction, CoopExecutive strictly enforces the accounting ringfence of the 3 mandatory collective funds.",
+        f1Heading: "Legal Reserve Fund",
+        f1Caption: "Financial buffer against operating risks. Indivisible among individual members.",
+        f2Heading: "Social Welfare Fund",
+        f2Caption: "Comprehensive healthcare, retirement pensions, disability and worker family support.",
+        f3Heading: "Cooperative Education Fund",
+        f3Caption: "Continuous technical engineering training, technological sovereignty and scholarships.",
+        councilHeading: "Collegiate Vigilance and Social Board (6 Specialized Roles)",
+        selectCallLabel: "Selected Funding Call:",
+        rubricHeading: "Multicriteria Technical & Financial Eligibility Rubric",
+        mmlHeading: "Results-Based Management Matrix (RBM 4x4) / Logical Framework",
         mmlSub: "Project: Community Clean Energy Microgrids for Rural Production Workshops",
-        thLevel: "Level",
-        thSummary: "Narrative Summary",
-        thIndicators: "Objectively Verifiable Indicators (OVIs)",
-        thMeans: "Means of Verification",
-        thAssumptions: "Critical Assumptions",
-        tdFinDesc: "Increase energy self-reliance and cut operating power costs by 30% in rural workshops.",
-        tdFinInd: "Percentage of utility bill savings evaluated at 24 months.",
-        tdFinMeans: "Energy billing receipts and audited financial statements.",
-        tdFinAss: "Regulatory stability in community distributed generation.",
-        tdPropDesc: "Commission 3 community wind microgrids with local technical maintenance committees.",
-        tdPropInd: "3 operating systems with >95% continuous technical availability.",
-        tdPropMeans: "Open IoT telemetry logs and official handover minutes.",
-        tdPropAss: "Active participation of member workers in communal work.",
-        tdCompDesc: "C1: Tested prototype.<br>C2: Commissioned local grid.<br>C3: Technical certification program.",
-        tdCompInd: "100% tested in university labs and 25 certified technicians.",
-        tdCompMeans: "Official vocational certificates and technical logs.",
-        tdCompAss: "Timely delivery of mechanical and electrical supplies.",
-        assTitle: "Assembly Legal Quorum Register",
-        assSub: "Core invariant: One accredited member = One direct vote. Zero capital weighting.",
-        assRow1: "Registered Founding Members",
-        assRow2: "Active Worker Members",
-        assRow3: "Quorum Status",
-        badgeAssQuorum: "VALID FOR LEGAL RESOLUTIONS",
-        voteTitle: "Assembly Resolution Under Vote",
-        voteSub: "Grant application decision for IDB Multilateral Call:",
-        voteMotion: '"Formal approval to submit application to the IDB Energy Transition Fund for $120,000 USD and commit institutional matching capacity."',
-        voteYes: "IN FAVOR: 50 votes (100%)",
-        voteAttest: "Certified by the internal Vigilance Board.",
-        footerCopy: "CoopExecutive — MIT Open Source License · Repository: github.com/pablomorenoc96/coop-executive",
-        footerTag: "Technology in service of community sovereignty"
+        dossierHeading: "Multilateral Grant Proposal Dossier Generator",
+        dossierSub: "Generates the complete submission package formatted for international multilateral donors.",
+        btnCopy: "Copy Markdown",
+        btnDownload: "Download .MD",
+        footerMit: "CoopExecutive · MIT Open Source License · Public GitHub Repository",
+        footerGov: "Democratic Technology in Service of Community Sovereignty"
       }
     };
 
     function setLanguage(lang) {
       currentLang = lang;
-      const t = translations[lang];
+      const t = i18n[lang];
       if (!t) return;
 
-      // Update button styling
       const btnEs = document.getElementById('btn-lang-es');
       const btnEn = document.getElementById('btn-lang-en');
       if (lang === 'es') {
-        btnEs.className = "px-2.5 py-1 rounded font-bold bg-brand-500 text-slate-950 transition";
-        btnEn.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+        btnEs.className = "px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-700 text-white transition";
+        btnEn.className = "px-2 py-0.5 rounded text-[11px] font-medium text-zinc-400 hover:text-white transition";
       } else {
-        btnEn.className = "px-2.5 py-1 rounded font-bold bg-brand-500 text-slate-950 transition";
-        btnEs.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+        btnEn.className = "px-2 py-0.5 rounded text-[11px] font-semibold bg-zinc-700 text-white transition";
+        btnEs.className = "px-2 py-0.5 rounded text-[11px] font-medium text-zinc-400 hover:text-white transition";
       }
 
-      // Map texts
-      document.getElementById('txt-org-name').innerText = t.orgName;
-      document.getElementById('txt-status-gov').innerText = t.statusGov;
-      document.getElementById('txt-regime-label').innerText = t.regimeLabel;
-      document.getElementById('txt-regime-val').innerText = t.regimeVal;
-      document.getElementById('tab-text-overview').innerText = t.tabOverview;
-      document.getElementById('tab-text-grants').innerText = t.tabGrants;
-      document.getElementById('tab-text-mml').innerText = t.tabMml;
-      document.getElementById('tab-text-assembly').innerText = t.tabAssembly;
+      document.getElementById('txt-org-type').innerText = t.orgType;
+      document.getElementById('txt-regime-title').innerText = t.regimeTitle;
+      document.getElementById('txt-system-ready').innerText = t.systemReady;
+      document.getElementById('btn-dossier-label').innerText = t.dossierLabel;
+      document.getElementById('tab-title-funds').innerText = t.tabFunds;
+      document.getElementById('tab-title-grants').innerText = t.tabGrants;
+      document.getElementById('tab-title-mml').innerText = t.tabMml;
+      document.getElementById('tab-title-dossier').innerText = t.tabDossier;
+      document.getElementById('tab-title-assembly').innerText = t.tabAssembly;
+      document.getElementById('txt-quorum-badge').innerText = t.quorumBadge;
 
-      document.getElementById('badge-thesis').innerText = t.badgeThesis;
-      document.getElementById('txt-thesis-sub').innerText = t.thesisSub;
-      document.getElementById('txt-thesis-h1').innerText = t.thesisH1;
-      document.getElementById('txt-thesis-p').innerText = t.thesisP;
-      document.getElementById('txt-quorum-label').innerText = t.quorumLabel;
-      document.getElementById('txt-quorum-val').innerText = t.quorumVal;
+      document.getElementById('badge-thesis-title').innerText = t.badgeThesisTitle;
+      document.getElementById('badge-thesis-sub').innerText = t.badgeThesisSub;
+      document.getElementById('txt-thesis-heading').innerText = t.thesisHeading;
+      document.getElementById('txt-thesis-body').innerText = t.thesisBody;
+      document.getElementById('f1-heading').innerText = t.f1Heading;
+      document.getElementById('f1-caption').innerText = t.f1Caption;
+      document.getElementById('f2-heading').innerText = t.f2Heading;
+      document.getElementById('f2-caption').innerText = t.f2Caption;
+      document.getElementById('f3-heading').innerText = t.f3Heading;
+      document.getElementById('f3-caption').innerText = t.f3Caption;
 
-      document.getElementById('f1-badge').innerText = t.f1Badge;
-      document.getElementById('f1-title').innerText = t.f1Title;
-      document.getElementById('f1-desc').innerText = t.f1Desc;
-      document.getElementById('f2-badge').innerText = t.f2Badge;
-      document.getElementById('f2-title').innerText = t.f2Title;
-      document.getElementById('f2-desc').innerText = t.f2Desc;
-      document.getElementById('f3-badge').innerText = t.f3Badge;
-      document.getElementById('f3-title').innerText = t.f3Title;
-      document.getElementById('f3-desc').innerText = t.f3Desc;
-
-      document.getElementById('txt-council-title').querySelector('span').innerText = t.councilTitle;
-      document.getElementById('role1-title').innerText = t.role1Title;
-      document.getElementById('role1-sub').innerText = t.role1Sub;
-      document.getElementById('role1-desc').innerText = t.role1Desc;
-      document.getElementById('role2-title').innerText = t.role2Title;
-      document.getElementById('role2-sub').innerText = t.role2Sub;
-      document.getElementById('role2-desc').innerText = t.role2Desc;
-      document.getElementById('role3-title').innerText = t.role3Title;
-      document.getElementById('role3-sub').innerText = t.role3Sub;
-      document.getElementById('role3-desc').innerText = t.role3Desc;
-      document.getElementById('role4-title').innerText = t.role4Title;
-      document.getElementById('role4-sub').innerText = t.role4Sub;
-      document.getElementById('role4-desc').innerText = t.role4Desc;
-      document.getElementById('role5-title').innerText = t.role5Title;
-      document.getElementById('role5-sub').innerText = t.role5Sub;
-      document.getElementById('role5-desc').innerText = t.role5Desc;
-      document.getElementById('role6-title').innerText = t.role6Title;
-      document.getElementById('role6-sub').innerText = t.role6Sub;
-      document.getElementById('role6-desc').innerText = t.role6Desc;
-
-      document.getElementById('badge-grant-live').innerText = t.badgeGrantLive;
-      document.getElementById('txt-grant-source').innerText = t.grantSource;
-      document.getElementById('txt-grant-h2').innerText = t.grantH2;
-      document.getElementById('txt-grant-meta').innerText = t.grantMeta;
-      document.getElementById('txt-score-label').innerText = t.scoreLabel;
-      document.getElementById('badge-apply').innerText = t.badgeApply;
-      document.getElementById('txt-rubric-title').innerText = t.rubricTitle;
-      document.getElementById('dim1-title').innerText = t.dim1Title;
-      document.getElementById('dim2-title').innerText = t.dim2Title;
-      document.getElementById('dim3-title').innerText = t.dim3Title;
-      document.getElementById('dim4-title').innerText = t.dim4Title;
-      document.getElementById('dim5-title').innerText = t.dim5Title;
-
-      document.getElementById('txt-mml-title').innerText = t.mmlTitle;
+      document.getElementById('txt-council-heading').innerText = t.councilHeading;
+      document.getElementById('txt-select-call-label').innerText = t.selectCallLabel;
+      document.getElementById('txt-rubric-heading').innerText = t.rubricHeading;
+      document.getElementById('txt-mml-heading').innerText = t.mmlHeading;
       document.getElementById('txt-mml-sub').innerText = t.mmlSub;
-      document.getElementById('th-level').innerText = t.thLevel;
-      document.getElementById('th-summary').innerText = t.thSummary;
-      document.getElementById('th-indicators').innerText = t.thIndicators;
-      document.getElementById('th-means').innerText = t.thMeans;
-      document.getElementById('th-assumptions').innerText = t.thAssumptions;
-      document.getElementById('td-fin-desc').innerText = t.tdFinDesc;
-      document.getElementById('td-fin-ind').innerText = t.tdFinInd;
-      document.getElementById('td-fin-means').innerText = t.tdFinMeans;
-      document.getElementById('td-fin-ass').innerText = t.tdFinAss;
-      document.getElementById('td-prop-desc').innerText = t.tdPropDesc;
-      document.getElementById('td-prop-ind').innerText = t.tdPropInd;
-      document.getElementById('td-prop-means').innerText = t.tdPropMeans;
-      document.getElementById('td-prop-ass').innerText = t.tdPropAss;
-      document.getElementById('td-comp-desc').innerHTML = t.tdCompDesc;
-      document.getElementById('td-comp-ind').innerText = t.tdCompInd;
-      document.getElementById('td-comp-means').innerText = t.tdCompMeans;
-      document.getElementById('td-comp-ass').innerText = t.tdCompAss;
+      document.getElementById('txt-dossier-heading').innerText = t.dossierHeading;
+      document.getElementById('txt-dossier-sub').innerText = t.dossierSub;
+      document.getElementById('btn-copy-dossier').innerText = t.btnCopy;
+      document.getElementById('btn-download-dossier').innerText = t.btnDownload;
+      document.getElementById('txt-footer-mit').innerText = t.footerMit;
+      document.getElementById('txt-footer-gov').innerText = t.footerGov;
 
-      document.getElementById('txt-ass-title').innerText = t.assTitle;
-      document.getElementById('txt-ass-sub').innerText = t.assSub;
-      document.getElementById('txt-ass-row1').innerText = t.assRow1;
-      document.getElementById('txt-ass-row2').innerText = t.assRow2;
-      document.getElementById('txt-ass-row3').innerText = t.assRow3;
-      document.getElementById('badge-ass-quorum').innerText = t.badgeAssQuorum;
-      document.getElementById('vote-title').innerText = t.voteTitle;
-      document.getElementById('vote-sub').innerText = t.voteSub;
-      document.getElementById('vote-motion').innerText = t.voteMotion;
-      document.getElementById('txt-vote-yes').innerText = t.voteYes;
-      document.getElementById('txt-vote-attest').innerText = t.voteAttest;
-      document.getElementById('txt-footer-copy').innerText = t.footerCopy;
-      document.getElementById('txt-footer-tag').innerText = t.footerTag;
+      const selVal = document.getElementById('select-call').value;
+      changeOpportunityPreset(selVal);
     }
 
-    function switchTab(tabId) {
-      document.getElementById('tab-content-overview').classList.add('hidden');
-      document.getElementById('tab-content-grants').classList.add('hidden');
-      document.getElementById('tab-content-mml').classList.add('hidden');
-      document.getElementById('tab-content-assembly').classList.add('hidden');
-
-      document.getElementById('tab-btn-overview').className = 'tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2';
-      document.getElementById('tab-btn-grants').className = 'tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2';
-      document.getElementById('tab-btn-mml').className = 'tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2';
-      document.getElementById('tab-btn-assembly').className = 'tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2';
-
-      document.getElementById('tab-content-' + tabId).classList.remove('hidden');
-      document.getElementById('tab-btn-' + tabId).className = 'tab-btn px-4 py-3 text-sm font-medium border-b-2 tab-active transition flex items-center space-x-2';
-    }
-
-    // Check query param
+    // Check query params
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('lang') === 'en') {
       setLanguage('en');
