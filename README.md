@@ -8,7 +8,7 @@
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
 [![Free & Paid AI](https://img.shields.io/badge/Models-Free%20%26%20Commercial-orange.svg)](#ai-model-setup-free-local-and-paid-options)
-[![Social Economy Manifesto](https://img.shields.io/badge/Document-Principles%20%26%20Governance-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
+[![Social Economy Principles](https://img.shields.io/badge/Document-Principles%20%26%20Governance-darkgreen.svg)](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md)
 
 [🇲🇽 Leer en Español](README.es.md) | [📢 Outreach & Social Media Kit](docs/KIT_DIFUSION_REDES.md)
 
@@ -145,7 +145,7 @@ CoopExecutive supports three execution tiers configurable via `.env`:
 
 ## Technical Documentation
 * [Architecture & Data Flow Specification](ARCHITECTURE.md)
-* [Social Economy & Governance Principles](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
+* [Social Economy & Governance Principles](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md) | [🇲🇽 Español](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md)
 * [Logical Framework Practical Guide](docs/GUIA_MARCO_LOGICO.md)
 * [Statutory Funds & Cooperative Governance Guide](docs/GUIA_FONDOS_ESTATUTARIOS.md)
 * [Contributing Guide](CONTRIBUTING.md)

@@ -8,7 +8,7 @@
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
 [![Modelos Libres](https://img.shields.io/badge/Modelos-Gratis%20y%20Comerciales-orange.svg)](#configuración-de-modelos-de-ia-gratis-locales-y-de-pago)
-[![Manifiesto Economía Social](https://img.shields.io/badge/Documento-Principios%20y%20Gobernanza-darkgreen.svg)](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
+[![Principios de Economía Social](https://img.shields.io/badge/Documento-Principios%20y%20Gobernanza-darkgreen.svg)](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md)
 
 [🇺🇸 Read in English](README.md) | [📢 Kit de Difusión en Redes](docs/KIT_DIFUSION_REDES.md)
 
@@ -145,7 +145,7 @@ El motor de CoopExecutive soporta tres vías de ejecución configurables en `.en
 
 ## Documentación Técnica
 * [Arquitectura del Sistema y Flujo de Datos](ARCHITECTURE.md)
-* [Principios de Economía Social y Gobernanza](docs/MANIFIESTO_ECONOMIA_SOCIAL.md)
+* [Principios de Economía Social y Gobernanza](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md) | [🇺🇸 English](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md)
 * [Guía Práctica de Marco Lógico](docs/GUIA_MARCO_LOGICO.md)
 * [Guía de Fondos Estatutarios y Gobernanza LGSC](docs/GUIA_FONDOS_ESTATUTARIOS.md)
 * [Guía para Contribuir](CONTRIBUTING.md)
