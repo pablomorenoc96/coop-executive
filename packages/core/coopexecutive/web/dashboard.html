@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoopExecutive — Sistema Directivo Colegiado</title>
+  <title>CoopExecutive — Open-Source Collegiate Governance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -92,7 +92,7 @@
               <span class="font-bold text-lg tracking-tight text-white">CoopExecutive</span>
               <span class="text-xs px-2 py-0.5 rounded bg-brand-500/10 border border-brand-500/30 text-brand-400 font-mono font-medium">v0.1.0</span>
             </div>
-            <p class="text-xs text-slate-400">Cooperativa de Producción y Tecnología Abierta S.C. de R.L.</p>
+            <p id="txt-org-name" class="text-xs text-slate-400">Cooperativa de Producción y Tecnología Abierta S.C. de R.L.</p>
           </div>
         </div>
       </div>
@@ -101,28 +101,35 @@
       <div class="hidden md:flex items-center space-x-6 text-xs text-slate-400 font-mono">
         <div class="flex items-center space-x-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>GOBERNANZA: ASAMBLEA SOBERANA</span>
+          <span id="txt-status-gov">GOBERNANZA: ASAMBLEA SOBERANA</span>
         </div>
         <div class="h-4 w-px bg-surface-border"></div>
         <div class="flex items-center space-x-2">
-          <span class="text-slate-500">RÉGIMEN:</span>
-          <span class="text-slate-300 font-medium">LGSC MÉXICO (ART. 53-59)</span>
+          <span id="txt-regime-label" class="text-slate-500">RÉGIMEN:</span>
+          <span id="txt-regime-val" class="text-slate-300 font-medium">LGSC MÉXICO (ART. 53-59)</span>
         </div>
       </div>
 
       <!-- Right Controls -->
       <div class="flex items-center space-x-3">
+        
+        <!-- Language Switcher Toggle -->
+        <div class="flex items-center rounded-md bg-surface-input border border-surface-border p-0.5 text-xs font-mono">
+          <button id="btn-lang-es" onclick="setLanguage('es')" class="px-2.5 py-1 rounded font-bold bg-brand-500 text-slate-950 transition">ES</button>
+          <button id="btn-lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">EN</button>
+        </div>
+
         <div class="px-3 py-1.5 rounded-md bg-surface-input border border-surface-border flex items-center space-x-2 text-xs font-mono text-slate-300">
           <span class="text-emerald-400">●</span>
           <span>OpenRouter: <strong class="text-white">minimax-m3:free</strong></span>
-          <span class="text-slate-500">|</span>
-          <span class="text-slate-400">429 Fallback</span>
         </div>
-        <div class="p-2 text-slate-400 rounded-md border border-surface-border bg-surface-card">
+
+        <a href="https://github.com/pablomorenoc96/coop-executive" target="_blank" class="p-2 text-slate-400 rounded-md border border-surface-border bg-surface-card hover:text-white transition">
           <svg class="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
           </svg>
-        </div>
+        </a>
+
       </div>
 
     </div>
@@ -133,20 +140,20 @@
     <div class="max-w-7xl mx-auto px-6 flex space-x-1">
       <button id="tab-btn-overview" onclick="switchTab('overview')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 tab-active transition flex items-center space-x-2">
         <svg class="w-4 h-4 text-brand-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-        <span>Gobernanza & Fondos Estatutarios</span>
+        <span id="tab-text-overview">Gobernanza & Fondos Estatutarios</span>
       </button>
       <button id="tab-btn-grants" onclick="switchTab('grants')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2">
         <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16 10-4 4-2-2"/></svg>
-        <span>Procurador de Fondos (FundsforNGOs)</span>
+        <span id="tab-text-grants">Procurador de Fondos (FundsforNGOs)</span>
         <span class="text-xs px-1.5 py-0.2 bg-amber-500/10 text-amber-400 rounded font-mono">100 Pts</span>
       </button>
       <button id="tab-btn-mml" onclick="switchTab('mml')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2">
         <svg class="w-4 h-4 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-        <span>Marco Lógico 4x4 & ODS</span>
+        <span id="tab-text-mml">Marco Lógico 4x4 & ODS</span>
       </button>
       <button id="tab-btn-assembly" onclick="switchTab('assembly')" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition flex items-center space-x-2">
         <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Asamblea General (Un Socio, Un Voto)</span>
+        <span id="tab-text-assembly">Asamblea General (Un Socio, Un Voto)</span>
       </button>
     </div>
   </div>
@@ -162,17 +169,17 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div class="flex items-center space-x-2 mb-2">
-              <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/40">ANTÍTESIS A SILICON VALLEY</span>
-              <span class="text-xs text-slate-400">Sin fondos VC · Sin dilución de capital · Democracia asamblearia</span>
+              <span id="badge-thesis" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-brand-500/20 text-brand-400 border border-brand-500/40">ANTÍTESIS A SILICON VALLEY</span>
+              <span id="txt-thesis-sub" class="text-xs text-slate-400">Sin fondos VC · Sin dilución de capital · Democracia asamblearia</span>
             </div>
-            <h1 class="text-2xl font-bold tracking-tight text-white">Soberanía Tecnológica y Control Democrático Colegiado</h1>
-            <p class="text-sm text-slate-300 mt-1 max-w-2xl">
-              CoopExecutive sustituye la maximización de dividendos para accionistas por el blindaje de los tres fondos patrimoniales inalienables de la Ley General de Sociedades Cooperativas (LGSC).
+            <h1 id="txt-thesis-h1" class="text-2xl font-bold tracking-tight text-white">Soberanía Tecnológica y Control Democrático Colegiado</h1>
+            <p id="txt-thesis-p" class="text-sm text-slate-300 mt-1 max-w-2xl">
+              CoopExecutive sustituye la maximización de dividendos privados por el blindaje de los tres fondos patrimoniales inalienables de la Ley General de Sociedades Cooperativas (LGSC).
             </p>
           </div>
           <div class="px-4 py-2 rounded-lg bg-surface-input border border-surface-border text-right">
-            <p class="text-xs text-slate-400 uppercase font-mono">Quórum Asambleario</p>
-            <p class="text-lg font-bold text-brand-400 font-mono">100% ACREDITADO</p>
+            <p id="txt-quorum-label" class="text-xs text-slate-400 uppercase font-mono">Quórum Asambleario</p>
+            <p id="txt-quorum-val" class="text-lg font-bold text-brand-400 font-mono">100% ACREDITADO</p>
           </div>
         </div>
       </div>
@@ -183,11 +190,11 @@
         <div class="p-6 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/40 transition">
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs font-mono font-semibold text-brand-400">LGSC ART. 55</span>
-            <span class="text-xs px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 font-mono">15.0% Inalienable</span>
+            <span id="f1-badge" class="text-xs px-2 py-0.5 rounded bg-brand-500/10 text-brand-400 font-mono">15.0% Inalienable</span>
           </div>
-          <p class="text-sm text-slate-400 font-medium">Fondo de Reserva Legal</p>
+          <p id="f1-title" class="text-sm text-slate-400 font-medium">Fondo de Reserva Legal</p>
           <p class="text-3xl font-bold text-white mt-1 font-mono">$142,500 <span class="text-sm font-normal text-slate-400">MXN</span></p>
-          <p class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
+          <p id="f1-desc" class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
             Garantía de solvencia frente a contingencias. No divisible entre socios.
           </p>
         </div>
@@ -195,11 +202,11 @@
         <div class="p-6 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/40 transition">
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs font-mono font-semibold text-cyan-400">LGSC ART. 57</span>
-            <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-mono">10.0% Inalienable</span>
+            <span id="f2-badge" class="text-xs px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-mono">10.0% Inalienable</span>
           </div>
-          <p class="text-sm text-slate-400 font-medium">Fondo de Previsión Social</p>
+          <p id="f2-title" class="text-sm text-slate-400 font-medium">Fondo de Previsión Social</p>
           <p class="text-3xl font-bold text-white mt-1 font-mono">$95,000 <span class="text-sm font-normal text-slate-400">MXN</span></p>
-          <p class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
+          <p id="f2-desc" class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
             Salud integral, pensiones, incapacidades y bienestar familiar de los cooperativistas.
           </p>
         </div>
@@ -207,11 +214,11 @@
         <div class="p-6 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/40 transition">
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs font-mono font-semibold text-amber-400">LGSC ART. 58</span>
-            <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono">10.0% Inalienable</span>
+            <span id="f3-badge" class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono">10.0% Inalienable</span>
           </div>
-          <p class="text-sm text-slate-400 font-medium">Fondo de Educación Cooperativa</p>
+          <p id="f3-title" class="text-sm text-slate-400 font-medium">Fondo de Educación Cooperativa</p>
           <p class="text-3xl font-bold text-white mt-1 font-mono">$95,000 <span class="text-sm font-normal text-slate-400">MXN</span></p>
-          <p class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
+          <p id="f3-desc" class="mt-4 pt-4 border-t border-surface-border text-xs text-slate-400">
             Capacitación técnica continua, becas de ingeniería y soberanía de saberes.
           </p>
         </div>
@@ -220,7 +227,7 @@
 
       <!-- Collegiate Council Roles -->
       <div>
-        <h2 class="text-base font-bold text-white mb-4 flex items-center space-x-2">
+        <h2 id="txt-council-title" class="text-base font-bold text-white mb-4 flex items-center space-x-2">
           <span>Consejo Social Colegiado</span>
           <span class="text-xs font-normal text-slate-400 font-mono">(6 Agentes Especializados)</span>
         </h2>
@@ -229,66 +236,66 @@
             <div class="flex items-center space-x-3 mb-2">
               <span class="text-emerald-400 text-lg">🛡️</span>
               <div>
-                <h3 class="font-semibold text-white text-sm">Consejo de Vigilancia</h3>
-                <p class="text-xs text-slate-400">Auditoría ética interna y observancia estatutaria</p>
+                <h3 id="role1-title" class="font-semibold text-white text-sm">Consejo de Vigilancia</h3>
+                <p id="role1-sub" class="text-xs text-slate-400">Auditoría ética interna y observancia estatutaria</p>
               </div>
             </div>
-            <p class="text-xs text-slate-300">Vigila que ningún acuerdo vulnere la ley ni la voluntad soberana de la asamblea.</p>
+            <p id="role1-desc" class="text-xs text-slate-300">Vigila que ningún acuerdo vulnere la ley ni la voluntad soberana de la asamblea.</p>
           </div>
 
           <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
             <div class="flex items-center space-x-3 mb-2">
               <span class="text-blue-400 text-lg">⚖️</span>
               <div>
-                <h3 class="font-semibold text-white text-sm">Asesor Jurídico en Economía Social</h3>
-                <p class="text-xs text-slate-400">LGSC, A.C., Donatarias y SAT</p>
+                <h3 id="role2-title" class="font-semibold text-white text-sm">Asesor Jurídico en Economía Social</h3>
+                <p id="role2-sub" class="text-xs text-slate-400">LGSC, A.C., Donatarias y SAT</p>
               </div>
             </div>
-            <p class="text-xs text-slate-300">Dictamina contratos colectivos, convenios de donación y régimen fiscal sin fin de lucro.</p>
+            <p id="role2-desc" class="text-xs text-slate-300">Dictamina contratos colectivos, convenios de donación y régimen fiscal sin fin de lucro.</p>
           </div>
 
           <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
             <div class="flex items-center space-x-3 mb-2">
               <span class="text-amber-400 text-lg">🪙</span>
               <div>
-                <h3 class="font-semibold text-white text-sm">Finanzas Solidarias</h3>
-                <p class="text-xs text-slate-400">Fondos estatutarios y balances transparentes</p>
+                <h3 id="role3-title" class="font-semibold text-white text-sm">Finanzas Solidarias</h3>
+                <p id="role3-sub" class="text-xs text-slate-400">Fondos estatutarios y balances transparentes</p>
               </div>
             </div>
-            <p class="text-xs text-slate-300">Garantiza la separación rigurosa de los fondos y prepara balances anuales auditables.</p>
+            <p id="role3-desc" class="text-xs text-slate-300">Garantiza la separación rigurosa de los fondos y prepara balances anuales auditables.</p>
           </div>
 
           <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
             <div class="flex items-center space-x-3 mb-2">
               <span class="text-cyan-400 text-lg">⚡</span>
               <div>
-                <h3 class="font-semibold text-white text-sm">Desarrollo Tecnológico Comunitario</h3>
-                <p class="text-xs text-slate-400">Hardware libre y energía limpia</p>
+                <h3 id="role4-title" class="font-semibold text-white text-sm">Desarrollo Tecnológico Comunitario</h3>
+                <p id="role4-sub" class="text-xs text-slate-400">Hardware libre y energía limpia</p>
               </div>
             </div>
-            <p class="text-xs text-slate-300">Planifica microrredes, automatización industrial accesible y transferencia técnica abierta.</p>
+            <p id="role4-desc" class="text-xs text-slate-300">Planifica microrredes, automatización industrial accesible y transferencia técnica abierta.</p>
           </div>
 
           <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
             <div class="flex items-center space-x-3 mb-2">
               <span class="text-purple-400 text-lg">📡</span>
               <div>
-                <h3 class="font-semibold text-white text-sm">Comunicación Social y Vinculación</h3>
-                <p class="text-xs text-slate-400">Relaciones territoriales e impacto</p>
+                <h3 id="role5-title" class="font-semibold text-white text-sm">Comunicación Social y Vinculación</h3>
+                <p id="role5-sub" class="text-xs text-slate-400">Relaciones territoriales e impacto</p>
               </div>
             </div>
-            <p class="text-xs text-slate-300">Organiza convocatorias asamblearias, foros comunitarios y alianzas con centros de estudio.</p>
+            <p id="role5-desc" class="text-xs text-slate-300">Organiza convocatorias asamblearias, foros comunitarios y alianzas con centros de estudio.</p>
           </div>
 
           <div class="p-5 rounded-lg bg-surface-card border border-surface-border">
             <div class="flex items-center space-x-3 mb-2">
               <span class="text-emerald-400 text-lg">📜</span>
               <div>
-                <h3 class="font-semibold text-white text-sm">Secretaría de Actas</h3>
-                <p class="text-xs text-slate-400">Libro de actas y quórum legal</p>
+                <h3 id="role6-title" class="font-semibold text-white text-sm">Secretaría de Actas</h3>
+                <p id="role6-sub" class="text-xs text-slate-400">Libro de actas y quórum legal</p>
               </div>
             </div>
-            <p class="text-xs text-slate-300">Registra resoluciones bajo el principio inalienable de un voto por persona socia.</p>
+            <p id="role6-desc" class="text-xs text-slate-300">Registra resoluciones bajo el principio inalienable de un voto por persona socia.</p>
           </div>
         </div>
       </div>
@@ -301,58 +308,58 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div class="flex items-center space-x-2 mb-1">
-              <span class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">DICTAMEN EN VIVO</span>
-              <span class="text-xs text-slate-400">Fuente: FundsforNGOs / Banco Interamericano de Desarrollo</span>
+              <span id="badge-grant-live" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">DICTAMEN EN VIVO</span>
+              <span id="txt-grant-source" class="text-xs text-slate-400">Fuente: FundsforNGOs / Banco Interamericano de Desarrollo</span>
             </div>
-            <h2 class="text-xl font-bold text-white">Fondo de Transición Energética Comunitaria y Soberanía Tecnológica</h2>
-            <p class="text-xs text-slate-400 mt-1">Monto Disponible: <strong>$120,000 USD</strong> · Cierre de Postulación: <strong>31 Dic 2026</strong></p>
+            <h2 id="txt-grant-h2" class="text-xl font-bold text-white">Fondo de Transición Energética Comunitaria y Soberanía Tecnológica</h2>
+            <p id="txt-grant-meta" class="text-xs text-slate-400 mt-1">Monto Disponible: <strong>$120,000 USD</strong> · Cierre de Postulación: <strong>31 Dic 2026</strong></p>
           </div>
           <div class="flex items-center space-x-3">
             <div class="px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-center">
-              <span class="text-xs font-mono text-emerald-400 uppercase font-semibold">Calificación</span>
+              <span id="txt-score-label" class="text-xs font-mono text-emerald-400 uppercase font-semibold">Calificación</span>
               <p class="text-2xl font-bold text-white font-mono">94.5 <span class="text-xs text-slate-400">/ 100</span></p>
             </div>
             <div class="px-4 py-3 rounded-lg bg-emerald-600 text-white font-semibold text-sm flex items-center space-x-2">
-              <span>🟢 APLICAR (ALTA COMPATIBILIDAD)</span>
+              <span id="badge-apply">🟢 APLICAR (ALTA COMPATIBILIDAD)</span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-        <h3 class="text-base font-bold text-white mb-4">Rúbrica Multicriterio de Elegibilidad (8 Dimensiones)</h3>
+        <h3 id="txt-rubric-title" class="text-base font-bold text-white mb-4">Rúbrica Multicriterio de Elegibilidad (8 Dimensiones)</h3>
         <div class="space-y-4">
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="font-medium text-slate-200">1. Alineación con la Misión y Estatutos (ODS 7, 9)</span>
+              <span id="dim1-title" class="font-medium text-slate-200">1. Alineación con la Misión y Estatutos (ODS 7, 9)</span>
               <span class="font-mono text-emerald-400 font-bold">20.0 / 20.0 pts</span>
             </div>
             <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="font-medium text-slate-200">2. Elegibilidad Jurídica y Fiscal (LGSC S.C. de R.L.)</span>
+              <span id="dim2-title" class="font-medium text-slate-200">2. Elegibilidad Jurídica y Fiscal (LGSC S.C. de R.L.)</span>
               <span class="font-mono text-emerald-400 font-bold">10.0 / 10.0 pts</span>
             </div>
             <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="font-medium text-slate-200">3. Rango Presupuestal y Factibilidad de CAPEX / OPEX</span>
+              <span id="dim3-title" class="font-medium text-slate-200">3. Rango Presupuestal y Factibilidad de CAPEX / OPEX</span>
               <span class="font-mono text-emerald-400 font-bold">15.0 / 15.0 pts</span>
             </div>
             <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="font-medium text-slate-200">4. Capacidad Técnica del Equipo y Alianzas (IPN / Redes)</span>
+              <span id="dim4-title" class="font-medium text-slate-200">4. Capacidad Técnica del Equipo y Alianzas (IPN / Redes)</span>
               <span class="font-mono text-emerald-400 font-bold">14.5 / 15.0 pts</span>
             </div>
             <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 96.6%"></div></div>
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1">
-              <span class="font-medium text-slate-200">5. Impacto Comunitario Medible y Sostenibilidad</span>
+              <span id="dim5-title" class="font-medium text-slate-200">5. Impacto Comunitario Medible y Sostenibilidad</span>
               <span class="font-mono text-emerald-400 font-bold">15.0 / 15.0 pts</span>
             </div>
             <div class="w-full bg-surface-input rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div></div>
@@ -366,8 +373,8 @@
       <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
         <div class="flex justify-between items-center mb-6">
           <div>
-            <h2 class="text-xl font-bold text-white">Matriz de Marco Lógico 4x4 (MML / MIR)</h2>
-            <p class="text-xs text-slate-400">Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Rurales</p>
+            <h2 id="txt-mml-title" class="text-xl font-bold text-white">Matriz de Marco Lógico 4x4 (MML / MIR)</h2>
+            <p id="txt-mml-sub" class="text-xs text-slate-400">Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Rurales</p>
           </div>
           <div class="flex space-x-2">
             <span class="px-2.5 py-1 rounded bg-surface-input text-xs font-mono text-emerald-400">ODS 7 Energía</span>
@@ -379,34 +386,34 @@
           <table class="w-full text-left text-xs border-collapse">
             <thead>
               <tr class="border-b border-surface-border bg-surface-input text-slate-300 font-mono">
-                <th class="p-3 w-28">Nivel</th>
-                <th class="p-3">Resumen Narrativo</th>
-                <th class="p-3">Indicadores Verificables (IOV)</th>
-                <th class="p-3">Medios de Verificación</th>
-                <th class="p-3">Supuestos Críticos</th>
+                <th id="th-level" class="p-3 w-28">Nivel</th>
+                <th id="th-summary" class="p-3">Resumen Narrativo</th>
+                <th id="th-indicators" class="p-3">Indicadores Verificables (IOV)</th>
+                <th id="th-means" class="p-3">Medios de Verificación</th>
+                <th id="th-assumptions" class="p-3">Supuestos Críticos</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-surface-border text-slate-300">
               <tr>
                 <td class="p-3 font-bold font-mono text-emerald-400">FIN</td>
-                <td class="p-3 text-white">Incrementar la autosuficiencia energética y reducir costos en 30% en talleres comunitarios.</td>
-                <td class="p-3">Tasa de ahorro en facturación eléctrica a 24 meses.</td>
-                <td class="p-3 text-slate-400">Recibos de energía y estados contables.</td>
-                <td class="p-3 text-slate-400">Estabilidad regulatoria en generación distribuida.</td>
+                <td id="td-fin-desc" class="p-3 text-white">Incrementar la autosuficiencia energética y reducir costos en 30% en talleres comunitarios.</td>
+                <td id="td-fin-ind" class="p-3">Tasa de ahorro en facturación eléctrica a 24 meses.</td>
+                <td id="td-fin-means" class="p-3 text-slate-400">Recibos de energía y estados contables.</td>
+                <td id="td-fin-ass" class="p-3 text-slate-400">Estabilidad regulatoria en generación distribuida.</td>
               </tr>
               <tr>
                 <td class="p-3 font-bold font-mono text-cyan-400">PROPÓSITO</td>
-                <td class="p-3 text-white">Instalar 3 microrredes eólicas comunitarias con comités locales de mantenimiento.</td>
-                <td class="p-3">3 sistemas en operación continua con disponibilidad >95%.</td>
-                <td class="p-3 text-slate-400">Telemetría IoT abierta y actas de entrega.</td>
-                <td class="p-3 text-slate-400">Participación activa de la asamblea comunitaria.</td>
+                <td id="td-prop-desc" class="p-3 text-white">Instalar 3 microrredes eólicas comunitarias con comités locales de mantenimiento.</td>
+                <td id="td-prop-ind" class="p-3">3 sistemas en operación continua con disponibilidad >95%.</td>
+                <td id="td-prop-means" class="p-3 text-slate-400">Telemetría IoT abierta y actas de entrega.</td>
+                <td id="td-prop-ass" class="p-3 text-slate-400">Participación activa de la asamblea comunitaria.</td>
               </tr>
               <tr>
                 <td class="p-3 font-bold font-mono text-amber-400">COMPONENTES</td>
-                <td class="p-3 text-white">C1: Prototipo ensayado.<br>C2: Red comunitaria instalada.<br>C3: Programa de certificación técnica.</td>
-                <td class="p-3">100% ensayado en laboratorio IPN y 25 operadores certificados.</td>
-                <td class="p-3 text-slate-400">Certificados CONOCER y bitácoras técnicas.</td>
-                <td class="p-3 text-slate-400">Suministro oportuno de insumos eléctricos.</td>
+                <td id="td-comp-desc" class="p-3 text-white">C1: Prototipo ensayado.<br>C2: Red comunitaria instalada.<br>C3: Programa de certificación técnica.</td>
+                <td id="td-comp-ind" class="p-3">100% ensayado en laboratorio IPN y 25 operadores certificados.</td>
+                <td id="td-comp-means" class="p-3 text-slate-400">Certificados CONOCER y bitácoras técnicas.</td>
+                <td id="td-comp-ass" class="p-3 text-slate-400">Suministro oportuno de insumos eléctricos.</td>
               </tr>
             </tbody>
           </table>
@@ -418,34 +425,34 @@
     <div id="tab-content-assembly" class="hidden space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-          <h2 class="text-base font-bold text-white mb-2">Registro de Quórum Legal Asambleario</h2>
-          <p class="text-xs text-slate-400 mb-4">Principio rector: Un socio acreditado = Un voto directo. Sin ponderación de capital.</p>
+          <h2 id="txt-ass-title" class="text-base font-bold text-white mb-2">Registro de Quórum Legal Asambleario</h2>
+          <p id="txt-ass-sub" class="text-xs text-slate-400 mb-4">Principio rector: Un socio acreditado = Un voto directo. Sin ponderación de capital.</p>
           <div class="space-y-3">
             <div class="flex items-center justify-between p-3 rounded-lg bg-surface-input text-xs">
-              <span class="text-slate-200">Socios Fundadores Registrados</span>
+              <span id="txt-ass-row1" class="text-slate-200">Socios Fundadores Registrados</span>
               <span class="font-mono text-brand-400 font-bold">12 / 12 (100%)</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-lg bg-surface-input text-xs">
-              <span class="text-slate-200">Socios Cooperativistas Activos</span>
+              <span id="txt-ass-row2" class="text-slate-200">Socios Cooperativistas Activos</span>
               <span class="font-mono text-brand-400 font-bold">38 / 40 (95%)</span>
             </div>
             <div class="flex items-center justify-between p-3 rounded-lg bg-surface-input text-xs">
-              <span class="text-slate-200">Estado del Quórum</span>
-              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">VÁLIDO PARA RESOLUCIONES</span>
+              <span id="txt-ass-row3" class="text-slate-200">Estado del Quórum</span>
+              <span id="badge-ass-quorum" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">VÁLIDO PARA RESOLUCIONES</span>
             </div>
           </div>
         </div>
 
         <div class="p-6 rounded-xl bg-surface-card border border-surface-border">
-          <h2 class="text-base font-bold text-white mb-2">Resolución Asamblearia en Votación</h2>
-          <p class="text-xs text-slate-400 mb-4">Dictamen de postulación a Fondo Internacional BID:</p>
+          <h2 id="txt-vote-title" class="text-base font-bold text-white mb-2">Resolución Asamblearia en Votación</h2>
+          <p id="txt-vote-sub" class="text-xs text-slate-400 mb-4">Dictamen de postulación a Fondo Internacional BID:</p>
           <div class="p-4 rounded-lg bg-surface-input text-xs space-y-3">
-            <p class="text-slate-200 font-semibold">"Aprobación formal para postular al Fondo de Transición Energética BID por $120,000 USD y comprometer contrapartida técnica valorizada."</p>
+            <p id="txt-vote-motion" class="text-slate-200 font-semibold">"Aprobación formal para postular al Fondo de Transición Energética BID por $120,000 USD y comprometer contrapartida técnica valorizada."</p>
             <div class="flex items-center space-x-4 pt-2 border-t border-surface-border font-mono text-xs">
-              <span class="text-emerald-400 font-bold">A FAVOR: 50 votos (100%)</span>
-              <span class="text-rose-400">EN CONTRA: 0</span>
+              <span id="txt-vote-yes" class="text-emerald-400 font-bold">A FAVOR: 50 votos (100%)</span>
+              <span id="txt-vote-no" class="text-rose-400">EN CONTRA: 0</span>
             </div>
-            <p class="text-[11px] text-slate-500 italic">Fe de hechos certificada por el Consejo de Vigilancia.</p>
+            <p id="txt-vote-attest" class="text-[11px] text-slate-500 italic">Fe de hechos certificada por el Consejo de Vigilancia.</p>
           </div>
         </div>
       </div>
@@ -455,12 +462,304 @@
 
   <footer class="border-t border-surface-border bg-surface-card/60 py-4 mt-auto">
     <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 font-mono">
-      <div>CoopExecutive — Licencia Libre MIT · Repositorio: github.com/pablomorenoc96/coop-executive</div>
-      <div class="mt-2 md:mt-0 text-slate-400">Técnica al servicio de la soberanía comunitaria</div>
+      <div id="txt-footer-copy">CoopExecutive — Licencia Libre MIT · Repositorio: github.com/pablomorenoc96/coop-executive</div>
+      <div id="txt-footer-tag" class="mt-2 md:mt-0 text-slate-400">Técnica al servicio de la soberanía comunitaria</div>
     </div>
   </footer>
 
   <script>
+    let currentLang = 'es';
+
+    const translations = {
+      es: {
+        orgName: "Cooperativa de Producción y Tecnología Abierta S.C. de R.L.",
+        statusGov: "GOBERNANZA: ASAMBLEA SOBERANA",
+        regimeLabel: "RÉGIMEN:",
+        regimeVal: "LGSC MÉXICO (ART. 53-59)",
+        tabOverview: "Gobernanza & Fondos Estatutarios",
+        tabGrants: "Procurador de Fondos (FundsforNGOs)",
+        tabMml: "Marco Lógico 4x4 & ODS",
+        tabAssembly: "Asamblea General (Un Socio, Un Voto)",
+        badgeThesis: "ANTÍTESIS A SILICON VALLEY",
+        thesisSub: "Sin fondos VC · Sin dilución de capital · Democracia asamblearia",
+        thesisH1: "Soberanía Tecnológica y Control Democrático Colegiado",
+        thesisP: "CoopExecutive sustituye la maximización de dividendos privados por el blindaje de los tres fondos patrimoniales inalienables de la Ley General de Sociedades Cooperativas (LGSC).",
+        quorumLabel: "Quórum Asambleario",
+        quorumVal: "100% ACREDITADO",
+        f1Badge: "15.0% Inalienable",
+        f1Title: "Fondo de Reserva Legal",
+        f1Desc: "Garantía de solvencia frente a contingencias. No divisible entre socios.",
+        f2Badge: "10.0% Inalienable",
+        f2Title: "Fondo de Previsión Social",
+        f2Desc: "Salud integral, pensiones, incapacidades y bienestar familiar de los cooperativistas.",
+        f3Badge: "10.0% Inalienable",
+        f3Title: "Fondo de Educación Cooperativa",
+        f3Desc: "Capacitación técnica continua, becas de ingeniería y soberanía de saberes.",
+        councilTitle: "Consejo Social Colegiado (6 Agentes Especializados)",
+        role1Title: "Consejo de Vigilancia",
+        role1Sub: "Auditoría ética interna y observancia estatutaria",
+        role1Desc: "Vigila que ningún acuerdo vulnere la ley ni la voluntad soberana de la asamblea.",
+        role2Title: "Asesor Jurídico en Economía Social",
+        role2Sub: "LGSC, A.C., Donatarias y SAT",
+        role2Desc: "Dictamina contratos colectivos, convenios de donación y régimen fiscal sin fin de lucro.",
+        role3Title: "Finanzas Solidarias",
+        role3Sub: "Fondos estatutarios y balances transparentes",
+        role3Desc: "Garantiza la separación rigurosa de los fondos y prepara balances anuales auditables.",
+        role4Title: "Desarrollo Tecnológico Comunitario",
+        role4Sub: "Hardware libre y energía limpia",
+        role4Desc: "Planifica microrredes, automatización industrial accesible y transferencia técnica abierta.",
+        role5Title: "Comunicación Social y Vinculación",
+        role5Sub: "Relaciones territoriales e impacto",
+        role5Desc: "Organiza convocatorias asamblearias, foros comunitarios y alianzas con centros de estudio.",
+        role6Title: "Secretaría de Actas",
+        role6Sub: "Libro de actas y quórum legal",
+        role6Desc: "Registra resoluciones bajo el principio inalienable de un voto por persona socia.",
+        badgeGrantLive: "DICTAMEN EN VIVO",
+        grantSource: "Fuente: FundsforNGOs / Banco Interamericano de Desarrollo",
+        grantH2: "Fondo de Transición Energética Comunitaria y Soberanía Tecnológica",
+        grantMeta: "Monto Disponible: $120,000 USD · Cierre de Postulación: 31 Dic 2026",
+        scoreLabel: "Calificación",
+        badgeApply: "🟢 APLICAR (ALTA COMPATIBILIDAD)",
+        rubricTitle: "Rúbrica Multicriterio de Elegibilidad (8 Dimensiones)",
+        dim1Title: "1. Alineación con la Misión y Estatutos (ODS 7, 9)",
+        dim2Title: "2. Elegibilidad Jurídica y Fiscal (LGSC S.C. de R.L.)",
+        dim3Title: "3. Rango Presupuestal y Factibilidad de CAPEX / OPEX",
+        dim4Title: "4. Capacidad Técnica del Equipo y Alianzas (IPN / Redes)",
+        dim5Title: "5. Impacto Comunitario Medible y Sostenibilidad",
+        mmlTitle: "Matriz de Marco Lógico 4x4 (MML / MIR)",
+        mmlSub: "Proyecto: Despliegue de Microrredes de Energía Limpia para Talleres Rurales",
+        thLevel: "Nivel",
+        thSummary: "Resumen Narrativo",
+        thIndicators: "Indicadores Verificables (IOV)",
+        thMeans: "Medios de Verificación",
+        thAssumptions: "Supuestos Críticos",
+        tdFinDesc: "Incrementar la autosuficiencia energética y reducir costos en 30% en talleres comunitarios.",
+        tdFinInd: "Tasa de ahorro en facturación eléctrica a 24 meses.",
+        tdFinMeans: "Recibos de energía y estados contables.",
+        tdFinAss: "Estabilidad regulatoria en generación distribuida.",
+        tdPropDesc: "Instalar 3 microrredes eólicas comunitarias con comités locales de mantenimiento.",
+        tdPropInd: "3 sistemas en operación continua con disponibilidad >95%.",
+        tdPropMeans: "Telemetría IoT abierta y actas de entrega.",
+        tdPropAss: "Participación activa de la asamblea comunitaria.",
+        tdCompDesc: "C1: Prototipo ensayado.<br>C2: Red comunitaria instalada.<br>C3: Programa de certificación técnica.",
+        tdCompInd: "100% ensayado en laboratorio IPN y 25 operadores certificados.",
+        tdCompMeans: "Certificados CONOCER y bitácoras técnicas.",
+        tdCompAss: "Suministro oportuno de insumos eléctricos.",
+        assTitle: "Registro de Quórum Legal Asambleario",
+        assSub: "Principio rector: Un socio acreditado = Un voto directo. Sin ponderación de capital.",
+        assRow1: "Socios Fundadores Registrados",
+        assRow2: "Socios Cooperativistas Activos",
+        assRow3: "Estado del Quórum",
+        badgeAssQuorum: "VÁLIDO PARA RESOLUCIONES",
+        voteTitle: "Resolución Asamblearia en Votación",
+        voteSub: "Dictamen de postulación a Fondo Internacional BID:",
+        voteMotion: '"Aprobación formal para postular al Fondo de Transición Energética BID por $120,000 USD y comprometer contrapartida técnica valorizada."',
+        voteYes: "A FAVOR: 50 votos (100%)",
+        voteAttest: "Fe de hechos certificada por el Consejo de Vigilancia.",
+        footerCopy: "CoopExecutive — Licencia Libre MIT · Repositorio: github.com/pablomorenoc96/coop-executive",
+        footerTag: "Técnica al servicio de la soberanía comunitaria"
+      },
+      en: {
+        orgName: "Open Tech & Worker Cooperative Society",
+        statusGov: "GOVERNANCE: SOVEREIGN GENERAL ASSEMBLY",
+        regimeLabel: "REGIME:",
+        regimeVal: "DEMOCRATIC COOPERATIVE LAW",
+        tabOverview: "Governance & Statutory Funds",
+        tabGrants: "Grant Procurement (FundsforNGOs)",
+        tabMml: "4x4 Logical Framework & SDGs",
+        tabAssembly: "General Assembly (One Member, One Vote)",
+        badgeThesis: "ANTITHESIS TO SILICON VALLEY",
+        thesisSub: "No VC capital · No equity dilution · Assembly democracy",
+        thesisH1: "Technical Sovereignty & Democratic Collegiate Oversight",
+        thesisP: "CoopExecutive replaces shareholder extraction with the protection of the three mandatory collective funds under Cooperative Law.",
+        quorumLabel: "Assembly Quorum",
+        quorumVal: "100% ACCREDITED",
+        f1Badge: "15.0% Mandatory",
+        f1Title: "Legal Reserve Fund",
+        f1Desc: "Solvency guarantee against contingencies. Indivisible among individual members.",
+        f2Badge: "10.0% Mandatory",
+        f2Title: "Social Welfare Fund",
+        f2Desc: "Comprehensive healthcare, pensions, disability coverage, and family welfare.",
+        f3Badge: "10.0% Mandatory",
+        f3Title: "Cooperative Education Fund",
+        f3Desc: "Continuous engineering training, academic scholarships, and open knowledge sovereignty.",
+        councilTitle: "Collegiate Social Council (6 Specialized AI Agents)",
+        role1Title: "Vigilance Board",
+        role1Sub: "Democratic internal auditing & statutory compliance",
+        role1Desc: "Ensures no resolution violates cooperative law or the will of the sovereign assembly.",
+        role2Title: "Social Legal Counsel",
+        role2Sub: "Cooperative Law, Non-Profit & Tax Exemptions",
+        role2Desc: "Validates collective contracts, non-profit grant agreements, and tax compliance.",
+        role3Title: "Solidarity Finance",
+        role3Sub: "Statutory fund allocation & transparent audits",
+        role3Desc: "Enforces strict statutory fund ringfencing and prepares auditable financial statements.",
+        role4Title: "Community Technology",
+        role4Sub: "Open hardware & clean microgrids",
+        role4Desc: "Plans renewable microgrids, accessible automation, and open knowledge transfer.",
+        role5Title: "Social Communication",
+        role5Sub: "Community alliances & stakeholder outreach",
+        role5Desc: "Coordinates general assemblies, university partnerships, and community forums.",
+        role6Title: "Assembly Secretariat",
+        role6Sub: "Official minutes & legal quorum verification",
+        role6Desc: "Records formal roll-call resolutions under the invariant of one member, one vote.",
+        badgeGrantLive: "LIVE VERDICT",
+        grantSource: "Source: FundsforNGOs / Inter-American Development Bank",
+        grantH2: "Community Clean Energy Transition & Open Tech Sovereignty Fund",
+        grantMeta: "Available Budget: $120,000 USD · Deadline: Dec 31, 2026",
+        scoreLabel: "Global Score",
+        badgeApply: "🟢 APPLY (HIGH COMPATIBILITY)",
+        rubricTitle: "Multicriteria Eligibility Rubric (8 Dimensions)",
+        dim1Title: "1. Mission & Statutory Alignment (SDGs 7, 9)",
+        dim2Title: "2. Legal & Non-Profit Eligibility (Cooperative Society / NGO)",
+        dim3Title: "3. Budgetary Range & CAPEX / OPEX Feasibility",
+        dim4Title: "4. Technical Team Capacity & University Partnerships",
+        dim5Title: "5. Measurable Community Impact & Long-term Sustainability",
+        mmlTitle: "4x4 Logical Framework Matrix (LFA / MML)",
+        mmlSub: "Project: Community Clean Energy Microgrids for Rural Production Workshops",
+        thLevel: "Level",
+        thSummary: "Narrative Summary",
+        thIndicators: "Objectively Verifiable Indicators (OVIs)",
+        thMeans: "Means of Verification",
+        thAssumptions: "Critical Assumptions",
+        tdFinDesc: "Increase energy self-reliance and cut operating power costs by 30% in rural workshops.",
+        tdFinInd: "Percentage of utility bill savings evaluated at 24 months.",
+        tdFinMeans: "Energy billing receipts and audited financial statements.",
+        tdFinAss: "Regulatory stability in community distributed generation.",
+        tdPropDesc: "Commission 3 community wind microgrids with local technical maintenance committees.",
+        tdPropInd: "3 operating systems with >95% continuous technical availability.",
+        tdPropMeans: "Open IoT telemetry logs and official handover minutes.",
+        tdPropAss: "Active participation of member workers in communal work.",
+        tdCompDesc: "C1: Tested prototype.<br>C2: Commissioned local grid.<br>C3: Technical certification program.",
+        tdCompInd: "100% tested in university labs and 25 certified technicians.",
+        tdCompMeans: "Official vocational certificates and technical logs.",
+        tdCompAss: "Timely delivery of mechanical and electrical supplies.",
+        assTitle: "Assembly Legal Quorum Register",
+        assSub: "Core invariant: One accredited member = One direct vote. Zero capital weighting.",
+        assRow1: "Registered Founding Members",
+        assRow2: "Active Worker Members",
+        assRow3: "Quorum Status",
+        badgeAssQuorum: "VALID FOR LEGAL RESOLUTIONS",
+        voteTitle: "Assembly Resolution Under Vote",
+        voteSub: "Grant application decision for IDB Multilateral Call:",
+        voteMotion: '"Formal approval to submit application to the IDB Energy Transition Fund for $120,000 USD and commit institutional matching capacity."',
+        voteYes: "IN FAVOR: 50 votes (100%)",
+        voteAttest: "Certified by the internal Vigilance Board.",
+        footerCopy: "CoopExecutive — MIT Open Source License · Repository: github.com/pablomorenoc96/coop-executive",
+        footerTag: "Technology in service of community sovereignty"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = translations[lang];
+      if (!t) return;
+
+      // Update button styling
+      const btnEs = document.getElementById('btn-lang-es');
+      const btnEn = document.getElementById('btn-lang-en');
+      if (lang === 'es') {
+        btnEs.className = "px-2.5 py-1 rounded font-bold bg-brand-500 text-slate-950 transition";
+        btnEn.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded font-bold bg-brand-500 text-slate-950 transition";
+        btnEs.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      }
+
+      // Map texts
+      document.getElementById('txt-org-name').innerText = t.orgName;
+      document.getElementById('txt-status-gov').innerText = t.statusGov;
+      document.getElementById('txt-regime-label').innerText = t.regimeLabel;
+      document.getElementById('txt-regime-val').innerText = t.regimeVal;
+      document.getElementById('tab-text-overview').innerText = t.tabOverview;
+      document.getElementById('tab-text-grants').innerText = t.tabGrants;
+      document.getElementById('tab-text-mml').innerText = t.tabMml;
+      document.getElementById('tab-text-assembly').innerText = t.tabAssembly;
+
+      document.getElementById('badge-thesis').innerText = t.badgeThesis;
+      document.getElementById('txt-thesis-sub').innerText = t.thesisSub;
+      document.getElementById('txt-thesis-h1').innerText = t.thesisH1;
+      document.getElementById('txt-thesis-p').innerText = t.thesisP;
+      document.getElementById('txt-quorum-label').innerText = t.quorumLabel;
+      document.getElementById('txt-quorum-val').innerText = t.quorumVal;
+
+      document.getElementById('f1-badge').innerText = t.f1Badge;
+      document.getElementById('f1-title').innerText = t.f1Title;
+      document.getElementById('f1-desc').innerText = t.f1Desc;
+      document.getElementById('f2-badge').innerText = t.f2Badge;
+      document.getElementById('f2-title').innerText = t.f2Title;
+      document.getElementById('f2-desc').innerText = t.f2Desc;
+      document.getElementById('f3-badge').innerText = t.f3Badge;
+      document.getElementById('f3-title').innerText = t.f3Title;
+      document.getElementById('f3-desc').innerText = t.f3Desc;
+
+      document.getElementById('txt-council-title').querySelector('span').innerText = t.councilTitle;
+      document.getElementById('role1-title').innerText = t.role1Title;
+      document.getElementById('role1-sub').innerText = t.role1Sub;
+      document.getElementById('role1-desc').innerText = t.role1Desc;
+      document.getElementById('role2-title').innerText = t.role2Title;
+      document.getElementById('role2-sub').innerText = t.role2Sub;
+      document.getElementById('role2-desc').innerText = t.role2Desc;
+      document.getElementById('role3-title').innerText = t.role3Title;
+      document.getElementById('role3-sub').innerText = t.role3Sub;
+      document.getElementById('role3-desc').innerText = t.role3Desc;
+      document.getElementById('role4-title').innerText = t.role4Title;
+      document.getElementById('role4-sub').innerText = t.role4Sub;
+      document.getElementById('role4-desc').innerText = t.role4Desc;
+      document.getElementById('role5-title').innerText = t.role5Title;
+      document.getElementById('role5-sub').innerText = t.role5Sub;
+      document.getElementById('role5-desc').innerText = t.role5Desc;
+      document.getElementById('role6-title').innerText = t.role6Title;
+      document.getElementById('role6-sub').innerText = t.role6Sub;
+      document.getElementById('role6-desc').innerText = t.role6Desc;
+
+      document.getElementById('badge-grant-live').innerText = t.badgeGrantLive;
+      document.getElementById('txt-grant-source').innerText = t.grantSource;
+      document.getElementById('txt-grant-h2').innerText = t.grantH2;
+      document.getElementById('txt-grant-meta').innerText = t.grantMeta;
+      document.getElementById('txt-score-label').innerText = t.scoreLabel;
+      document.getElementById('badge-apply').innerText = t.badgeApply;
+      document.getElementById('txt-rubric-title').innerText = t.rubricTitle;
+      document.getElementById('dim1-title').innerText = t.dim1Title;
+      document.getElementById('dim2-title').innerText = t.dim2Title;
+      document.getElementById('dim3-title').innerText = t.dim3Title;
+      document.getElementById('dim4-title').innerText = t.dim4Title;
+      document.getElementById('dim5-title').innerText = t.dim5Title;
+
+      document.getElementById('txt-mml-title').innerText = t.mmlTitle;
+      document.getElementById('txt-mml-sub').innerText = t.mmlSub;
+      document.getElementById('th-level').innerText = t.thLevel;
+      document.getElementById('th-summary').innerText = t.thSummary;
+      document.getElementById('th-indicators').innerText = t.thIndicators;
+      document.getElementById('th-means').innerText = t.thMeans;
+      document.getElementById('th-assumptions').innerText = t.thAssumptions;
+      document.getElementById('td-fin-desc').innerText = t.tdFinDesc;
+      document.getElementById('td-fin-ind').innerText = t.tdFinInd;
+      document.getElementById('td-fin-means').innerText = t.tdFinMeans;
+      document.getElementById('td-fin-ass').innerText = t.tdFinAss;
+      document.getElementById('td-prop-desc').innerText = t.tdPropDesc;
+      document.getElementById('td-prop-ind').innerText = t.tdPropInd;
+      document.getElementById('td-prop-means').innerText = t.tdPropMeans;
+      document.getElementById('td-prop-ass').innerText = t.tdPropAss;
+      document.getElementById('td-comp-desc').innerHTML = t.tdCompDesc;
+      document.getElementById('td-comp-ind').innerText = t.tdCompInd;
+      document.getElementById('td-comp-means').innerText = t.tdCompMeans;
+      document.getElementById('td-comp-ass').innerText = t.tdCompAss;
+
+      document.getElementById('txt-ass-title').innerText = t.assTitle;
+      document.getElementById('txt-ass-sub').innerText = t.assSub;
+      document.getElementById('txt-ass-row1').innerText = t.assRow1;
+      document.getElementById('txt-ass-row2').innerText = t.assRow2;
+      document.getElementById('txt-ass-row3').innerText = t.assRow3;
+      document.getElementById('badge-ass-quorum').innerText = t.badgeAssQuorum;
+      document.getElementById('vote-title').innerText = t.voteTitle;
+      document.getElementById('vote-sub').innerText = t.voteSub;
+      document.getElementById('vote-motion').innerText = t.voteMotion;
+      document.getElementById('txt-vote-yes').innerText = t.voteYes;
+      document.getElementById('txt-vote-attest').innerText = t.voteAttest;
+      document.getElementById('txt-footer-copy').innerText = t.footerCopy;
+      document.getElementById('txt-footer-tag').innerText = t.footerTag;
+    }
+
     function switchTab(tabId) {
       document.getElementById('tab-content-overview').classList.add('hidden');
       document.getElementById('tab-content-grants').classList.add('hidden');
@@ -474,6 +773,12 @@
 
       document.getElementById('tab-content-' + tabId).classList.remove('hidden');
       document.getElementById('tab-btn-' + tabId).className = 'tab-btn px-4 py-3 text-sm font-medium border-b-2 tab-active transition flex items-center space-x-2';
+    }
+
+    // Check query param
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('lang') === 'en') {
+      setLanguage('en');
     }
   </script>
 </body>

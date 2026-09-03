@@ -33,7 +33,7 @@ It includes a dedicated **Grant Procurement Agent** designed to evaluate, plan, 
 
 ## Visual Demonstration
 
-![CoopExecutive Showcase](assets/demo.gif)
+![CoopExecutive Showcase](assets/demo_en.gif)
 
 ---
 
