@@ -12,13 +12,16 @@ if sys.platform == "win32":
         sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 import click
-from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.markdown import Markdown
 from rich.table import Table
 
-from coopexecutive.config import get_settings
+from coopexecutive.cli import crm as _crm
+from coopexecutive.cli import procuracion as _procuracion
+from coopexecutive.cli._consola import console
+from coopexecutive.config import get_settings, usar_espacio
+from coopexecutive.guardrails import LEYENDA_BORRADOR, agregar_leyenda, revisar_respuesta
 from coopexecutive.memory.company_profile import CoopProfile
 from coopexecutive.orchestrator.coop_executive import CoopExecutive
 from coopexecutive.governance.voting import (
@@ -29,31 +32,63 @@ from coopexecutive.governance.voting import (
     get_proposal,
     VoteChoice,
 )
-from coopexecutive.utils.fechas import local_desde_utc
-
-console = Console(legacy_windows=False)
+from coopexecutive.utils.fechas import hoy_local, local_desde_utc
 
 
 @click.group()
-def cli() -> None:
+@click.option(
+    "--espacio",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    help="Carpeta de la organización (perfil, base de datos y salidas). También: COOPEXECUTIVE_WORKSPACE.",
+)
+@click.pass_context
+def cli(ctx: click.Context, espacio: Path | None) -> None:
     """CoopExecutive — Sistema Directivo y Procurador de Fondos para la Economía Social."""
-    pass
+    ctx.ensure_object(dict)
+    ctx.obj["espacio"] = espacio
+    if espacio is not None:
+        usar_espacio(espacio)
 
 
 @cli.command()
 @click.argument("pregunta")
 @click.option("--rol", default=None, help="Especialista a enfocar: procurador, vigilancia, legal, finanzas, tecnico, comunicacion, asamblea")
-def ask(pregunta: str, rol: str | None) -> None:
+@click.option("--estricto", is_flag=True, help="Sustituir montos y fechas sin respaldo por marcadores antes de mostrar la respuesta.")
+def ask(pregunta: str, rol: str | None, estricto: bool) -> None:
     """Hacer una consulta directa al Director Colegiado."""
-    asyncio.run(_ask(pregunta, rol))
+    asyncio.run(_ask(pregunta, rol, estricto))
 
 
-async def _ask(pregunta: str, rol: str | None) -> None:
+async def _ask(pregunta: str, rol: str | None, estricto: bool = False) -> None:
     executive = CoopExecutive()
     console.print(f"\n[bold green]🏛️ CoopExecutive ({executive.profile.name})[/bold green]\n")
+    texto = ""
     async for chunk in executive.stream_chat(pregunta, specialist_focus=rol):
-        console.print(chunk, end="", highlight=False)
-    console.print("\n")
+        texto += chunk
+        if not estricto:
+            console.print(chunk, end="", highlight=False)
+    if not estricto and rol != "procurador":
+        console.print("\n")
+        return
+
+    # Revisión posterior: montos y fechas sin respaldo, emojis, extensión y contrapunto.
+    contexto = f"{pregunta}\n{executive.profile.to_prompt_block()}"
+    revision = revisar_respuesta(
+        texto, contexto, estricto=estricto, hoy=hoy_local(executive.settings.user_timezone)
+    )
+    if estricto:
+        final = agregar_leyenda(revision.texto) if rol == "procurador" else revision.texto
+        console.print(final, highlight=False)
+    else:
+        console.print(f"\n\n{LEYENDA_BORRADOR}", highlight=False)
+    if revision.observaciones:
+        console.print(Panel(
+            "\n".join(f"- {o}" for o in revision.observaciones),
+            title="Revisión automática",
+            border_style="yellow",
+        ))
+    console.print()
 
 
 @cli.command()
@@ -98,40 +133,6 @@ async def _chat() -> None:
 
         history.append({"role": "user", "content": user_input})
         history.append({"role": "assistant", "content": response_text})
-
-
-@cli.command("evaluar-convocatoria")
-@click.argument("origen", type=str)
-def evaluar_convocatoria(origen: str) -> None:
-    """Evaluar una convocatoria (texto, URL o archivo) con la Matriz de 100 Puntos."""
-    asyncio.run(_evaluar_convocatoria(origen))
-
-
-async def _evaluar_convocatoria(origen: str) -> None:
-    executive = CoopExecutive()
-    console.print(f"\n[bold cyan]📋 Agente Procurador de Fondos — Evaluando Convocatoria[/bold cyan]\n")
-    
-    contenido = origen
-    path_candidate = Path(origen)
-    if path_candidate.exists() and path_candidate.is_file():
-        contenido = path_candidate.read_text(encoding="utf-8")
-        console.print(f"Archivo cargado: [dim]{path_candidate.name}[/dim]")
-
-    prompt = (
-        f"Actúa como el Agente Procurador de Fondos de {executive.profile.name}. "
-        f"Evalúa la siguiente convocatoria aplicando con rigor la Matriz de Evaluación de 100 Puntos (las 8 dimensiones):\n\n"
-        f"{contenido}\n\n"
-        f"Genera el Dictamen Ejecutivo con:\n"
-        f"1. Datos clave (Donante, Monto, Fecha límite, Elegibilidad).\n"
-        f"2. Tabla de puntuación desglosada (0-100 pts) con justificación técnica.\n"
-        f"3. Dictamen claro: APLICAR / EXPLORAR / CONDICIONAL / NO APLICAR.\n"
-        f"4. Fortalezas de nuestra organización y Riesgos/Brechas identificadas.\n"
-        f"5. Ruta de acción recomendada paso a paso."
-    )
-
-    async for chunk in executive.stream_chat(prompt, specialist_focus="procurador"):
-        console.print(chunk, end="", highlight=False)
-    console.print("\n")
 
 
 @cli.command("marco-logico")
@@ -327,6 +328,10 @@ def cmd_escrutinio(propuesta_id: int, padron: int) -> None:
         console.print(Markdown(tally["acta_md"]))
     except ValueError as e:
         console.print(Panel(f"[bold red]✗ Error en Escrutinio:[/bold red] {e}", title="Error", border_style="red"))
+
+
+for _comando in (*_procuracion.COMANDOS, *_crm.COMANDOS):
+    cli.add_command(_comando)
 
 
 if __name__ == "__main__":

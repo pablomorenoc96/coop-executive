@@ -65,3 +65,74 @@ def initialize_db() -> None:
                 FOREIGN KEY (proposal_id) REFERENCES assembly_proposals(id)
             );
         """)
+        _migrar(conn)
+
+
+# Cada migración se aplica una sola vez; PRAGMA user_version guarda la última aplicada.
+MIGRACIONES: tuple[str, ...] = (
+    # 1. Núcleo de procuración: evaluaciones completas, financiadores y expedientes.
+    """
+    ALTER TABLE grant_evaluations ADD COLUMN resultado_json TEXT;
+    ALTER TABLE grant_evaluations ADD COLUMN expediente_folio TEXT;
+    ALTER TABLE grant_evaluations ADD COLUMN hash TEXT;
+
+    CREATE TABLE IF NOT EXISTS financiadores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        folio TEXT NOT NULL UNIQUE,
+        organizacion TEXT NOT NULL,
+        organizacion_normalizada TEXT NOT NULL UNIQUE,
+        proyecto TEXT NOT NULL,
+        tipo TEXT NOT NULL,
+        canal TEXT NOT NULL,
+        contacto TEXT NOT NULL DEFAULT '',
+        moneda TEXT NOT NULL,
+        monto_solicitado REAL,
+        monto_comprometido REAL,
+        monto_recibido REAL,
+        estatus TEXT NOT NULL DEFAULT 'Prospecto',
+        seguimiento TEXT,
+        notas TEXT NOT NULL DEFAULT '',
+        creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS expedientes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        folio TEXT NOT NULL UNIQUE,
+        tipo TEXT NOT NULL,
+        entidad TEXT NOT NULL,
+        entidad_normalizada TEXT NOT NULL,
+        titulo TEXT NOT NULL,
+        objetivo TEXT NOT NULL DEFAULT '',
+        responsable TEXT NOT NULL DEFAULT '',
+        fecha_limite TEXT,
+        monto REAL,
+        moneda TEXT,
+        abierto INTEGER NOT NULL DEFAULT 1,
+        creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS ux_expediente_abierto
+        ON expedientes (entidad_normalizada, tipo) WHERE abierto = 1;
+
+    CREATE TABLE IF NOT EXISTS avances (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        expediente_id INTEGER NOT NULL REFERENCES expedientes(id),
+        estado TEXT NOT NULL,
+        pendientes TEXT NOT NULL DEFAULT '',
+        siguiente_accion TEXT NOT NULL DEFAULT '',
+        origen TEXT NOT NULL,
+        registrado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """,
+)
+
+
+def version_esquema(conn: sqlite3.Connection) -> int:
+    return conn.execute("PRAGMA user_version").fetchone()[0]
+
+
+def _migrar(conn: sqlite3.Connection) -> None:
+    actual = version_esquema(conn)
+    for numero, script in enumerate(MIGRACIONES[actual:], start=actual + 1):
+        conn.executescript(f"BEGIN;\n{script}\nPRAGMA user_version = {numero};\nCOMMIT;")

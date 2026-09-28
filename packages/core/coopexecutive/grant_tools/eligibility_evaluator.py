@@ -9,6 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from coopexecutive.grant_tools.matrix import PESOS, UMBRAL_APLICAR, UMBRAL_CONDICIONAL, UMBRAL_EXPLORAR
+
 
 @dataclass
 class DimensionScore:
@@ -86,24 +88,24 @@ def evaluate_grant_opportunity(
 ) -> EvaluationReport:
     """Calcula la matriz ponderada y genera el reporte ejecutivo."""
     dims = [
-        DimensionScore("Alineación con la Misión", 20, min(20.0, max(0.0, mission_alignment)), alignment_notes),
-        DimensionScore("Elegibilidad Geográfica y Legal", 10, min(10.0, max(0.0, geo_eligibility)), geo_notes),
-        DimensionScore("Rango Presupuestal Adecuado", 15, min(15.0, max(0.0, budget_feasibility)), budget_notes),
-        DimensionScore("Viabilidad de Tiempos y Entrega", 10, min(10.0, max(0.0, timeline_feasibility)), timeline_notes),
-        DimensionScore("Capacidad Técnica y Operativa", 15, min(15.0, max(0.0, capacity_score)), capacity_notes),
-        DimensionScore("Potencial de Impacto Medible (ODS)", 15, min(15.0, max(0.0, impact_score)), impact_notes),
-        DimensionScore("Valor Estratégico a Largo Plazo", 10, min(10.0, max(0.0, strategic_value)), strategic_notes),
-        DimensionScore("Requisitos de Auditoría y Reporte", 5, min(5.0, max(0.0, reporting_manageability)), reporting_notes),
+        DimensionScore("Alineación con la Misión", PESOS["alineacion"], min(float(PESOS["alineacion"]), max(0.0, mission_alignment)), alignment_notes),
+        DimensionScore("Elegibilidad Geográfica y Legal", PESOS["elegibilidad"], min(float(PESOS["elegibilidad"]), max(0.0, geo_eligibility)), geo_notes),
+        DimensionScore("Rango Presupuestal Adecuado", PESOS["presupuesto"], min(float(PESOS["presupuesto"]), max(0.0, budget_feasibility)), budget_notes),
+        DimensionScore("Viabilidad de Tiempos y Entrega", PESOS["tiempos"], min(float(PESOS["tiempos"]), max(0.0, timeline_feasibility)), timeline_notes),
+        DimensionScore("Capacidad Técnica y Operativa", PESOS["capacidad"], min(float(PESOS["capacidad"]), max(0.0, capacity_score)), capacity_notes),
+        DimensionScore("Potencial de Impacto Medible (ODS)", PESOS["impacto"], min(float(PESOS["impacto"]), max(0.0, impact_score)), impact_notes),
+        DimensionScore("Valor Estratégico a Largo Plazo", PESOS["estrategico"], min(float(PESOS["estrategico"]), max(0.0, strategic_value)), strategic_notes),
+        DimensionScore("Requisitos de Auditoría y Reporte", PESOS["reporte"], min(float(PESOS["reporte"]), max(0.0, reporting_manageability)), reporting_notes),
     ]
     total = sum(d.score for d in dims)
     
-    if total >= 80.0:
+    if total >= UMBRAL_APLICAR:
         rec = "APLICAR (Alta Compatibilidad)"
         color = "🟢"
-    elif total >= 60.0:
+    elif total >= UMBRAL_EXPLORAR:
         rec = "EXPLORAR (Requiere Alianzas o Definición)"
         color = "🟡"
-    elif total >= 40.0:
+    elif total >= UMBRAL_CONDICIONAL:
         rec = "CONDICIONAL (Solo si existe capacidad ociosa)"
         color = "🟠"
     else:

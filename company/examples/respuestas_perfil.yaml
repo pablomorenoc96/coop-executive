@@ -1,0 +1,22 @@
+# Respuestas de ejemplo para: coopexecutive configurar --desde respuestas_perfil.yaml
+# Datos ficticios. Lo que no se conozca se deja vacío y el perfil lo marca como [PENDIENTE].
+# No incluya RFC, CURP, domicilio ni cuentas bancarias: el comando los rechaza o no los pide.
+
+nombre: "Energía Solidaria del Valle"
+siglas: "ESV"
+figura: "Asociación Civil"
+mision: "Llevar energía limpia y capacitación técnica a comunidades rurales."
+poblacion: "Hogares rurales; escuelas comunitarias"
+territorio: "Valle de Ejemplo"
+programas: "Microrredes solares; Taller de mantenimiento"
+ejes: "Energía renovable; Formación técnica"
+metricas: ""
+estatus_legal: "Acta constitutiva vigente"
+estatus_fiscal: ""
+rango_minimo: 50000
+rango_maximo: 500000
+moneda: MXN
+alianzas: ""
+financiadores: ""
+aprobadores: "Consejo directivo"
+mecanismos_cobro: "Transferencia bancaria"

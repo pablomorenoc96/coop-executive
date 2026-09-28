@@ -1,0 +1,50 @@
+# Plantilla de ejemplo. La persona y su negocio son ficticios: sustituya todos los datos por los suyos.
+# No escriba aquí identificadores fiscales, domicilio, cuentas bancarias ni contraseñas.
+name: "Taller Solar del Valle (ejemplo)"
+tipo_organizacion: persona_fisica
+legal_structure: "Persona física con actividad empresarial"
+regime: "Actividad empresarial y profesional"
+country: "México"
+mission: >
+  Diseñar e instalar sistemas de energía solar y automatización para pequeños
+  productores y talleres de la región, con mantenimiento local y precios accesibles.
+vision: >
+  Ser el taller de referencia en energía limpia y automatización para la economía local.
+values:
+  - "Calidad técnica verificable"
+  - "Trato directo y transparente con cada cliente"
+target_communities:
+  - "Pequeños productores agrícolas"
+  - "Talleres y comercios locales"
+focus_areas:
+  - "Energía solar fotovoltaica"
+  - "Automatización de procesos pequeños"
+  - "Formación técnica"
+funding_sources:
+  - "Venta de servicios de ingeniería"
+  - "Créditos para emprendedores"
+  - "Convocatorias de innovación y energía"
+strategic_priorities:
+  - "Financiar equipo de medición y demostración"
+  - "Certificar competencias técnicas"
+procuracion:
+  siglas: "TSV"
+  estatus_legal: "[Situación de alta ante la autoridad fiscal]"
+  estatus_fiscal: "[Régimen fiscal]"
+  territorio: "[Municipios donde presta servicios]"
+  programas:
+    - "Instalación y mantenimiento de sistemas solares"
+    - "Automatización de bombeo y riego"
+  metricas_impacto: []
+  alianzas: []
+  financiadores_historicos: []
+  rango_presupuesto:
+    minimo: null
+    maximo: null
+    moneda: MXN
+  moneda_base: MXN
+  mecanismos_cobro:
+    - "Transferencia bancaria"
+    - "Factura por servicio"
+  aprobadores:
+    - "Titular del negocio"

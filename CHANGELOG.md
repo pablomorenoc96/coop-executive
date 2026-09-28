@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-09-27
+
+### Added
+- **Workspaces:** `--espacio` (or `COOPEXECUTIVE_WORKSPACE`) points to a folder with `profile.yaml`, `coop_memory.db` and `salidas/`. `coopexecutive iniciar` creates it without overwriting an existing profile. Explicit `COMPANY_PROFILE_PATH` and `EPISODIC_DB_PATH` keep priority, and without a workspace everything works as before.
+- **Organisation types:** `tipo_organizacion` (cooperativa, asociacion_civil, empresa, persona_fisica), inferred from the legal structure when absent. Statutory funds and the one-member-one-vote assembly apply only to cooperatives; other organisations get a general advisory persona. New fictitious template `company/templates/persona_fisica_empresarial.yaml`.
+- **Procurement profile:** optional `procuracion` block (short name, legal and tax status, territory, programmes, impact metrics, alliances, past funders, budget range, base currency, payment channels, approvers, letterhead). Missing data is shown as `[PENDIENTE: …]`.
+- **`coopexecutive configurar`:** ten guided questions or `--desde answers.yaml`; shows a summary, rejects RFC/CURP identifiers and backs up the previous profile as `profile.yaml.bak-YYYYMMDD-HHMMSS`.
+- **Deterministic matrix (`grant_tools.matrix`):** 8 criteria with required evidence; empty criteria stay pending instead of counting as zero; deadline bands; decision precedence; counterpoint; next step; SHA-256 hash. Results are stored in `grant_evaluations`, which was never written before.
+- **`evaluar-convocatoria`** now runs the matrix in three modes: interactive, `--archivo` YAML and assisted (the model proposes scores as JSON, you confirm, the matrix decides and the model drafts the analysis). `--expediente` links the evaluation to a case.
+- **Funders (`financiadores registrar|buscar|ver|actualizar`)** with `FIN-YYYY-NNNN` folios, catalogues, normalised duplicate detection and amounts in any ISO 4217 currency.
+- **Cases (`expedientes abrir|avance|ver|listar`)** with `EXP-YYYY-NNNN` folios, one open case per entity and type, a progress log with data origin and linked evaluations.
+- **Post-generation review (`guardrails`):** flags unsupported amounts and dates, emojis, answers over 900 words, recommendations without a counterpoint and claims of actions that were not executed. `ask --estricto` replaces unsupported amounts and dates with placeholders.
+- The system prompt includes today's date in the organisation's time zone.
+- Fictitious examples in `company/examples/` for `configurar --desde` and `evaluar-convocatoria --archivo`.
+
+### Changed
+- **BREAKING — `evaluar-convocatoria`:** the previous LLM-only command is replaced by the matrix. Passing a text or file with the call's rules starts the assisted mode; URLs are not downloaded.
+- The grant procurement prompt was rewritten (under 8,000 characters) around evidence, placeholders and the matrix decision.
+- The database schema is versioned with `PRAGMA user_version`; migrations add the `financiadores`, `expedientes` and `avances` tables and three columns to `grant_evaluations`.
+- `eligibility_evaluator` takes its weights and thresholds from the matrix module.
+
+---
+
 ## [0.1.1] - 2026-09-27
 
 ### Changed

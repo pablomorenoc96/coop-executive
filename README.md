@@ -42,7 +42,8 @@ In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Age
      - Historical assembly agreements.
      - Assembly proposals.
      - Registered member ballots (with strict deduplication per proposal).
-     - Prior grant opportunity evaluations.
+     - Grant opportunity evaluations, with the full result and its SHA-256 hash.
+     - Funders, procurement cases and their progress log.
 
 4. **Universal Inference Engine:**
    - Flexible routing across three compute tiers:
@@ -51,7 +52,7 @@ In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Age
      - *Commercial APIs (optional):* OpenAI, Anthropic, Google Gemini, Groq, Mistral, and DeepSeek.
 
 5. **Deterministic Tool-Use Layer:**
-   - 100-point multicriteria rubric (evaluates 8 dimensions to issue *APPLY*, *EXPLORE*, or *REJECT* verdicts).
+   - Deterministic 100-point matrix: 8 criteria with required evidence, deadline bands and decision precedence (*APLICAR*, *EXPLORAR*, *CONDICIONAL*, *DESCARTAR*, or a verification step when eligibility, validity or evidence is missing).
    - 4x4 Logical Framework Matrix (Goals, Indicators, Verification Means, Assumptions).
    - Budget builder with explicit cash and in-kind matching funds calculations.
    - Multilateral proposal dossier compiler for major funding bodies (IDB, Horizon, foundations).
@@ -100,6 +101,15 @@ In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Age
 * Answers operational, technical, and legal questions regarding cooperative law and tax exemption.
 * Generates clear documentation for internal assembly review.
 
+### 4. Procurement Workspace (0.2.0)
+* **One workspace per organisation:** `iniciar` creates a folder with the profile, the database and an outputs folder. One installation serves several organisations, and their data stays outside the repository.
+* **Guided profile setup:** `configurar` asks ten questions (or reads them from a YAML file), shows a summary, and backs up the previous profile before writing. Tax identifiers are rejected.
+* **Organisation types:** cooperatives, civil associations, companies and self-employed individuals. Statutory funds and the one-member-one-vote assembly apply only to cooperatives.
+* **Deterministic evaluation matrix:** eight criteria with mandatory evidence; an empty criterion stays pending instead of counting as zero. Deadline bands, decision precedence (eligibility, validity, tensions, completeness, score) and a counterpoint are computed in code, and every result is sealed with a SHA-256 hash. The same matrix serves calls, scholarships, awards and loans.
+* **Three input modes:** interactive, `--archivo` (YAML) or assisted, where the model only proposes scores with evidence as JSON; pydantic validates the proposal, you confirm it, the matrix decides and the model drafts the analysis.
+* **Funders and cases:** a funder base (`FIN-YYYY-NNNN`) with duplicate detection by normalised name and amounts in any ISO 4217 currency, and cases (`EXP-YYYY-NNNN`) with a progress log, data origin and linked evaluations.
+* **No invented data:** answers are reviewed after generation. Unsupported amounts and dates are flagged (or replaced with `MONTO POR DEFINIR` / `[PENDIENTE: fecha]` with `--estricto`), as are emojis, answers over 900 words, recommendations without a counterpoint and claims that something was saved when no command ran.
+
 ---
 
 ## Quickstart
@@ -114,8 +124,16 @@ uv sync --all-groups --extra dev
 # Configure environment variables:
 cp ../../.env.example .env
 
-# Evaluate a grant opportunity with the 100-point rubric:
-uv run coopexecutive evaluar "Clean_Energy_Grant_Call.txt"
+# Create a workspace for your organisation (keep it outside the repository):
+uv run coopexecutive iniciar ~/procuracion/my-org --nombre "My Organisation" --tipo asociacion_civil
+uv run coopexecutive --espacio ~/procuracion/my-org configurar --desde ../../company/examples/respuestas_perfil.yaml
+
+# Evaluate an opportunity with the deterministic 100-point matrix:
+uv run coopexecutive --espacio ~/procuracion/my-org evaluar-convocatoria --archivo ../../company/examples/convocatoria_ejemplo.yaml
+
+# Track funders and cases:
+uv run coopexecutive --espacio ~/procuracion/my-org financiadores registrar "Example Foundation" --proyecto "Community microgrids" --tipo "Fundación" --canal "Correo" --moneda USD
+uv run coopexecutive --espacio ~/procuracion/my-org expedientes abrir "Example Foundation" --tipo Convocatoria
 
 # Generate a complete multilateral proposal dossier:
 uv run coopexecutive dossier "Community Clean Microgrids" --donante "IDB"

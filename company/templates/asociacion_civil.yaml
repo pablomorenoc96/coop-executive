@@ -1,5 +1,6 @@
 # Plantilla de ejemplo. La organización es ficticia: sustituya todos los datos por los de la suya.
 name: "Agua y Territorio A.C. (ejemplo)"
+tipo_organizacion: asociacion_civil
 legal_structure: "Asociación Civil (A.C.)"
 regime: "Persona moral sin fines de lucro"
 country: "México"
@@ -30,3 +31,23 @@ funding_sources:
 strategic_priorities:
   - "Documentar resultados con indicadores verificables"
   - "Diversificar las fuentes de financiamiento"
+procuracion:
+  siglas: "AyT"
+  estatus_legal: "[Estatus legal vigente]"
+  estatus_fiscal: "[Estatus fiscal vigente]"
+  territorio: "[Municipios o regiones donde trabaja]"
+  programas:
+    - "Captación de agua de lluvia en escuelas"
+    - "Formación de comités comunitarios de agua"
+  metricas_impacto: []
+  alianzas: []
+  financiadores_historicos: []
+  rango_presupuesto:
+    minimo: null
+    maximo: null
+    moneda: MXN
+  moneda_base: MXN
+  mecanismos_cobro:
+    - "Transferencia bancaria"
+  aprobadores:
+    - "Consejo Directivo"

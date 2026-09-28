@@ -100,6 +100,15 @@ En términos de arquitectura de software, **CoopExecutive es un Agente de IA Ver
 * Respuestas técnicas fundamentadas en la LGSC, régimen de Donatarias Autorizadas (SAT) y normas ISO/NOM.
 * Consultas operativas sobre fondos de reserva, balances y presupuestos de proyecto.
 
+### 4. Espacio de Procuración (0.2.0)
+* **Un espacio por organización:** `iniciar` crea una carpeta con el perfil, la base de datos y una carpeta de salidas. Una sola instalación atiende a varias organizaciones y sus datos quedan fuera del repositorio.
+* **Autoconfiguración:** `configurar` hace diez preguntas (o las lee de un YAML), muestra un resumen y respalda el perfil anterior antes de escribir. Rechaza RFC y CURP.
+* **Tipos de organización:** cooperativa, asociación civil, empresa y persona física con actividad empresarial. Los fondos estatutarios y la asamblea de un socio, un voto aplican solo a cooperativas.
+* **Matriz determinista:** ocho criterios con evidencia obligatoria; un criterio vacío queda pendiente y no cuenta como cero. Las bandas de plazo, el orden de decisión (elegibilidad, vigencia, tensiones, completitud y puntaje) y el contrapunto se calculan en código, y cada resultado lleva una huella SHA-256. Sirve para convocatorias, becas, premios y créditos.
+* **Tres modos de entrada:** interactivo, `--archivo` (YAML) o asistido: el modelo solo propone puntajes con evidencia en JSON, pydantic valida, usted confirma, la matriz decide y el modelo redacta el análisis.
+* **Financiadores y expedientes:** base de financiadores (`FIN-AAAA-NNNN`) que detecta duplicados por nombre normalizado y registra montos en cualquier moneda ISO 4217; expedientes (`EXP-AAAA-NNNN`) con bitácora de avances, origen del dato y evaluaciones vinculadas.
+* **Sin datos inventados:** cada respuesta se revisa después de generarse. Se señalan montos y fechas sin respaldo (con `--estricto` se sustituyen por `MONTO POR DEFINIR` o `[PENDIENTE: fecha]`), emojis, respuestas de más de 900 palabras, recomendaciones sin contrapunto y frases que dan por guardado algo que no se ejecutó.
+
 ---
 
 ## Inicio Rápido
@@ -114,8 +123,16 @@ uv sync --all-groups --extra dev
 # Configurar variables de entorno:
 cp ../../.env.example .env
 
-# Evaluar una convocatoria con la rúbrica de 100 puntos:
-uv run coopexecutive evaluar "Convocatoria_Energia_Limpia_BID.txt"
+# Crear el espacio de su organización (fuera del repositorio):
+uv run coopexecutive iniciar ~/procuracion/mi-org --nombre "Mi Organización" --tipo asociacion_civil
+uv run coopexecutive --espacio ~/procuracion/mi-org configurar --desde ../../company/examples/respuestas_perfil.yaml
+
+# Evaluar una oportunidad con la matriz determinista de 100 puntos:
+uv run coopexecutive --espacio ~/procuracion/mi-org evaluar-convocatoria --archivo ../../company/examples/convocatoria_ejemplo.yaml
+
+# Registrar financiadores y expedientes:
+uv run coopexecutive --espacio ~/procuracion/mi-org financiadores registrar "Fundación Ejemplo" --proyecto "Microrredes comunitarias" --tipo "Fundación" --canal "Correo" --moneda USD
+uv run coopexecutive --espacio ~/procuracion/mi-org expedientes abrir "Fundación Ejemplo" --tipo Convocatoria
 
 # Generar un expediente técnico completo para postulación multilateral:
 uv run coopexecutive dossier "Microrredes Rurales Comunitarias" --donante "BID"

@@ -1,0 +1,26 @@
+# Entrada de ejemplo para: coopexecutive evaluar-convocatoria --archivo convocatoria_ejemplo.yaml
+# Datos ficticios. Cada puntaje necesita evidencia; un criterio sin evidencia se deja
+# con puntos vacíos (null) y queda pendiente: nunca cuenta como cero.
+
+convocatoria: "Fondo de Energía Comunitaria 2026"
+financiador: "Fundación Ejemplo"
+tipo: convocatoria            # convocatoria | beca | premio | credito | otro
+monto: "250,000.00 MXN"       # tal como aparece en las bases, con moneda ISO
+
+# Use fecha_cierre (AAAA-MM-DD) cuando la conozca. dias_restantes sirve para ejemplos.
+dias_restantes: 40
+evidencia_plazo: "Bases, numeral 5: fecha límite de recepción."
+
+elegibilidad: confirmada      # confirmada | excluida | pendiente
+vigencia: vigente             # vigente | vencida | pendiente
+tension: ninguna              # ninguna | resuelta | pendiente | posicion_publica
+
+criterios:
+  alineacion:   {puntos: 18, evidencia: "Objetivo 2 de las bases: energía renovable comunitaria."}
+  elegibilidad: {puntos: 9,  evidencia: "Admite organizaciones sin fines de lucro con dos años de operación."}
+  presupuesto:  {puntos: 13, evidencia: "El tope por proyecto está dentro del rango del perfil."}
+  tiempos:      {puntos: 9,  evidencia: "Faltan más de 28 días para el cierre."}
+  capacidad:    {puntos: 13, evidencia: "Equipo técnico con tres instalaciones previas."}
+  impacto:      {puntos: 13, evidencia: "Indicadores de hogares atendidos y kWh generados."}
+  estrategico:  {puntos: 8,  evidencia: "Abre relación con un financiador regional."}
+  reporte:      {puntos: 4,  evidencia: "Informe técnico y financiero semestral."}

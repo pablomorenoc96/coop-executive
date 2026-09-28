@@ -5,7 +5,7 @@ from typing import AsyncIterator
 from coopexecutive.config import get_settings
 from coopexecutive.memory.company_profile import CoopProfile
 from coopexecutive.memory.episodic import initialize_db
-from coopexecutive.prompts.cooperative_persona import COOPERATIVE_PERSONA_PROMPT
+from coopexecutive.prompts.cooperative_persona import COOPERATIVE_PERSONA_PROMPT, ORGANIZATION_PERSONA_PROMPT
 from coopexecutive.prompts.domain_prompts import (
     VIGILANCIA_PROMPT,
     LEGAL_SOCIAL_PROMPT,
@@ -16,6 +16,7 @@ from coopexecutive.prompts.domain_prompts import (
 )
 from coopexecutive.prompts.grant_procurement import GRANT_PROCUREMENT_PROMPT
 from coopexecutive.providers.client import AIClient
+from coopexecutive.utils.fechas import fecha_larga, hoy_local
 
 
 class CoopExecutive:
@@ -26,7 +27,10 @@ class CoopExecutive:
         self.client = AIClient()
 
     def build_system_prompt(self, specialist_focus: str | None = None) -> str:
-        base = COOPERATIVE_PERSONA_PROMPT.replace("{VOICE_PERSONA}", "")
+        if self.profile.es_cooperativa:
+            base = COOPERATIVE_PERSONA_PROMPT.replace("{VOICE_PERSONA}", "")
+        else:
+            base = ORGANIZATION_PERSONA_PROMPT
         profile_block = self.profile.to_prompt_block()
         
         specialist_text = ""
@@ -45,7 +49,9 @@ class CoopExecutive:
         elif specialist_focus == "asamblea":
             specialist_text = f"\n\n### Modo Activo: Secretaría de Actas y Gobernanza\n{SECRETARIA_ASAMBLEA_PROMPT}"
 
-        return f"{base}\n\n{profile_block}{specialist_text}"
+        zona = self.settings.user_timezone
+        fecha = f"**Fecha de hoy:** {fecha_larga(hoy_local(zona))} (zona horaria {zona})."
+        return f"{base}\n\n{fecha}\n\n{profile_block}{specialist_text}"
 
     async def stream_chat(
         self,

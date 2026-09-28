@@ -1,4 +1,4 @@
-from .cooperative_persona import COOPERATIVE_PERSONA_PROMPT
+from .cooperative_persona import COOPERATIVE_PERSONA_PROMPT, ORGANIZATION_PERSONA_PROMPT
 from .grant_procurement import GRANT_PROCUREMENT_PROMPT
 from .domain_prompts import (
     VIGILANCIA_PROMPT,
@@ -12,6 +12,7 @@ from .domain_prompts import (
 
 __all__ = [
     "COOPERATIVE_PERSONA_PROMPT",
+    "ORGANIZATION_PERSONA_PROMPT",
     "GRANT_PROCUREMENT_PROMPT",
     "VIGILANCIA_PROMPT",
     "LEGAL_SOCIAL_PROMPT",

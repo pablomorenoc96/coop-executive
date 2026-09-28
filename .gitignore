@@ -31,3 +31,7 @@ dist/
 .DS_Store
 Thumbs.db
 scratch/
+
+# Procurement workspaces and profile backups (organisation data never goes in the repo)
+*.bak-*
+salidas/

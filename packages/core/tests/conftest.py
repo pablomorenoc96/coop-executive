@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pytest
@@ -23,3 +24,11 @@ def entorno_aislado(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("USER_TIMEZONE", "America/Mexico_City")
     monkeypatch.setattr(config, "_settings", None)
     return tmp_path
+
+
+@pytest.fixture(autouse=True)
+def _sin_espacio_residual():
+    """`usar_espacio` escribe en os.environ; se limpia después de cada prueba."""
+    yield
+    os.environ.pop("COOPEXECUTIVE_WORKSPACE", None)
+    config._settings = None

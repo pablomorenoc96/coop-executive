@@ -27,9 +27,9 @@ flowchart LR
         
         subgraph SUBSYSTEMS["Execution & Deliberation Pillars"]
             direction LR
-            MEM["<b>Episodic Memory (SQLite)</b><br/>• assembly_decisions<br/>• assembly_proposals<br/>• assembly_votes (1 Member = 1 Vote)<br/>• grant_evaluations"]
+            MEM["<b>Episodic Memory (SQLite)</b><br/>• assembly_decisions<br/>• assembly_proposals<br/>• assembly_votes (1 Member = 1 Vote)<br/>• grant_evaluations<br/>• financiadores / expedientes / avances"]
             INF["<b>Universal Inference</b><br/>• Free Cloud: OpenRouter (:free)<br/>• Offline Local: Ollama (llama3.1)<br/>• Commercial: OpenAI / Anthropic / Gemini<br/>• Resilience: HTTP 429 Fallback"]
-            TOOL["<b>Deterministic Tools</b><br/>• 100-Point Rubric (8 Dimensions)<br/>• 4x4 Logical Framework (MIR)<br/>• Budget Builder & In-Kind Matcher<br/>• Quorum Engine (>50% + 1)"]
+            TOOL["<b>Deterministic Tools</b><br/>• 100-Point Matrix (8 Criteria + Evidence)<br/>• 4x4 Logical Framework (MIR)<br/>• Budget Builder & In-Kind Matcher<br/>• Quorum Engine (>50% + 1)"]
         end
 
         ORCH --> SUBSYSTEMS
@@ -73,7 +73,11 @@ flowchart LR
      - `assembly_decisions`: Historical ratified resolutions.
      - `assembly_proposals`: Registered motions for member voting.
      - `assembly_votes`: Individual ballots with a composite primary key / unique constraint `(proposal_id, member_id)` enforcing strictly one vote per member.
-     - `grant_evaluations`: Evaluated calls and historical scoring records.
+     - `grant_evaluations`: Evaluated calls with the full matrix result, its SHA-256 hash and the linked case.
+     - `financiadores`: Funders (`FIN-YYYY-NNNN`) with type, channel, status and amounts in their ISO 4217 currency.
+     - `expedientes` and `avances`: Procurement cases (`EXP-YYYY-NNNN`), at most one open per entity and type, with a progress log that records the origin of each fact.
+   - The schema is versioned with `PRAGMA user_version`; `initialize_db()` applies pending migrations and is idempotent.
+   - **Workspaces (`coopexecutive.config`):** `--espacio` or `COOPEXECUTIVE_WORKSPACE` points to a folder holding `profile.yaml`, `coop_memory.db` and `salidas/`. Explicit `COMPANY_PROFILE_PATH` and `EPISODIC_DB_PATH` still take priority.
 
 3. **Universal Inference Engine (`coopexecutive.providers.client`):**
    - Unified multi-model routing:
@@ -84,7 +88,13 @@ flowchart LR
 
 4. **Deterministic Tool-Use Layer (`coopexecutive.grant_tools`):**
    - Verifiable, non-hallucinatory algorithms:
-     - 100-point rubric across 8 dimensions (Eligibility, Relevance, Technical Design, Sustainability, Budget, Risk, Team Capacity, Impact) issuing binding verdicts (`APLICAR`, `OBSERVAR`, `RECHAZAR`).
+     - 100-point matrix (`grant_tools.matrix`) across 8 criteria: mission alignment (20), geographic and legal eligibility (10), budget range (15), timing (10), technical capacity (15), measurable impact (15), strategic value (10) and reporting requirements (5).
+       - Every score must be an integer within its weight and carry evidence; an empty criterion stays pending and never counts as zero.
+       - Timing points must match the band for the days left before the deadline, counted in the organisation's time zone.
+       - Decision precedence: validation error, excluded eligibility, expired call, unconfirmed eligibility, unconfirmed validity, public-position tension, incomplete evaluation, and finally the score (80 `APLICAR`, 60 `EXPLORAR`, 40 `CONDICIONAL`, otherwise `DESCARTAR`). A pending tension lowers `APLICAR`/`EXPLORAR` to `CONDICIONAL`.
+       - Each result includes the next step, a counterpoint and a SHA-256 hash of its inputs and outputs.
+     - Funders and cases (`coopexecutive.crm`): folios, catalogues, normalised duplicate detection and progress logs.
+     - Post-generation review (`coopexecutive.guardrails`): flags unsupported amounts and dates, emojis, excessive length, missing counterpoints and claimed actions that were not executed.
      - 4x4 Logical Framework Matrix (LFM / MIR) aligning objectives, indicators, means of verification, and assumptions with UN SDGs.
      - Multi-category budget builder with explicit cash and in-kind matching contributions.
      - Digital scrutiny engine computing statutory quorum (>50% + 1 members).

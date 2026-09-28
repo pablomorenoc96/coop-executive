@@ -4,8 +4,11 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import Any
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ARCHIVO_PERFIL = "profile.yaml"
+ARCHIVO_BASE = "coop_memory.db"
 
 
 class Settings(BaseSettings):
@@ -75,6 +78,31 @@ class Settings(BaseSettings):
     user_timezone: str = Field("America/Mexico_City", alias="USER_TIMEZONE")
     log_level: str = Field("INFO", alias="LOG_LEVEL")
 
+    # Espacio de trabajo por organización: carpeta con profile.yaml, base de datos y salidas/.
+    workspace: Path | None = Field(None, alias="COOPEXECUTIVE_WORKSPACE")
+
+    @model_validator(mode="after")
+    def _aplicar_espacio(self) -> "Settings":
+        """Con un espacio activo, el perfil y la base salen de él.
+
+        Las variables de entorno explícitas COMPANY_PROFILE_PATH y EPISODIC_DB_PATH
+        conservan la prioridad (así se aíslan las pruebas).
+        """
+        if self.workspace is None:
+            return self
+        self.workspace = Path(self.workspace).expanduser().resolve()
+        if not os.environ.get("COMPANY_PROFILE_PATH"):
+            self.company_profile_path = self.workspace / ARCHIVO_PERFIL
+        if not os.environ.get("EPISODIC_DB_PATH"):
+            self.episodic_db_path = self.workspace / ARCHIVO_BASE
+        return self
+
+    @property
+    def salidas_dir(self) -> Path:
+        """Carpeta de documentos generados: la del espacio o `salidas/` junto al perfil."""
+        base = self.workspace if self.workspace is not None else self.company_profile_path.parent
+        return base / "salidas"
+
     @property
     def local_models_list(self) -> list[str]:
         return [m.strip() for m in self.local_models.split(",") if m.strip()]
@@ -98,3 +126,11 @@ def get_settings() -> Settings:
     if _settings is None:
         _settings = Settings()
     return _settings
+
+
+def usar_espacio(ruta: str | Path | None) -> None:
+    """Activa un espacio de trabajo para el resto del proceso (opción `--espacio` de la CLI)."""
+    global _settings
+    if ruta is not None:
+        os.environ["COOPEXECUTIVE_WORKSPACE"] = str(Path(ruta).expanduser().resolve())
+    _settings = None
