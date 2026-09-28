@@ -18,9 +18,12 @@ from rich.markdown import Markdown
 from rich.table import Table
 
 from coopexecutive.cli import crm as _crm
+from coopexecutive.cli import documentos as _documentos
+from coopexecutive.cli import monitoreo as _monitoreo
 from coopexecutive.cli import procuracion as _procuracion
-from coopexecutive.cli._consola import console
+from coopexecutive.cli._consola import console, fallar
 from coopexecutive.config import get_settings, usar_espacio
+from coopexecutive import identidad as _identidad
 from coopexecutive.guardrails import LEYENDA_BORRADOR, agregar_leyenda, revisar_respuesta
 from coopexecutive.memory.company_profile import CoopProfile
 from coopexecutive.orchestrator.coop_executive import CoopExecutive
@@ -35,7 +38,7 @@ from coopexecutive.governance.voting import (
 from coopexecutive.utils.fechas import hoy_local, local_desde_utc
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.option(
     "--espacio",
     type=click.Path(file_okay=False, path_type=Path),
@@ -49,6 +52,36 @@ def cli(ctx: click.Context, espacio: Path | None) -> None:
     ctx.obj["espacio"] = espacio
     if espacio is not None:
         usar_espacio(espacio)
+    if ctx.invoked_subcommand is None:
+        _mostrar_intro()
+        console.print(ctx.get_help(), highlight=False)
+
+
+def _mostrar_intro() -> None:
+    settings = get_settings()
+    perfil = CoopProfile.load_from_yaml(settings.company_profile_path)
+    _identidad.mostrar_intro(console, perfil, settings.company_profile_path.parent)
+
+
+@cli.group(invoke_without_command=True)
+@click.pass_context
+def intro(ctx: click.Context) -> None:
+    """Mostrar la intro de la organización (o la de CoopExecutive si no tiene una)."""
+    if ctx.invoked_subcommand is None:
+        _mostrar_intro()
+
+
+@intro.command("generar")
+def intro_generar() -> None:
+    """Crear intro.txt con el logo, la fuente y el lema del bloque `identidad` del perfil."""
+    settings = get_settings()
+    perfil = CoopProfile.load_from_yaml(settings.company_profile_path)
+    try:
+        destino = _identidad.generar_para_perfil(perfil, settings.company_profile_path.parent)
+    except (RuntimeError, OSError, ValueError) as exc:
+        fallar(str(exc), "No se generó la intro")
+    _mostrar_intro()
+    console.print(f"[green]Intro guardada en[/green] {destino}", highlight=False)
 
 
 @cli.command()
@@ -100,13 +133,12 @@ def chat() -> None:
 async def _chat() -> None:
     executive = CoopExecutive()
     settings = get_settings()
-    console.print(Panel.fit(
-        f"[bold cyan]CoopExecutive — Dirección Colegiada y Economía Social[/bold cyan]\n"
-        f"Organización: [bold green]{executive.profile.name}[/bold green]\n"
-        f"Régimen: {executive.profile.legal_structure}\n"
-        f"Modelo IA: [bold yellow]{settings.default_model}[/bold yellow] (Escribe 'salir' para terminar)",
-        border_style="green",
-    ))
+    _identidad.mostrar_intro(console, executive.profile, settings.company_profile_path.parent)
+    console.print(
+        f"Organización: [bold]{executive.profile.name}[/bold] · {executive.profile.legal_structure}\n"
+        f"Modelo IA: [bold yellow]{settings.default_model}[/bold yellow] · Escribe 'salir' para terminar\n",
+        highlight=False,
+    )
 
     history: list[dict[str, str]] = []
 
@@ -330,7 +362,7 @@ def cmd_escrutinio(propuesta_id: int, padron: int) -> None:
         console.print(Panel(f"[bold red]✗ Error en Escrutinio:[/bold red] {e}", title="Error", border_style="red"))
 
 
-for _comando in (*_procuracion.COMANDOS, *_crm.COMANDOS):
+for _comando in (*_procuracion.COMANDOS, *_crm.COMANDOS, *_documentos.COMANDOS, *_monitoreo.COMANDOS):
     cli.add_command(_comando)
 
 

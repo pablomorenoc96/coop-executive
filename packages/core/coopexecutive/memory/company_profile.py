@@ -85,11 +85,35 @@ class RangoPresupuesto(BaseModel):
 
 
 class Membrete(BaseModel):
-    """Identidad gráfica para documentos: imagen de encabezado, pie y fuente."""
+    """Identidad gráfica para documentos Word: imagen de encabezado, pie, fuente y tamaño.
+
+    La imagen es relativa a la carpeta del perfil. La fuente debe estar instalada en el
+    equipo que abra el documento; si no, el procesador de textos usa una similar.
+    """
 
     imagen: str = ""
     pie: str = ""
     fuente: str = "Arial"
+    tamano: float = Field(11, ge=8, le=16)
+
+
+class Identidad(BaseModel):
+    """Identidad visual de la intro. Las rutas son relativas a la carpeta del perfil."""
+
+    nombre_corto: str = ""
+    lema: str = ""
+    logo: str = ""
+    fuente: str = ""
+    color_logo: str = ""
+    color_texto: str = ""
+
+    @field_validator("color_logo", "color_texto")
+    @classmethod
+    def _color(cls, v: str) -> str:
+        v = v.strip()
+        if v and not re.fullmatch(r"#[0-9A-Fa-f]{6}", v):
+            raise ValueError(f"«{v}» no es un color hexadecimal como #7C3AED.")
+        return v.upper()
 
 
 class Procuracion(BaseModel):
@@ -135,6 +159,7 @@ class CoopProfile(BaseModel):
     focus_areas: list[str] = Field(default_factory=list)
     funding_sources: list[str] = Field(default_factory=list)
     procuracion: Procuracion | None = None
+    identidad: Identidad = Field(default_factory=Identidad)
 
     @model_validator(mode="after")
     def _tipo(self) -> "CoopProfile":

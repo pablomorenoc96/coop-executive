@@ -109,6 +109,15 @@ En términos de arquitectura de software, **CoopExecutive es un Agente de IA Ver
 * **Financiadores y expedientes:** base de financiadores (`FIN-AAAA-NNNN`) que detecta duplicados por nombre normalizado y registra montos en cualquier moneda ISO 4217; expedientes (`EXP-AAAA-NNNN`) con bitácora de avances, origen del dato y evaluaciones vinculadas.
 * **Sin datos inventados:** cada respuesta se revisa después de generarse. Se señalan montos y fechas sin respaldo (con `--estricto` se sustituyen por `MONTO POR DEFINIR` o `[PENDIENTE: fecha]`), emojis, respuestas de más de 900 palabras, recomendaciones sin contrapunto y frases que dan por guardado algo que no se ejecutó.
 
+### 5. Documentos, Monitoreo y Asamblea (0.3.0)
+* **Documentos Word:** `documento solicitud`, `documento institucional` y `documento ficha` arman la solicitud, el documento institucional y la ficha de la oportunidad a partir del perfil, el expediente y la evaluación. Lo que falta queda como `[PENDIENTE: …]`. Usted revisa el contenido antes de guardarlo en `salidas/AAAA/EXP-…/`; nunca se sobrescribe un archivo y cada uno queda registrado en su expediente.
+* **Membrete de cada organización:** imagen de encabezado, pie, fuente y tamaño se toman de `procuracion.membrete` en el perfil. Por omisión: Arial 11, interlineado 1.15, 6 pt posteriores, texto justificado y tablas al ancho de la página.
+* **Monitoreo de convocatorias:** `monitorear` lee canales RSS/Atom públicos y entrega hasta tres avisos priorizados, avisos por revisar y convocatorias cerradas. Los temas salen de los ejes de trabajo del perfil (o de `--tema`), en español o inglés. Una fecha de cierre solo se acepta si sigue a una palabra de cierre; si no, el aviso queda como `VIGENCIA NO VERIFICADA`.
+* **Fuentes propias:** agregue un `fuentes.yaml` al espacio (el formato está en `knowledge/builtin/procuracion_fondos/fuentes.yaml`: `nombre`, `tipo`, `region`, `idioma`, `url`, `rss`). Claves opcionales: `temas`, `buscador` (un SearXNG propio con JSON activado) y `solo_propias`. Una fuente sin `rss` se lista para revisión manual.
+* **Privacidad:** del equipo solo salen las solicitudes a los canales y, si hay buscador, los temas. No se envía ningún dato del perfil ni de los financiadores. Las descargas se guardan 12 horas en `.cache/`, y si una fuente falla se usa la copia guardada.
+* **Asamblea:** `evaluar-convocatoria --proponer-asamblea` convierte una decisión APLICAR en una propuesta de categoría `subvencion` que cita el folio del expediente y la huella de la evaluación. Si la organización no tiene asamblea, se remite a sus aprobadores.
+* **Intro de la terminal:** `coopexecutive` muestra la intro de la organización o la incluida. `intro generar` la dibuja a partir del bloque `identidad` (logo, fuente, lema y colores) y requiere el extra opcional `identidad` (`uv sync --extra identidad`). La intro incluida se generó con `assets/isotipo.png`, Arial Bold, 12 filas de logo y 6 de texto.
+
 ---
 
 ## Inicio Rápido
@@ -133,6 +142,10 @@ uv run coopexecutive --espacio ~/procuracion/mi-org evaluar-convocatoria --archi
 # Registrar financiadores y expedientes:
 uv run coopexecutive --espacio ~/procuracion/mi-org financiadores registrar "Fundación Ejemplo" --proyecto "Microrredes comunitarias" --tipo "Fundación" --canal "Correo" --moneda USD
 uv run coopexecutive --espacio ~/procuracion/mi-org expedientes abrir "Fundación Ejemplo" --tipo Convocatoria
+
+# Monitorear convocatorias abiertas y generar documentos Word de un expediente:
+uv run coopexecutive --espacio ~/procuracion/mi-org monitorear
+uv run coopexecutive --espacio ~/procuracion/mi-org documento ficha --expediente EXP-2026-0001
 
 # Generar un expediente técnico completo para postulación multilateral:
 uv run coopexecutive dossier "Microrredes Rurales Comunitarias" --donante "BID"

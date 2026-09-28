@@ -110,6 +110,15 @@ In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Age
 * **Funders and cases:** a funder base (`FIN-YYYY-NNNN`) with duplicate detection by normalised name and amounts in any ISO 4217 currency, and cases (`EXP-YYYY-NNNN`) with a progress log, data origin and linked evaluations.
 * **No invented data:** answers are reviewed after generation. Unsupported amounts and dates are flagged (or replaced with `MONTO POR DEFINIR` / `[PENDIENTE: fecha]` with `--estricto`), as are emojis, answers over 900 words, recommendations without a counterpoint and claims that something was saved when no command ran.
 
+### 5. Documents, Monitoring and Assembly (0.3.0)
+* **Word documents:** `documento solicitud`, `documento institucional` and `documento ficha` build an application, an institutional document and an opportunity sheet from the profile, the case and the evaluation. Missing data stays as `[PENDIENTE: …]`. You review the content before it is saved to `salidas/YYYY/EXP-…/`; files are never overwritten and each one is logged in its case.
+* **Letterhead per organisation:** header image, footer, font and size come from `procuracion.membrete` in the profile. Default: Arial 11, 1.15 line spacing, 6 pt after, justified text, tables at page width.
+* **Opportunity monitoring:** `monitorear` reads public RSS/Atom feeds and returns up to three prioritised notices, notices to review and closed ones. Topics come from the profile's focus areas (or `--tema`), in Spanish or English. A closing date is only accepted when it follows a closing keyword; otherwise the notice is marked `VIGENCIA NO VERIFICADA`.
+* **Your own sources:** add a `fuentes.yaml` to the workspace (see the built-in `knowledge/builtin/procuracion_fondos/fuentes.yaml` for the format: `nombre`, `tipo`, `region`, `idioma`, `url`, `rss`). Optional keys: `temas`, `buscador` (your own SearXNG with JSON enabled) and `solo_propias`. A source without `rss` is listed for manual review.
+* **Privacy:** only feed requests leave the machine, plus the topics if a search engine is configured. No profile or funder data is sent. Downloads are cached for 12 hours in `.cache/`, and the cached copy is used if a source is down.
+* **Assembly:** `evaluar-convocatoria --proponer-asamblea` turns an APLICAR decision into a `subvencion` proposal that cites the case folio and the evaluation hash. Organisations without an assembly are pointed to their approvers.
+* **Terminal intro:** `coopexecutive` shows the organisation's intro, or the built-in one. `intro generar` draws it from the `identidad` block (logo, font, motto, colours) and needs the optional `identidad` extra (`uv sync --extra identidad`). The built-in intro was generated from `assets/isotipo.png` with Arial Bold, 12 logo rows and 6 text rows.
+
 ---
 
 ## Quickstart
@@ -134,6 +143,10 @@ uv run coopexecutive --espacio ~/procuracion/my-org evaluar-convocatoria --archi
 # Track funders and cases:
 uv run coopexecutive --espacio ~/procuracion/my-org financiadores registrar "Example Foundation" --proyecto "Community microgrids" --tipo "Fundación" --canal "Correo" --moneda USD
 uv run coopexecutive --espacio ~/procuracion/my-org expedientes abrir "Example Foundation" --tipo Convocatoria
+
+# Monitor open opportunities and generate Word documents for a case:
+uv run coopexecutive --espacio ~/procuracion/my-org monitorear
+uv run coopexecutive --espacio ~/procuracion/my-org documento ficha --expediente EXP-2026-0001
 
 # Generate a complete multilateral proposal dossier:
 uv run coopexecutive dossier "Community Clean Microgrids" --donante "IDB"

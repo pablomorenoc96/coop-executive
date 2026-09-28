@@ -35,3 +35,4 @@ scratch/
 # Procurement workspaces and profile backups (organisation data never goes in the repo)
 *.bak-*
 salidas/
+.cache/

@@ -19,7 +19,8 @@ from coopexecutive.config import ARCHIVO_PERFIL, get_settings, usar_espacio
 from coopexecutive.crm import cases
 from coopexecutive.grant_tools import matrix
 from coopexecutive.grant_tools.matrix import CRITERIOS, EntradaMatriz, ResultadoMatriz
-from coopexecutive.guardrails import agregar_leyenda, revisar_respuesta
+from coopexecutive.governance.voting import create_proposal
+from coopexecutive.guardrails import MONTO_POR_DEFINIR, agregar_leyenda, pendiente, revisar_respuesta
 from coopexecutive.memory import onboarding
 from coopexecutive.memory.company_profile import TIPOS_ORGANIZACION, CoopProfile
 from coopexecutive.memory.episodic import initialize_db
@@ -287,6 +288,8 @@ def _analisis_redactado(resultado: ResultadoMatriz, bases: str) -> None:
 @click.option("--expediente", default=None, help="Folio EXP-AAAA-NNNN al que se vincula la evaluación.")
 @click.option("--guardar/--no-guardar", default=True, show_default=True, help="Guardar el resultado en la base.")
 @click.option("--si", "aceptar", is_flag=True, help="Aceptar la propuesta del modelo sin preguntar.")
+@click.option("--proponer-asamblea", is_flag=True,
+              help="Si la decisión es APLICAR, somete la postulación a la asamblea.")
 def evaluar_convocatoria(
     origen: str | None,
     archivo: Path | None,
@@ -294,12 +297,15 @@ def evaluar_convocatoria(
     expediente: str | None,
     guardar: bool,
     aceptar: bool,
+    proponer_asamblea: bool,
 ) -> None:
     """Evaluar una oportunidad con la matriz de 100 puntos.
 
     Sin argumentos pregunta cada dato. Con --archivo lee un YAML. Con un ORIGEN o
     --asistido, el modelo propone puntajes con evidencia; la matriz decide.
     """
+    if proponer_asamblea and not guardar:
+        fallar("--proponer-asamblea requiere guardar la evaluación: la propuesta cita su huella.")
     if expediente:
         vinculado = cases.obtener(expediente)
         if vinculado is None:
@@ -344,8 +350,39 @@ def evaluar_convocatoria(
         id_evaluacion = matrix.guardar(resultado, expediente)
         vinculo = f", vinculada a {expediente}" if expediente else ""
         console.print(f"[green]Evaluación guardada con id {id_evaluacion}{vinculo}.[/green]")
+        if proponer_asamblea:
+            _proponer_asamblea(perfil, resultado, id_evaluacion, expediente)
     if fuente:
         _analisis_redactado(resultado, bases)
+
+
+def _proponer_asamblea(perfil: CoopProfile, resultado: ResultadoMatriz, id_evaluacion: int,
+                       expediente: str | None) -> None:
+    """Somete a la asamblea una postulación con decisión APLICAR; sin asamblea, remite a los aprobadores."""
+    if resultado.decision != "APLICAR":
+        console.print(f"[yellow]No se creó propuesta para la asamblea: la decisión es {resultado.decision} "
+                      "y solo se someten las de APLICAR.[/yellow]")
+        return
+    if not perfil.tiene_asamblea:
+        aprobadores = perfil.procuracion.aprobadores if perfil.procuracion else []
+        quienes = "; ".join(aprobadores) or pendiente("aprobadores")
+        console.print(f"[yellow]La organización no tiene asamblea en su perfil. "
+                      f"La decisión corresponde a: {quienes}.[/yellow]")
+        return
+    financiador = f" ({resultado.financiador})" if resultado.financiador else ""
+    descripcion = (
+        f"Someter a la asamblea la postulación a «{resultado.convocatoria}»{financiador}.\n"
+        f"Decisión de la matriz: APLICAR con {resultado.puntaje} de 100 puntos. "
+        f"Plazo: {resultado.plazo}. Monto: {resultado.monto or MONTO_POR_DEFINIR}.\n"
+        f"Expediente: {expediente or 'sin vincular'}. "
+        f"Evaluación {id_evaluacion}, huella SHA-256 {resultado.hash}."
+    )
+    try:
+        id_propuesta = create_proposal(f"Postular a {resultado.convocatoria}", descripcion, "subvencion")
+    except ValueError as exc:
+        fallar(str(exc), "Propuesta rechazada")
+    console.print(f"[green]Propuesta {id_propuesta} abierta para la asamblea. "
+                  f"Consulte: coopexecutive propuestas.[/green]")
 
 
 COMANDOS = (iniciar, configurar, evaluar_convocatoria)

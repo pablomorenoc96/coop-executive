@@ -1,0 +1,36 @@
+# Fuentes públicas de convocatorias que `coopexecutive monitorear` revisa por omisión.
+#
+# Solo se incluyen portales con canal RSS público y activo. Cada espacio de trabajo
+# puede sumar las suyas en su propio fuentes.yaml (ver README).
+#
+# Campos: nombre, tipo, region, idioma (es/en), url (portal) y rss (canal que se lee).
+# Una fuente sin rss se muestra como «revisión manual»: el monitoreo no raspa páginas.
+
+fuentes:
+  - nombre: fundsforNGOs
+    tipo: Portal de subvenciones
+    region: Internacional
+    idioma: en
+    url: https://www2.fundsforngos.org/
+    rss: https://www2.fundsforngos.org/feed/
+
+  - nombre: Opportunity Desk
+    tipo: Portal de subvenciones, becas y premios
+    region: Internacional
+    idioma: en
+    url: https://opportunitydesk.org/
+    rss: https://opportunitydesk.org/feed/
+
+  - nombre: Opportunities for Youth
+    tipo: Portal de becas y programas
+    region: Internacional
+    idioma: en
+    url: https://www.opportunitiesforyouth.org/
+    rss: https://www.opportunitiesforyouth.org/feed/
+
+  - nombre: SECIHTI - Convocatorias
+    tipo: Gobierno (ciencia, tecnología e innovación)
+    region: México
+    idioma: es
+    url: https://secihti.mx/convocatorias/
+    rss: https://secihti.mx/convocatorias/feed/

@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-09-27
+
+### Added
+- **Terminal intro:** running `coopexecutive` without a command shows the organisation's intro (logo and name drawn with quadrant blocks) or the built-in CoopExecutive one. `coopexecutive intro generar` builds `intro.txt` from the optional `identidad` profile block (short name, motto, logo, font, colours). Generating requires the optional `identidad` extra (Pillow); showing it does not.
+- **Word documents (`documento solicitud|institucional|ficha`):** application, institutional document and opportunity sheet built from the profile, the case and the latest evaluation. Missing data stays as `[PENDIENTE: …]`; the files never include internal tensions or the draft notice. The content is shown for confirmation before saving. Files go to `salidas/YYYY/EXP-…/` in the workspace, are never overwritten and are logged in the case (`expedientes ver` lists them).
+- **Letterhead per organisation:** the `procuracion.membrete` block sets the header image, footer text, font and size. Default format: Arial 11, 1.15 line spacing, 6 pt after, justified text and tables at page width.
+- **Opportunity monitoring (`monitorear`):** reads the public RSS/Atom feeds of the built-in sources (`knowledge/builtin/procuracion_fondos/fuentes.yaml`) and of the workspace's own `fuentes.yaml`, filters by the profile's focus areas (Spanish topics also match English notices), extracts the closing date only when it follows a closing keyword, and applies the matrix deadline rules. Output: up to 3 prioritised notices, notices to review and closed ones; a notice without an explicit date is marked `VIGENCIA NO VERIFICADA`. Notices published more than 120 days ago are skipped. Sources without a feed are listed for manual review.
+- Monitoring privacy: only requests to public feeds leave the machine and, if a SearXNG instance is configured in `fuentes.yaml` (`buscador`), the topics. No profile or funder data is sent. Downloads are cached for 12 hours in the workspace `.cache/` folder; if a source fails, the cached copy is used and flagged.
+- **`evaluar-convocatoria --proponer-asamblea`:** when the decision is APLICAR and the organisation has an assembly, opens a `subvencion` proposal that cites the case folio and the evaluation hash. Without an assembly, it names the profile's approvers (or `[PENDIENTE: aprobadores]`).
+- Database migration 2 adds the `documentos` table.
+
+### Changed
+- New dependency: `python-docx` (MIT).
+
+---
+
 ## [0.2.1] - 2026-09-27
 
 ### Fixed

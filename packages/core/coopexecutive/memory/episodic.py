@@ -125,6 +125,18 @@ MIGRACIONES: tuple[str, ...] = (
         registrado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """,
+    # 2. Documentos generados, con su huella y el expediente o la evaluación de origen.
+    """
+    CREATE TABLE IF NOT EXISTS documentos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        expediente_folio TEXT,
+        evaluacion_id INTEGER,
+        tipo TEXT NOT NULL,
+        ruta TEXT NOT NULL,
+        sha256 TEXT NOT NULL,
+        creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """,
 )
 
 

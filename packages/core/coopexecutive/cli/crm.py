@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 
 import click
 from rich.panel import Panel
 from rich.table import Table
 
+from coopexecutive import documents
 from coopexecutive.cli._consola import FECHA, como_fecha, console, fallar, texto_fecha
 from coopexecutive.crm import cases, funders
 from coopexecutive.crm.cases import Expediente
@@ -221,6 +223,14 @@ def expedientes_ver(folio: str) -> None:
             tabla.add_column(columna)
         for v in vinculadas:
             tabla.add_row(str(v.id), v.decision, f"{v.puntaje:g}", _momento(v.evaluado_en), (v.hash or "-")[:12])
+        console.print(tabla)
+    generados = documents.documentos_de(e.folio)
+    if generados:
+        tabla = Table(title="Documentos", header_style="bold cyan")
+        for columna in ("Fecha", "Tipo", "Archivo", "Huella"):
+            tabla.add_column(columna)
+        for d in generados:
+            tabla.add_row(_momento(d.creado_en), d.tipo, Path(d.ruta).name, d.sha256[:12])
         console.print(tabla)
 
 

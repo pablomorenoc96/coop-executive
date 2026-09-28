@@ -7,6 +7,7 @@ from click.testing import CliRunner
 
 from coopexecutive.cli import _consola, cli, procuracion
 from coopexecutive.crm import cases, funders
+from coopexecutive.governance.voting import list_proposals
 from coopexecutive.orchestrator.coop_executive import CoopExecutive
 
 
@@ -257,6 +258,53 @@ def test_evaluar_interactivo(entorno_aislado, hoy_fijo, con_rango):
     res = CliRunner().invoke(cli, ["evaluar-convocatoria"], input="\n".join(lineas) + "\n")
     assert res.exit_code == 0, res.output
     assert "APLICAR" in res.output
+
+
+def _con_tipo(entorno_aislado, tipo: str) -> None:
+    perfil = entorno_aislado / "profile.yaml"
+    lineas = [linea for linea in perfil.read_text(encoding="utf-8").splitlines()
+              if not linea.startswith("tipo_organizacion:")]
+    perfil.write_text("\n".join([f"tipo_organizacion: {tipo}", *lineas]) + "\n", encoding="utf-8")
+
+def test_evaluar_propone_a_la_asamblea(entorno_aislado, hoy_fijo, con_rango):
+    _con_tipo(entorno_aislado, "cooperativa")
+    invocar("expedientes", "abrir", "Fundación Ejemplo", "--tipo", "Convocatoria")
+    folio = cases.listar()[0].folio
+    archivo = escribir_yaml(entorno_aislado / "c.yaml", entrada_matriz())
+    res = invocar("evaluar-convocatoria", "--archivo", archivo, "--expediente", folio, "--proponer-asamblea")
+    assert res.exit_code == 0, res.output
+    assert "Propuesta 1 abierta para la asamblea" in res.output
+    propuesta = list_proposals()[0]
+    assert propuesta["category"] == "subvencion"
+    assert propuesta["title"] == "Postular a Fondo de Energía Comunitaria"
+    huella = cases.evaluaciones(folio)[0].hash
+    assert folio in propuesta["description"] and huella in propuesta["description"]
+    assert "MONTO POR DEFINIR" in propuesta["description"]
+
+
+def test_asamblea_solo_para_aplicar_y_con_asamblea(entorno_aislado, hoy_fijo, con_rango):
+    _con_tipo(entorno_aislado, "empresa")
+    archivo = escribir_yaml(entorno_aislado / "c.yaml", entrada_matriz())
+    # Sin asamblea ni aprobadores: se explica y se marca el dato pendiente.
+    res = invocar("evaluar-convocatoria", "--archivo", archivo, "--proponer-asamblea")
+    assert res.exit_code == 0, res.output
+    assert "no tiene asamblea" in res.output and "[PENDIENTE: aprobadores]" in res.output
+    perfil = entorno_aislado / "profile.yaml"
+    perfil.write_text(perfil.read_text(encoding="utf-8") + "  aprobadores: [Dirección general]\n",
+                      encoding="utf-8")
+    assert "corresponde a: Dirección general" in invocar(
+        "evaluar-convocatoria", "--archivo", archivo, "--proponer-asamblea").output
+
+    _con_tipo(entorno_aislado, "cooperativa")
+    datos = entrada_matriz()
+    datos["criterios"]["alineacion"]["puntos"] = 5
+    res = invocar("evaluar-convocatoria", "--archivo", escribir_yaml(entorno_aislado / "d.yaml", datos),
+                  "--proponer-asamblea")
+    assert "solo se someten las de APLICAR" in res.output
+    assert list_proposals() == []
+
+    res = invocar("evaluar-convocatoria", "--archivo", archivo, "--proponer-asamblea", "--no-guardar")
+    assert res.exit_code == 1 and "requiere guardar" in res.output
 
 
 def test_financiadores_por_cli(entorno_aislado):

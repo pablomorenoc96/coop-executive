@@ -454,3 +454,29 @@ def guardar(resultado: ResultadoMatriz, expediente: str | None = None) -> int:
         )
         conn.commit()
         return int(cursor.lastrowid)
+
+
+class EvaluacionGuardada(BaseModel):
+    id: int
+    expediente_folio: str | None = None
+    resultado: ResultadoMatriz
+
+
+def cargar(id_evaluacion: int) -> EvaluacionGuardada:
+    """Recupera una evaluación guardada con su resultado completo."""
+    from coopexecutive.memory.episodic import get_db_conn, initialize_db
+
+    initialize_db()
+    with get_db_conn() as conn:
+        fila = conn.execute(
+            "SELECT id, expediente_folio, resultado_json FROM grant_evaluations WHERE id = ?", (id_evaluacion,)
+        ).fetchone()
+    if fila is None:
+        raise ValueError(f"No existe la evaluación {id_evaluacion}.")
+    if not fila["resultado_json"]:
+        raise ValueError(f"La evaluación {id_evaluacion} no tiene el resultado completo de la matriz.")
+    return EvaluacionGuardada(
+        id=fila["id"],
+        expediente_folio=fila["expediente_folio"],
+        resultado=ResultadoMatriz.model_validate_json(fila["resultado_json"]),
+    )

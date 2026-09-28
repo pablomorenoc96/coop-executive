@@ -55,6 +55,7 @@ flowchart LR
 
 ### Stage 1: Operational Environment & Perception
 * **Grant Notices:** Ingests raw text and PDF calls for proposals from international platforms (FundsforNGOs, IDB, Horizon Europe, climate foundations).
+* **Opportunity Monitoring (`coopexecutive.monitoring`):** Reads public RSS/Atom feeds from the built-in and workspace `fuentes.yaml` catalogues (plus an optional self-hosted SearXNG), matches notices against the profile's focus areas in Spanish and English, extracts closing dates only after a closing keyword and ranks them with the matrix deadline rules. Only feed requests and topics leave the machine; downloads are cached in the workspace `.cache/`.
 * **Institutional Context:** Parses `company/profile.yaml`, accredited legal status (e.g., Authorized Donee under SAT Title III, Cooperative under LGSC), and internal bylaws.
 * **Assembly Participation:** Receives member motions and individual secret ballots via the command-line interface or the interactive web station.
 
@@ -109,4 +110,7 @@ flowchart LR
 * **Multilateral Proposal Dossier:** Comprehensive, audit-ready Markdown and exportable PDF technical proposals.
 * **Cryptographically Sealed Minutes:** Certified scrutiny reports (*Actas de Escrutinio*) stamped with SHA-256 digital hashes for immutable internal audit trails.
 * **Structured Budgets:** Detailed financial tables segregating direct costs, administrative caps, and community co-financing.
+* **Word Documents (`coopexecutive.documents`):** Application, institutional document and opportunity sheet built from the profile, the case and the latest evaluation, with each organisation's letterhead (`procuracion.membrete`). Missing data stays as `[PENDIENTE: …]`; files are saved to `salidas/YYYY/EXP-…/` without overwriting and logged in the `documentos` table.
+* **Assembly Proposals from Evaluations:** `evaluar-convocatoria --proponer-asamblea` turns an APLICAR decision into a `subvencion` proposal citing the case folio and the evaluation hash; organisations without an assembly are pointed to their approvers.
+* **Terminal Identity (`coopexecutive.identidad`):** Organisation intro rendered from its logo and font as quadrant-block text (`intro.txt`), shown without Pillow.
 * **Interactive Local Web Station:** Real-time dashboard (`localhost:8000`) for assembly deliberation, live vote counting, and direct advisor interaction.

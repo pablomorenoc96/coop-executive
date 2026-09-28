@@ -98,10 +98,19 @@ class Settings(BaseSettings):
         return self
 
     @property
+    def carpeta_base(self) -> Path:
+        """Carpeta del espacio o, sin espacio, la del perfil."""
+        return self.workspace if self.workspace is not None else self.company_profile_path.parent
+
+    @property
     def salidas_dir(self) -> Path:
-        """Carpeta de documentos generados: la del espacio o `salidas/` junto al perfil."""
-        base = self.workspace if self.workspace is not None else self.company_profile_path.parent
-        return base / "salidas"
+        """Carpeta de documentos generados."""
+        return self.carpeta_base / "salidas"
+
+    @property
+    def cache_dir(self) -> Path:
+        """Copias locales de lo descargado (monitoreo)."""
+        return self.carpeta_base / ".cache"
 
     @property
     def local_models_list(self) -> list[str]:
