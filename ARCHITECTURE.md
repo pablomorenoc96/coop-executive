@@ -55,7 +55,7 @@ flowchart LR
 
 ### Stage 1: Operational Environment & Perception
 * **Grant Notices:** Ingests raw text and PDF calls for proposals from international platforms (FundsforNGOs, IDB, Horizon Europe, climate foundations).
-* **Opportunity Monitoring (`coopexecutive.monitoring`):** Reads public RSS/Atom feeds from the built-in and workspace `fuentes.yaml` catalogues (plus an optional self-hosted SearXNG), matches notices against the profile's focus areas in Spanish and English, extracts closing dates only after a closing keyword and ranks them with the matrix deadline rules. Only feed requests and topics leave the machine; downloads are cached in the workspace `.cache/`.
+* **Opportunity Monitoring (`coopexecutive.monitoring`):** Reads public RSS/Atom feeds from the built-in and workspace `fuentes.yaml` catalogues (plus an optional self-hosted SearXNG), keeps only notices that contain every significant word of at least one of the profile's focus areas (Spanish or English), extracts closing dates only after a closing keyword and ranks them with the matrix deadline rules. Only feed requests and topics leave the machine; downloads are cached in the workspace `.cache/`.
 * **Institutional Context:** Parses `company/profile.yaml`, accredited legal status (e.g., Authorized Donee under SAT Title III, Cooperative under LGSC), and internal bylaws.
 * **Assembly Participation:** Receives member motions and individual secret ballots via the command-line interface or the interactive web station.
 

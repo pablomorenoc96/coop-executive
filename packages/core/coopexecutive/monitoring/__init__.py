@@ -74,7 +74,9 @@ class Reporte:
 def _aviso(entrada: Entrada, fuente: str, temas: list[Tema], hoy: date) -> Aviso | None:
     texto = f"{entrada.titulo}. {entrada.texto}"
     halladas = coincidencias(texto, temas)
-    if not halladas:
+    # Un tema cuenta solo si aparecen todas sus palabras: «Innovación tecnológica» no
+    # deja pasar un aviso que solo dice «innovation».
+    if not halladas.temas:
         return None
     cierre = extraer_cierre(texto)
     resumen = entrada.texto if len(entrada.texto) <= 280 else entrada.texto[:277].rsplit(" ", 1)[0] + "..."

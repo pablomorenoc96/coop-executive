@@ -179,7 +179,7 @@ def test_monitoreo_prioriza_marca_vigencia_y_separa_cerradas(tmp_path):
     _espacio(tmp_path)
     peticiones: list = []
     cliente = httpx.Client(transport=_transporte(HOY, peticiones))
-    r = monitoring.monitorear(["Energía eólica comunitaria"], HOY, tmp_path, cliente=cliente)
+    r = monitoring.monitorear(["Energía eólica comunitaria", "Energía"], HOY, tmp_path, cliente=cliente)
 
     titulos = [a.titulo for a in r.priorizadas]
     # Tema completo primero; luego con fecha y tiempo suficiente; sin fecha antes que urgente.
@@ -194,6 +194,17 @@ def test_monitoreo_prioriza_marca_vigencia_y_separa_cerradas(tmp_path):
     assert [f.nombre for f in r.manuales] == ["Portal sin canal"]
     # Solo se consultan los canales; no viaja ningún dato del perfil.
     assert {p.url.host for p in peticiones} == {"a.org", "caido.org"}
+
+
+def test_tema_de_varias_palabras_exige_todas(tmp_path):
+    _espacio(tmp_path)
+    cliente = httpx.Client(transport=_transporte(HOY, []))
+    # «innovation» aparece en el canal, pero ningún aviso habla de tecnología.
+    r = monitoring.monitorear(["Innovación tecnológica"], HOY, tmp_path, cliente=cliente)
+    assert r.priorizadas == [] and r.por_revisar == [] and r.cerradas == []
+    r = monitoring.monitorear(["Energía eólica"], HOY, tmp_path, cliente=cliente)
+    assert [a.titulo for a in r.priorizadas] == ["Community wind energy fund"]
+    assert [a.titulo for a in r.cerradas] == ["Wind energy innovation prize"]
 
 
 def test_buscador_solo_recibe_los_temas(tmp_path):
@@ -226,10 +237,13 @@ def test_cli_monitorear(entorno_aislado, monkeypatch):
     assert res.exit_code == 0, res.output
     assert "Energía comunitaria" in res.output  # tema del perfil
     assert "Priorizadas" in res.output and "Community wind energy fund" in res.output
-    assert "Cerradas" in res.output and "VIGENCIA NO VERIFICADA" in res.output
+    assert "Solar energy grants" not in res.output  # le falta «comunitaria»
     assert "No se pudo consultar Portal caído: HTTP 500" in res.output
     assert "Portal sin canal" in res.output
     assert (entorno_aislado / ".cache" / "monitoreo").is_dir()
+
+    res = CliRunner().invoke(cli, ["monitorear", "--tema", "Energía"], env={"COLUMNS": "200"})
+    assert "Cerradas" in res.output and "VIGENCIA NO VERIFICADA" in res.output
 
     res = CliRunner().invoke(cli, ["monitorear", "--tema", "salud materna"], env={"COLUMNS": "200"})
     assert "Ningún aviso coincide" in res.output and "Arts festival" not in res.output

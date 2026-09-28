@@ -4,6 +4,7 @@ Cada tema se parte en palabras significativas («Energía eólica» -> energia, 
 Una palabra coincide si alguna de sus formas aparece al inicio de una palabra del
 aviso; así «energ» encuentra energía, energético y energy. Las equivalencias en
 inglés permiten leer portales internacionales con temas escritos en español.
+Un aviso entra al monitoreo solo si contiene todas las palabras de al menos un tema.
 """
 from __future__ import annotations
 

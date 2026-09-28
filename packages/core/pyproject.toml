@@ -1,6 +1,6 @@
 [project]
 name = "coopexecutive"
-version = "0.3.1"
+version = "0.3.2"
 description = "El Sistema Directivo Colegiado y Agente Procurador de Fondos con IA para Cooperativas y Asociaciones Civiles."
 readme = "README.md"
 requires-python = ">=3.11"
