@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.1] - 2026-09-27
+
+### Fixed
+- Non-cooperative profiles no longer inherit the cooperative default regime ("Economía Social y Solidaria"). When `regime` is not declared, the tax status from `configurar` is used, or `[PENDIENTE: régimen]`.
+
+---
+
 ## [0.2.0] - 2026-09-27
 
 ### Added

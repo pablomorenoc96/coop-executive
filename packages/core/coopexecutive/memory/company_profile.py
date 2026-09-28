@@ -140,6 +140,10 @@ class CoopProfile(BaseModel):
     def _tipo(self) -> "CoopProfile":
         if self.tipo_organizacion is None:
             self.tipo_organizacion = inferir_tipo(self.legal_structure)
+        if self.tipo_organizacion != "cooperativa" and "regime" not in self.model_fields_set:
+            # El régimen por omisión describe a una cooperativa; para otras figuras no se supone.
+            fiscal = self.procuracion.estatus_fiscal.strip() if self.procuracion else ""
+            self.regime = fiscal or "[PENDIENTE: régimen]"
         return self
 
     @property

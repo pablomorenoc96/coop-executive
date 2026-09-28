@@ -146,6 +146,16 @@ def test_ejemplos_del_repositorio_son_validos():
     assert resultado.puntaje == 87
 
 
+def test_regimen_por_omision_solo_para_cooperativas():
+    datos = onboarding.aplicar_respuestas({}, RESPUESTAS)
+    assert CoopProfile(**datos).regime == "Régimen de actividad empresarial"
+    sin_fiscal = CoopProfile(name="Taller", tipo_organizacion="empresa")
+    assert sin_fiscal.regime == "[PENDIENTE: régimen]"
+    declarado = CoopProfile(name="Taller", tipo_organizacion="empresa", regime="Persona moral")
+    assert declarado.regime == "Persona moral"
+    assert CoopProfile().regime == "Economía Social y Solidaria"
+
+
 def test_perfil_antiguo_sin_campos_nuevos():
     perfil = CoopProfile(name="Coop Antigua", legal_structure="S.C. de R.L.", mission="Servir.")
     assert perfil.tipo_organizacion == "cooperativa"
