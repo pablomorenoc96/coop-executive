@@ -31,6 +31,9 @@ class CoopProfile(BaseModel):
     statutory_funds: StatutoryFunds = Field(default_factory=StatutoryFunds)
     values: list[str] = Field(default_factory=list)
     strategic_priorities: list[str] = Field(default_factory=list)
+    target_communities: list[str] = Field(default_factory=list)
+    focus_areas: list[str] = Field(default_factory=list)
+    funding_sources: list[str] = Field(default_factory=list)
 
     @classmethod
     def load_from_yaml(cls, path: Path) -> CoopProfile:
@@ -61,4 +64,13 @@ class CoopProfile(BaseModel):
         lines.append("\n### Prioridades Estratégicas:")
         for prio in self.strategic_priorities:
             lines.append(f"- {prio}")
+        opcionales = [
+            ("Poblaciones y Comunidades Atendidas", self.target_communities),
+            ("Ejes de Trabajo", self.focus_areas),
+            ("Fuentes de Financiamiento", self.funding_sources),
+        ]
+        for titulo, elementos in opcionales:
+            if elementos:
+                lines.append(f"\n### {titulo}:")
+                lines.extend(f"- {e}" for e in elementos)
         return "\n".join(lines)

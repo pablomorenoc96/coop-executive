@@ -26,18 +26,18 @@ def test_proposal_dossier_markdown_generation():
                 concept="3 Generadores eólicos",
                 unit="piezas",
                 quantity=3.0,
-                unit_cost_usd=15000.0,
-                requested_amount_usd=45000.0,
-                matching_amount_usd=5000.0
+                unit_cost=15000.0,
+                requested_amount=45000.0,
+                matching_amount=5000.0
             ),
             BudgetItem(
                 category="Personal",
                 concept="Ingeniero de instalación",
                 unit="meses",
                 quantity=6.0,
-                unit_cost_usd=2000.0,
-                requested_amount_usd=12000.0,
-                matching_amount_usd=3000.0
+                unit_cost=2000.0,
+                requested_amount=12000.0,
+                matching_amount=3000.0
             ),
         ]
     )
@@ -56,8 +56,24 @@ def test_proposal_dossier_markdown_generation():
     assert "DOSSIER DE POSTULACIÓN TÉCNICA Y FINANCIERA" in md
     assert "Cooperativa de Producción Comunitaria S.C. de R.L." in md
     assert "Reducir costos energéticos" in md
-    assert "**Fondos Solicitados al Donante:** $57,000.00 USD" in md
-    assert "**Contrapartida Institucional (Especie/Valorizada):** $8,000.00 USD" in md
-    assert "**Presupuesto Total Consolidado:** $65,000.00 USD" in md
+    assert "**Fondos Solicitados al Donante:** 57,000.00 USD" in md
+    assert "**Contrapartida Institucional (Especie/Valorizada):** 8,000.00 USD" in md
+    assert "**Presupuesto Total Consolidado:** 65,000.00 USD" in md
     assert "SALVAGUARDAS COOPERATIVAS" in md
     assert "ESTRATEGIA DE SOSTENIBILIDAD" in md
+
+
+def test_dossier_sin_datos_marca_pendientes():
+    md = ProposalDossier(
+        project_name="Proyecto X",
+        organization_name="Organización X",
+        donor_agency="Donante X",
+        call_title="Convocatoria X",
+    ).to_markdown()
+    assert "[PENDIENTE: ámbito territorial]" in md
+    assert "[PENDIENTE: resumen ejecutivo" in md
+    assert "[PENDIENTE: diagnóstico" in md
+    assert "[PENDIENTE: salvaguardas" in md
+    assert "[PENDIENTE: estrategia de sostenibilidad" in md
+    assert "mes 18" not in md
+    assert "trimestralmente" not in md

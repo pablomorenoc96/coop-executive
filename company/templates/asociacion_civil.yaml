@@ -1,28 +1,32 @@
-name: "Causas para la Transformación A.C. — Red por la Ciberseguridad"
-legal_structure: "Asociación Civil (A.C.) con estatus de Donataria Autorizada (SAT)"
-regime: "Persona Moral con Fines No Lucrativos (Título III LISR)"
+# Plantilla de ejemplo. La organización es ficticia: sustituya todos los datos por los de la suya.
+name: "Agua y Territorio A.C. (ejemplo)"
+legal_structure: "Asociación Civil (A.C.)"
+regime: "Persona moral sin fines de lucro"
 country: "México"
 mission: >
-  Fortalecer el ecosistema de ciberseguridad, alfabetización digital e inteligencia artificial
-  en México y América Latina mediante la educación, concientización, desarrollo de capacidades
-  y protección de derechos digitales de poblaciones vulnerables.
+  Mejorar el acceso a agua segura y la educación ambiental en comunidades rurales
+  mediante proyectos de captación de lluvia, formación comunitaria y monitoreo participativo.
 vision: >
-  Un entorno digital seguro, inclusivo y resiliente donde la tecnología esté al servicio
-  de los derechos humanos y el desarrollo comunitario.
+  Comunidades rurales que gestionan su agua de forma autónoma, informada y sostenible.
 governance:
   supreme_organ: "Asamblea General de Asociados"
-  executive_body: "Dirección General y Dirección de Operaciones"
-  supervisory_body: "Consejo Consultivo Ciudadano"
+  executive_body: "Consejo Directivo"
+  supervisory_body: "Comisario"
 values:
-  - "Protección irrestricta de derechos humanos en el ciberespacio"
-  - "Transparencia radical y rendición de cuentas pública"
-  - "Inclusión, equidad de género y no discriminación"
-  - "Colaboración multisectorial ética"
+  - "Transparencia y rendición de cuentas"
+  - "Participación comunitaria"
+  - "Equidad de género e inclusión"
+target_communities:
+  - "Localidades rurales con acceso intermitente a agua potable"
+  - "Escuelas primarias y secundarias rurales"
 focus_areas:
-  - "Capacitación y formación de talento técnico en IA y ciberseguridad"
-  - "Protección de Niñas, Niños y Adolescentes (NNA) en entornos digitales"
-  - "Políticas públicas, transparencia y derechos digitales"
+  - "Captación y almacenamiento de agua de lluvia"
+  - "Educación ambiental comunitaria"
+  - "Monitoreo participativo de la calidad del agua"
 funding_sources:
-  - "Subvenciones y fondos internacionales (Grants / FundsforNGOs)"
-  - "Donativos deducibles de empresas y fundaciones aliadas"
-  - "Convenios de cooperación técnica con universidades y organismos multilaterales"
+  - "Convocatorias de fundaciones nacionales e internacionales"
+  - "Donativos de empresas y personas físicas"
+  - "Convenios con gobiernos locales y universidades"
+strategic_priorities:
+  - "Documentar resultados con indicadores verificables"
+  - "Diversificar las fuentes de financiamiento"

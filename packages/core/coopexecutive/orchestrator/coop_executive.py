@@ -40,6 +40,8 @@ class CoopExecutive:
             specialist_text = f"\n\n### Modo Activo: Finanzas Solidarias y Fondos Estatutarios\n{FINANZAS_SOLIDARIAS_PROMPT}"
         elif specialist_focus == "tecnico":
             specialist_text = f"\n\n### Modo Activo: Soberanía Técnica y Tecnológica\n{DESARROLLO_TECNICO_PROMPT}"
+        elif specialist_focus == "comunicacion":
+            specialist_text = f"\n\n### Modo Activo: Comunicación Social y Rendición de Cuentas\n{COMUNICACION_SOCIAL_PROMPT}"
         elif specialist_focus == "asamblea":
             specialist_text = f"\n\n### Modo Activo: Secretaría de Actas y Gobernanza\n{SECRETARIA_ASAMBLEA_PROMPT}"
 

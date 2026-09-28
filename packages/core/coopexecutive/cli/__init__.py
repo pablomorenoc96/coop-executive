@@ -16,6 +16,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.markdown import Markdown
+from rich.table import Table
 
 from coopexecutive.config import get_settings
 from coopexecutive.memory.company_profile import CoopProfile
@@ -28,7 +29,7 @@ from coopexecutive.governance.voting import (
     get_proposal,
     VoteChoice,
 )
-from coopexecutive.grant_tools.eligibility_evaluator import evaluate_grant_opportunity
+from coopexecutive.utils.fechas import local_desde_utc
 
 console = Console(legacy_windows=False)
 
@@ -41,7 +42,7 @@ def cli() -> None:
 
 @cli.command()
 @click.argument("pregunta")
-@click.option("--rol", default=None, help="Especialista a enfocar: procurador, vigilancia, legal, finanzas, tecnico, asamblea")
+@click.option("--rol", default=None, help="Especialista a enfocar: procurador, vigilancia, legal, finanzas, tecnico, comunicacion, asamblea")
 def ask(pregunta: str, rol: str | None) -> None:
     """Hacer una consulta directa al Director Colegiado."""
     asyncio.run(_ask(pregunta, rol))
@@ -274,11 +275,11 @@ def cmd_propuestas(estatus: str | None) -> None:
         return
 
     table = Table(title="🗳️ Propuestas de Asamblea General", show_header=True, header_style="bold cyan")
-    table.add_column("Folio", style="dim", width=8)
-    table.add_column("Categoría", width=14)
-    table.add_column("Título", width=36)
-    table.add_column("Estatus", width=12)
-    table.add_column("Fecha", width=20)
+    table.add_column("Folio", style="dim", no_wrap=True)
+    table.add_column("Categoría", no_wrap=True)
+    table.add_column("Título", ratio=1)
+    table.add_column("Estatus", no_wrap=True)
+    table.add_column("Fecha", no_wrap=True)
 
     for p in props:
         status_color = "green" if p["status"] == "abierta" else ("cyan" if p["status"] == "aprobada" else "red")
@@ -287,7 +288,7 @@ def cmd_propuestas(estatus: str | None) -> None:
             p["category"].upper(),
             p["title"],
             f"[{status_color}]{p['status'].upper()}[/{status_color}]",
-            p["created_at"]
+            local_desde_utc(p["created_at"]).strftime("%Y-%m-%d %H:%M"),
         )
     console.print(table)
 

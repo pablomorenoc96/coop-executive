@@ -1,4 +1,4 @@
-"""Prompt del Agente Procurador de Fondos (LEO v2).
+"""Prompt del Agente Procurador de Fondos.
 
 Especialista en identificación, evaluación y formulación de proyectos para
 subvenciones internacionales, convocatorias de FundsforNGOs, agencias de

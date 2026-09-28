@@ -9,10 +9,10 @@ Principios:
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime
 from enum import Enum
 from typing import Any
 from coopexecutive.memory.episodic import get_db_conn, initialize_db
+from coopexecutive.utils.fechas import ahora_local
 
 
 class VoteChoice(str, Enum):
@@ -158,7 +158,7 @@ def tally_votes(proposal_id: int, total_census_members: int = 12) -> dict[str, A
 
     acta_md = f"""# Acta de Escrutinio y Resolución de Asamblea
 **Acuerdo Folio:** ASAMBLEA-{proposal_id:04d}-{resolution_hash}  
-**Fecha de Escrutinio:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
+**Fecha de Escrutinio:** {ahora_local().strftime('%Y-%m-%d %H:%M:%S %Z')}
 **Órgano Resolutivo:** Asamblea General de Socios (Principio: Un Socio = Un Voto)
 
 ---

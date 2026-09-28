@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] - 2026-09-27
+
+### Changed
+- **BREAKING — Budget Builder:** `BudgetItem` fields `unit_cost_usd`, `requested_amount_usd` and `matching_amount_usd` are renamed to `unit_cost`, `requested_amount` and `matching_amount` (and `total_cost_usd` to `total_cost`). Amounts are expressed in the budget currency, which must be a valid ISO 4217 code; no conversion is performed. Amounts are now rendered as `57,000.00 USD` instead of `$57,000.00`.
+- **Proposal Dossier:** sections the user does not provide are marked `[PENDIENTE: …]` instead of being filled with generic claims (such as a fixed self-sufficiency month or a quarterly audit).
+- **Voting:** the assembly minutes timestamp uses the organisation's time zone (`USER_TIMEZONE`).
+- **Association template:** `company/templates/asociacion_civil.yaml` now describes a fictitious organisation.
+
+### Added
+- `coopexecutive.utils`: `ahora_local()`, `hoy_local()`, `fecha_larga()` (locale-independent Spanish dates) and ISO 4217 validation and formatting.
+- `comunicacion` specialist role for `ask --rol` (the communication prompt was previously unreachable).
+- Organisation profiles keep `target_communities`, `focus_areas` and `funding_sources`, which were silently dropped when loading YAML.
+- CLI tests for `info`, `propuesta`, `propuestas`, `votar` and `escrutinio`.
+
+### Fixed
+- `propuestas` crashed because `Table` was not imported.
+- `propuestas` showed the creation date in UTC (SQLite `CURRENT_TIMESTAMP`); it is now shown in the organisation's time zone, and the category and status columns are no longer truncated at 80 columns.
+
+---
+
 ## [0.1.0] - 2026-09-02
 
 ### Added
