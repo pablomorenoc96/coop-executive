@@ -24,6 +24,8 @@ class Titulo:
 @dataclass
 class Parrafo:
     texto: str
+    # Falso para textos sin espacios que partir, como una huella SHA-256.
+    justificado: bool = True
 
 
 @dataclass

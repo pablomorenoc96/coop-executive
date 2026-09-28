@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.1] - 2026-09-27
+
+### Fixed
+- Word tables: rows no longer split across pages, so a criterion and its evidence stay together.
+- Opportunity sheet: the points column is wide enough for «Pendiente», and the evaluation hash is left-aligned instead of justified.
+
+---
+
 ## [0.3.0] - 2026-09-27
 
 ### Added

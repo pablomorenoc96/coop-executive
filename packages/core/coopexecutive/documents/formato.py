@@ -2,7 +2,8 @@
 
 Formato: carta con márgenes de 2.5 cm; la fuente y el tamaño del membrete (Arial 11
 por omisión); interlineado 1.15; 6 pt después de cada párrafo; texto justificado;
-tablas al ancho de la página con la fila de encabezado repetida en cada página.
+tablas al ancho de la página con la fila de encabezado repetida en cada página y
+filas que no se parten entre páginas.
 """
 from __future__ import annotations
 
@@ -128,11 +129,10 @@ def _sombrear(celda, color: str) -> None:
     celda._tc.get_or_add_tcPr().append(sombra)
 
 
-def _repetir_encabezado(fila) -> None:
-    propiedades = fila._tr.get_or_add_trPr()
-    marca = OxmlElement("w:tblHeader")
+def _marcar_fila(fila, etiqueta: str) -> None:
+    marca = OxmlElement(etiqueta)
     marca.set(qn("w:val"), "true")
-    propiedades.append(marca)
+    fila._tr.get_or_add_trPr().append(marca)
 
 
 def _texto_celda(celda, texto: str, tamano: float, negrita: bool = False) -> None:
@@ -157,11 +157,13 @@ def _tabla(doc, bloque: Tabla, membrete: Membrete) -> None:
     for celda, texto in zip(tabla.rows[0].cells, bloque.encabezados):
         _texto_celda(celda, texto, tamano, negrita=True)
         _sombrear(celda, SOMBRA_ENCABEZADO)
-    _repetir_encabezado(tabla.rows[0])
+    _marcar_fila(tabla.rows[0], "w:tblHeader")
     for fila in bloque.filas:
-        celdas = tabla.add_row().cells
-        for celda, texto in zip(celdas, fila):
+        nueva = tabla.add_row()
+        for celda, texto in zip(nueva.cells, fila):
             _texto_celda(celda, texto, tamano)
+    for fila in tabla.rows:
+        _marcar_fila(fila, "w:cantSplit")
     for columna, ancho in zip(tabla.columns, anchos):
         columna.width = ancho
         for celda in columna.cells:
@@ -196,7 +198,9 @@ def a_docx(plano: DocumentoPlano, membrete: Membrete, carpeta_perfil: Path, auto
         if isinstance(bloque, Titulo):
             doc.add_heading(bloque.texto, level=min(max(bloque.nivel, 1), 2))
         elif isinstance(bloque, Parrafo):
-            doc.add_paragraph(bloque.texto)
+            parrafo = doc.add_paragraph(bloque.texto)
+            if not bloque.justificado:
+                parrafo.alignment = WD_ALIGN_PARAGRAPH.LEFT
         elif isinstance(bloque, Lista):
             for elemento in bloque.elementos:
                 doc.add_paragraph(elemento, style="List Bullet")

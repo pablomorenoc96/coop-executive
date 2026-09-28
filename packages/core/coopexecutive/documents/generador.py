@@ -269,7 +269,7 @@ def ficha_oportunidad(
         ["Criterio", "Peso", "Puntos", "Evidencia"],
         [[c.nombre, str(c.peso), "Pendiente" if c.puntos is None else str(c.puntos), c.evidencia or "-"]
          for c in resultado.criterios],
-        [2.2, 0.6, 0.7, 3],
+        [2.2, 0.6, 1.0, 2.7],
     ))
     if resultado.pendientes:
         b += [Titulo("Pendientes"), Lista(list(resultado.pendientes))]
@@ -279,5 +279,5 @@ def ficha_oportunidad(
     contrapunto = _sin_tension(resultado.contrapunto)
     if contrapunto:
         b += [Titulo("Contrapunto"), Parrafo(contrapunto)]
-    b.append(Parrafo(f"Huella de la evaluación (SHA-256): {resultado.hash}"))
+    b.append(Parrafo(f"Huella de la evaluación (SHA-256): {resultado.hash}", justificado=False))
     return doc

@@ -155,6 +155,20 @@ def test_formato_institucional_y_membrete(tmp_path):
         assert abs(sum(c.width for c in tabla.columns) - ancho_util(doc)) < 10
 
 
+def test_ficha_filas_enteras_y_huella_sin_justificar(tmp_path):
+    resultado = _resultado()
+    doc = a_docx(generador.ficha_oportunidad(PERFIL, resultado, _expediente()), Membrete(), tmp_path)
+
+    for tabla in doc.tables:
+        for fila in tabla.rows:
+            assert fila._tr.trPr.xpath("./w:cantSplit")
+    huella = next(p for p in doc.paragraphs if resultado.hash in p.text)
+    assert huella.alignment == WD_ALIGN_PARAGRAPH.LEFT
+    # «Pendiente» cabe en la columna de puntos sin partirse.
+    puntos = doc.tables[-1].columns[2].width
+    assert puntos > ancho_util(doc) * 0.14
+
+
 def test_logo_cuadrado_se_limita_por_altura(tmp_path):
     from docx.shared import Cm
 
