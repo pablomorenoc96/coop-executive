@@ -1,10 +1,11 @@
 import pytest
+
 from coopexecutive.governance.voting import (
-    create_proposal,
-    cast_vote,
-    tally_votes,
-    list_proposals,
     VoteChoice,
+    cast_vote,
+    create_proposal,
+    list_proposals,
+    tally_votes,
 )
 
 

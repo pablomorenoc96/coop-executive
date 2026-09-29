@@ -47,7 +47,7 @@ En términos de arquitectura de software, **CoopExecutive es un Agente de IA Ver
 4. **Inferencia Universal con Conmutación de Proveedores:**
    - Conexión flexible a tres niveles de cómputo:
      - *Nube sin costo ($0.00):* Modelos libres en OpenRouter con conmutación ante errores 429.
-     - *Local desconectado:* Ejecución 100% privada con Ollama (`llama3.1`, `qwen2.5`).
+     - *Local desconectado:* Ejecución 100% privada con Ollama (`granite4.1`, `qwen3.8`).
      - *APIs comerciales (opcional):* OpenAI, Anthropic, Google Gemini, Groq, Mistral y DeepSeek.
 
 5. **Espacio de Herramientas Deterministas (*Tool-Use*):**
@@ -164,13 +164,23 @@ uv run coopexecutive chat
 
 ---
 
-## Configuración de Modelos de IA (Gratis, Locales y de Pago)
+## Configuración de modelos de IA (gratis, locales y de pago)
 
-El motor de CoopExecutive soporta tres vías de ejecución configurables en `.env`:
-1. **Ruta Gratuita en la Nube ($0.00):** Clave sin costo de [OpenRouter](https://openrouter.ai/keys) para modelos como `minimax/minimax-m3:free` o `nvidia/nemotron-3-super-120b-a12b:free`.
-2. **Ruta Local Desconectada (100% Privada y Gratis):** Con [Ollama](https://ollama.com/) local activo, ajusta `LOCAL_MODELS_ENABLED=true` para usar `llama3.1` o `qwen2.5`.
-3. **APIs Comerciales (Opcional):** Claves para OpenAI (`gpt-4o`), Anthropic (`claude-3-7-sonnet`), Google Gemini (`gemini-2.0-flash`), Groq, Mistral o DeepSeek.
+Copie `.env.example` como `.env` en su carpeta de usuario (`%APPDATA%\CoopExecutive` o `~/.config/coopexecutive`), en la raíz del repositorio o en la carpeta desde la que ejecuta; `coopexecutive info` muestra qué archivos se cargaron. Los nombres se verificaron el 29/09/2026 y cambian seguido: cualquier modelo compatible sirve, y `coopexecutive modelos --herramientas` lista los gratuitos disponibles hoy.
 
+| Vía | Proveedor | Variables | Modelos sugeridos | Privacidad |
+|---|---|---|---|---|
+| Gratis en la nube | [OpenRouter](https://openrouter.ai/keys) | `OPENROUTER_API_KEY`, `DEFAULT_MODEL` | `google/gemma-4-31b-it:free` (por omisión), `nvidia/nemotron-3-super-120b-a12b:free` (respaldo), `qwen/qwen3.8-27b:free` | Límite diario; los proveedores gratuitos pueden entrenar con sus datos |
+| Local y privada | [Ollama](https://ollama.com/) | `LOCAL_MODELS_ENABLED=true`, `LOCAL_MODELS` (el primero es el principal y los demás, respaldos) | `granite4.1:8b`, `granite4.1:3b` (poca memoria), `qwen3.8:27b`, `nemotron3:33b` (GPU de 24 GB) | Nada sale del equipo |
+| De pago | OpenAI | `OPENAI_API_KEY` | `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna` | Términos del proveedor |
+| De pago | Anthropic | `ANTHROPIC_API_KEY` | `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-4-5` | Términos del proveedor |
+| De pago | Google Gemini | `GEMINI_API_KEY` | `gemini-3.8-flash`, `gemini-3.5-flash-lite` | Términos del proveedor |
+| De pago | Groq | `GROQ_API_KEY` | `llama-3.3-70b-versatile`, `openai/gpt-oss-120b` | Términos del proveedor |
+| De pago | Mistral | `MISTRAL_API_KEY` | `mistral-medium-3-5-26-04`, `mistral-small-4-0-26-03` | Términos del proveedor |
+| De pago | DeepSeek | `DEEPSEEK_API_KEY` | `deepseek-flash`, `deepseek-v4-pro` | Términos del proveedor |
+| Cualquiera | Compatible con OpenAI (Azure, vLLM, LiteLLM, LM Studio) | `CUSTOM_BASE_URL`, `CUSTOM_API_KEY` | El que usted aloje | Suya |
+
+Con `PROVIDER=auto` se usa la primera clave presente. Ante límites de uso (429), errores del servidor o caídas de conexión se reintenta hasta `MAX_REINTENTOS` veces con espera creciente antes de pasar al modelo de respaldo.
 ---
 
 ## Documentación Técnica

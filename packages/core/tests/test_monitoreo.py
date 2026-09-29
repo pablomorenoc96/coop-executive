@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from email.utils import format_datetime
 
 import httpx
@@ -63,7 +63,7 @@ def _rss(*items: tuple[str, str, date | None]) -> bytes:
     for n, (titulo, descripcion, publicado) in enumerate(items):
         fecha = ""
         if publicado is not None:
-            momento = datetime(publicado.year, publicado.month, publicado.day, 12, tzinfo=timezone.utc)
+            momento = datetime(publicado.year, publicado.month, publicado.day, 12, tzinfo=UTC)
             fecha = f"<pubDate>{format_datetime(momento)}</pubDate>"
         cuerpo += (f"<item><title>{titulo}</title><link>https://ejemplo.org/{n}</link>"
                    f"<description><![CDATA[<p>{descripcion}</p>]]></description>{fecha}</item>")

@@ -1,5 +1,4 @@
-import pytest
-from coopexecutive.grant_tools.budget_builder import GrantBudget, BudgetItem
+from coopexecutive.grant_tools.budget_builder import BudgetItem, GrantBudget
 
 
 def test_grant_budget_calculations():

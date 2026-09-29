@@ -9,15 +9,17 @@ import hashlib
 import html
 import re
 import time
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import date, datetime
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 import httpx
+from defusedxml import DefusedXmlException
+from defusedxml import ElementTree as ET
 
 from coopexecutive import __version__
+from coopexecutive.lectura import descargar_bytes
 
 AGENTE = f"Mozilla/5.0 (compatible; CoopExecutive/{__version__}; +https://github.com/pablomorenoc96/coop-executive)"
 TIEMPO_ESPERA = 20.0
@@ -63,10 +65,7 @@ def descargar(
         if time.time() - archivo.stat().st_mtime < horas_cache * 3600:
             return Descarga(archivo.read_bytes(), desde_cache=True)
     try:
-        respuesta = cliente.get(url, params=params)
-        respuesta.raise_for_status()
-        if len(respuesta.content) > TAMANO_MAXIMO:
-            raise httpx.HTTPError(f"respuesta de más de {TAMANO_MAXIMO // 1_000_000} MB")
+        contenido, _ = descargar_bytes(url, cliente, tope=TAMANO_MAXIMO, params=params)
     except httpx.HTTPError as exc:
         if archivo is not None and archivo.is_file():
             guardada = datetime.fromtimestamp(archivo.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
@@ -75,8 +74,8 @@ def descargar(
         raise
     if archivo is not None:
         archivo.parent.mkdir(parents=True, exist_ok=True)
-        archivo.write_bytes(respuesta.content)
-    return Descarga(respuesta.content)
+        archivo.write_bytes(contenido)
+    return Descarga(contenido)
 
 
 def _motivo(exc: httpx.HTTPError) -> str:
@@ -110,6 +109,8 @@ def leer_canal(contenido: bytes) -> list[Entrada]:
         raiz = ET.fromstring(contenido)
     except ET.ParseError as exc:
         raise ValueError("la respuesta no es un canal RSS o Atom") from exc
+    except DefusedXmlException as exc:
+        raise ValueError("el canal declara entidades o DTD externos; no se procesa") from exc
     entradas: list[Entrada] = []
     for item in raiz.iter("item"):
         texto = " ".join(filter(None, [item.findtext("description"), item.findtext(_CONTENIDO)]))

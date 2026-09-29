@@ -1,13 +1,13 @@
-"""Evaluador de Convocatorias y Subvenciones Internacionales.
+"""Evaluador heredado de la 0.1 (obsoleto).
 
-Aplica la matriz de evaluación multicriterio de 8 dimensiones y 100 puntos
-para dictaminar objetivamente si una cooperativa u organización civil
-debe invertir recursos en postular a una convocatoria (FundsforNGOs, BID, UE, etc.).
+Suma ocho puntajes sin exigir evidencia ni revisar el plazo. Se conserva por
+compatibilidad y emite DeprecationWarning: use `grant_tools.matrix.evaluar`, que
+deja pendientes los criterios sin evidencia, valida el plazo y sella el resultado.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any
+import warnings
+from dataclasses import dataclass
 
 from coopexecutive.grant_tools.matrix import PESOS, UMBRAL_APLICAR, UMBRAL_CONDICIONAL, UMBRAL_EXPLORAR
 
@@ -45,19 +45,19 @@ class EvaluationReport:
         ]
         for d in self.dimension_scores:
             lines.append(f"| {d.name} | {d.weight} | {d.score:.1f} | {d.justification} |")
-        
+
         lines.append("\n### Fortalezas de la Organización para esta Convocatoria:")
         for s in self.strengths:
             lines.append(f"- [x] {s}")
-            
+
         lines.append("\n### Riesgos y Brechas Críticas Identificadas:")
         for r in self.risks:
             lines.append(f"- [!] {r}")
-            
+
         lines.append("\n### Ruta de Acción Recomendada:")
         for i, step in enumerate(self.next_steps, 1):
             lines.append(f"{i}. {step}")
-            
+
         return "\n".join(lines)
 
 
@@ -86,7 +86,12 @@ def evaluate_grant_opportunity(
     risks: list[str],
     next_steps: list[str],
 ) -> EvaluationReport:
-    """Calcula la matriz ponderada y genera el reporte ejecutivo."""
+    """Calcula la matriz ponderada y genera el reporte ejecutivo (obsoleto)."""
+    warnings.warn(
+        "evaluate_grant_opportunity está obsoleto; use coopexecutive.grant_tools.matrix.evaluar",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     dims = [
         DimensionScore("Alineación con la Misión", PESOS["alineacion"], min(float(PESOS["alineacion"]), max(0.0, mission_alignment)), alignment_notes),
         DimensionScore("Elegibilidad Geográfica y Legal", PESOS["elegibilidad"], min(float(PESOS["elegibilidad"]), max(0.0, geo_eligibility)), geo_notes),
@@ -98,20 +103,20 @@ def evaluate_grant_opportunity(
         DimensionScore("Requisitos de Auditoría y Reporte", PESOS["reporte"], min(float(PESOS["reporte"]), max(0.0, reporting_manageability)), reporting_notes),
     ]
     total = sum(d.score for d in dims)
-    
+
     if total >= UMBRAL_APLICAR:
         rec = "APLICAR (Alta Compatibilidad)"
-        color = "🟢"
+        color = "VERDE"
     elif total >= UMBRAL_EXPLORAR:
         rec = "EXPLORAR (Requiere Alianzas o Definición)"
-        color = "🟡"
+        color = "AMARILLO"
     elif total >= UMBRAL_CONDICIONAL:
         rec = "CONDICIONAL (Solo si existe capacidad ociosa)"
-        color = "🟠"
+        color = "NARANJA"
     else:
         rec = "NO APLICAR (Incompatible o Desgaste Operativo)"
-        color = "🔴"
-        
+        color = "ROJO"
+
     return EvaluationReport(
         call_title=call_title,
         donor_agency=donor_agency,

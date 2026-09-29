@@ -1,9 +1,11 @@
 import pytest
+
 from coopexecutive.grant_tools.eligibility_evaluator import evaluate_grant_opportunity
 
 
 def test_evaluate_grant_opportunity_high_score():
-    report = evaluate_grant_opportunity(
+    with pytest.warns(DeprecationWarning):
+        report = evaluate_grant_opportunity(
         call_title="Fondo de Transición Energética Comunitaria",
         donor_agency="Agencia Internacional de Cooperación",
         deadline="2026-12-31",
@@ -31,14 +33,15 @@ def test_evaluate_grant_opportunity_high_score():
 
     assert report.total_score == 100.0
     assert "APLICAR" in report.recommendation
-    assert report.color_code == "🟢"
+    assert report.color_code == "VERDE"
     md = report.to_markdown()
     assert "Fondo de Transición Energética Comunitaria" in md
     assert "Experiencia en energía comunitaria" in md
 
 
 def test_evaluate_grant_opportunity_low_score():
-    report = evaluate_grant_opportunity(
+    with pytest.warns(DeprecationWarning):
+        report = evaluate_grant_opportunity(
         call_title="Fondo Incompatible",
         donor_agency="Corporación Privada",
         deadline="2026-09-10",
@@ -66,4 +69,4 @@ def test_evaluate_grant_opportunity_low_score():
 
     assert report.total_score < 40.0
     assert "NO APLICAR" in report.recommendation
-    assert report.color_code == "🔴"
+    assert report.color_code == "ROJO"

@@ -127,7 +127,7 @@ def test_vista_previa_en_markdown():
 
 
 def _imagen(ruta, tamano=(1600, 180)):
-    PIL = pytest.importorskip("PIL")
+    pytest.importorskip("PIL")
     from PIL import Image
 
     Image.new("RGB", tamano, (40, 40, 40)).save(ruta)

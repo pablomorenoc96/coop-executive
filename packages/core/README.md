@@ -47,7 +47,7 @@ In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Age
 4. **Universal Inference Engine:**
    - Flexible routing across three compute tiers:
      - *Zero-cost cloud tier ($0.00):* Free OpenRouter models with 429 rate-limit fallback.
-     - *Local offline tier:* Fully private execution via Ollama (`llama3.1`, `qwen2.5`).
+     - *Local offline tier:* Fully private execution via Ollama (`granite4.1`, `qwen3.8`).
      - *Commercial APIs (optional):* OpenAI, Anthropic, Google Gemini, Groq, Mistral, and DeepSeek.
 
 5. **Deterministic Tool-Use Layer:**
@@ -136,11 +136,21 @@ uv run coopexecutive chat
 
 ## AI Model Setup (Free, Local, and Paid Options)
 
-CoopExecutive supports three execution tiers configurable via `.env`:
-1. **Free Cloud Tier ($0.00):** Free API key from [OpenRouter](https://openrouter.ai/keys) using models like `minimax/minimax-m3:free` or `nvidia/nemotron-3-super-120b-a12b:free`.
-2. **Local Offline Tier (100% Private & Free):** Uses local [Ollama](https://ollama.com/) with `LOCAL_MODELS_ENABLED=true` for `llama3.1` or `qwen2.5`.
-3. **Commercial & Paid APIs (Optional):** Supports OpenAI (`gpt-4o`), Anthropic (`claude-3-7-sonnet`), Google Gemini (`gemini-2.0-flash`), Groq, Mistral, and DeepSeek.
+Copy `.env.example` to `.env` in your user folder (`%APPDATA%\CoopExecutive` or `~/.config/coopexecutive`), the repository root or the folder you run from; `coopexecutive info` shows which files were loaded. Model names below were checked on 29/09/2026 and change often: any compatible model works, and `coopexecutive modelos --herramientas` lists the free ones available today.
 
+| Tier | Provider | Variables | Suggested models | Privacy |
+|---|---|---|---|---|
+| Free cloud | [OpenRouter](https://openrouter.ai/keys) | `OPENROUTER_API_KEY`, `DEFAULT_MODEL` | `google/gemma-4-31b-it:free` (default), `nvidia/nemotron-3-super-120b-a12b:free` (fallback), `qwen/qwen3.8-27b:free` | Daily limits; free providers may train on your data |
+| Local and private | [Ollama](https://ollama.com/) | `LOCAL_MODELS_ENABLED=true`, `LOCAL_MODELS` (first is primary, the rest fallbacks) | `granite4.1:8b`, `granite4.1:3b` (low memory), `qwen3.8:27b`, `nemotron3:33b` (24 GB GPU) | Nothing leaves your computer |
+| Paid | OpenAI | `OPENAI_API_KEY` | `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-luna` | Provider terms |
+| Paid | Anthropic | `ANTHROPIC_API_KEY` | `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-4-5` | Provider terms |
+| Paid | Google Gemini | `GEMINI_API_KEY` | `gemini-3.8-flash`, `gemini-3.5-flash-lite` | Provider terms |
+| Paid | Groq | `GROQ_API_KEY` | `llama-3.3-70b-versatile`, `openai/gpt-oss-120b` | Provider terms |
+| Paid | Mistral | `MISTRAL_API_KEY` | `mistral-medium-3-5-26-04`, `mistral-small-4-0-26-03` | Provider terms |
+| Paid | DeepSeek | `DEEPSEEK_API_KEY` | `deepseek-flash`, `deepseek-v4-pro` | Provider terms |
+| Any | OpenAI-compatible (Azure, vLLM, LiteLLM, LM Studio) | `CUSTOM_BASE_URL`, `CUSTOM_API_KEY` | The one you host | Yours |
+
+With `PROVIDER=auto` the first key present is used. Rate limits (429), server errors and dropped connections are retried up to `MAX_REINTENTOS` times with backoff before moving to the fallback model.
 ---
 
 ## Technical Documentation

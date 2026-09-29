@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Union
 
 MARCADORES = re.compile(
     r"\[PENDIENTE: [^\]]+\]|MONTO POR DEFINIR|COSTO POR COTIZAR|VIGENCIA NO VERIFICADA"
@@ -41,7 +40,7 @@ class Tabla:
     anchos: list[float] = field(default_factory=list)
 
 
-Bloque = Union[Titulo, Parrafo, Lista, Tabla]
+Bloque = Titulo | Parrafo | Lista | Tabla
 
 
 @dataclass

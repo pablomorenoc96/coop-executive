@@ -1,7 +1,7 @@
-import pytest
+from coopexecutive.grant_tools.budget_builder import BudgetItem, GrantBudget
 from coopexecutive.grant_tools.dossier_generator import ProposalDossier
-from coopexecutive.grant_tools.logical_framework import ProjectLogicalFramework, LogFrameRow
-from coopexecutive.grant_tools.budget_builder import GrantBudget, BudgetItem
+from coopexecutive.grant_tools.logical_framework import LogFrameRow, ProjectLogicalFramework
+
 
 def test_proposal_dossier_markdown_generation():
     # Build sample logframe

@@ -6,6 +6,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.3] - 2026-09-29
+
+### Breaking changes
+- `escrutinio` needs an active membership list (`socios alta`) or an explicit `--padron`; it no longer assumes a census.
+- `propuesta`, `votar` and `escrutinio` exit with code 1 when they fail (statutory block, duplicate vote, no quorum), and they refuse to run for organisations without an assembly in their profile.
+- `marco-logico`, `presupuesto` and `dossier` no longer ask the model to write the whole document. By default they return a skeleton with `[PENDIENTE: …]`; `--desde FILE.yaml` fills it with your data and `--asistido` asks the model for a draft that goes through the strict review. `--plantilla` prints the YAML template.
+- `fastapi` and `uvicorn` moved from the core dependencies to the new `web` extra. PDF reading needs the `pdf` extra (`pip install "coopexecutive[pdf]"`); `todo` installs every extra.
+
+### Added
+- **Membership list:** `socios alta|baja|listar`. Votes are checked against the active members when a list exists.
+- **Closing a vote:** `escrutinio` closes the proposal as approved or rejected, stores the result and a full SHA-256 hash, and records the decision. The minutes state the rule actually applied: simple majority or two thirds, taken from `governance.mayoria` in the profile. Running it again shows the stored minutes.
+- **Reading files and pages:** `evaluar-convocatoria` reads PDF, Word (.docx), HTML and text files, and web pages or PDFs published online. Downloads stop at 5 MB and follow redirects one by one.
+- `proyecto` group (`proyecto marco-logico|presupuesto|dossier`); the top-level names still work. `dossier` takes the funder and call from `--expediente`, and the logical framework and budget from `--marco` and `--presupuesto`.
+- Budget items without a cost show `COSTO POR COTIZAR` and the total `MONTO POR DEFINIR (parcial: …)`. Indirect costs are only computed when every item has a cost and `--tope-indirectos` is given.
+- `modelos [--herramientas]` lists the free OpenRouter models available today.
+- `chat --rol` and `ask --rol` accept only the defined roles: procurador, vigilancia, legal, finanzas, tecnico, comunicacion and asamblea.
+- `info` shows which `.env` files were loaded.
+- Model errors (invalid key, rate limit, no connection) now stop the command with a clear message instead of appearing as the answer. Rate limits, server errors and dropped connections are retried with backoff (`MAX_REINTENTOS`) before switching to the fallback model.
+- `LOG_LEVEL` writes diagnostic messages to stderr.
+
+### Changed
+- `.env` is looked up in the user folder (`%APPDATA%\CoopExecutive` or `~/.config/coopexecutive`), the repository root (only in a checkout) and the current folder, which wins. `COOPEXECUTIVE_ENV_FILE` points to a specific file. Installed from a wheel without a workspace, the profile and database live in the user folder.
+- `LOCAL_MODELS` now sets the Ollama model and its fallbacks; before, Ollama received the OpenRouter model name. `LOCAL_TIMEOUT_S` and `OPENROUTER_ENABLED` now take effect.
+- Default models updated: `google/gemma-4-31b-it:free`, with `nvidia/nemotron-3-super-120b-a12b:free` as fallback, and `granite4.1:8b` for Ollama. The model tables in `.env.example` and the README list current names.
+- The dossier no longer names a default funder, and statutory funds only appear for cooperatives.
+- The logical framework leaves the SDGs and the theory of change pending unless you provide them.
+- No emojis in terminal output.
+
+### Fixed
+- A database error in the middle of an operation no longer commits half of it; foreign keys are enforced.
+- Monitoring parses feeds with `defusedxml` and rejects feeds that declare entities or external DTDs.
+- The minutes no longer say «qualified majority» when a simple majority was applied.
+
+### Deprecated
+- `grant_tools.eligibility_evaluator` is a thin wrapper over the matrix and will be removed.
+
+---
+
 ## [0.3.2] - 2026-09-28
 
 ### Changed

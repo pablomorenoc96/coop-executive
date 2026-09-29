@@ -1,11 +1,16 @@
-"""Persistencia en SQLite para decisiones de asamblea, acuerdos, convocatorias y votaciones democráticas."""
+"""Persistencia en SQLite: asamblea, evaluaciones, financiadores, expedientes y documentos.
+
+Cada `get_db_conn()` confirma los cambios al salir sin error y los revierte si hay
+una excepción. Las claves foráneas están activas.
+"""
 from __future__ import annotations
 
 import os
 import sqlite3
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator
+
 from coopexecutive.config import get_settings
 
 
@@ -17,12 +22,17 @@ def get_db_conn() -> Generator[sqlite3.Connection, None, None]:
     else:
         db_path = get_settings().episodic_db_path
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(db_path))
+    conn = sqlite3.connect(str(db_path), timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA busy_timeout = 10000")
     try:
         yield conn
-    finally:
         conn.commit()
+    except BaseException:
+        conn.rollback()
+        raise
+    finally:
         conn.close()
 
 
@@ -136,6 +146,21 @@ MIGRACIONES: tuple[str, ...] = (
         sha256 TEXT NOT NULL,
         creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+    """,
+    # 3. Padrón de socios y cierre de propuestas con su resultado y huella completa.
+    """
+    CREATE TABLE IF NOT EXISTS socios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        socio_id TEXT NOT NULL UNIQUE,
+        nombre TEXT NOT NULL,
+        activo INTEGER NOT NULL DEFAULT 1,
+        alta_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        baja_en TIMESTAMP
+    );
+    ALTER TABLE assembly_proposals ADD COLUMN cerrada_en TIMESTAMP;
+    ALTER TABLE assembly_proposals ADD COLUMN resultado_json TEXT;
+    ALTER TABLE assembly_proposals ADD COLUMN hash TEXT;
+    ALTER TABLE assembly_decisions ADD COLUMN proposal_id INTEGER REFERENCES assembly_proposals(id);
     """,
 )
 

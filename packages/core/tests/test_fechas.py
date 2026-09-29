@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 from coopexecutive.utils import fechas
 from coopexecutive.utils.fechas import ahora_local, fecha_larga, hoy_local, local_desde_utc
@@ -30,7 +30,7 @@ def test_local_desde_utc_de_sqlite():
 
 def test_hoy_local_depende_de_la_zona(monkeypatch):
     # Las 03:00 UTC del 28/9 todavía son el 27/9 en la Ciudad de México.
-    fijo = datetime(2026, 9, 28, 3, 0, tzinfo=timezone.utc)
+    fijo = datetime(2026, 9, 28, 3, 0, tzinfo=UTC)
 
     class Reloj(datetime):
         @classmethod

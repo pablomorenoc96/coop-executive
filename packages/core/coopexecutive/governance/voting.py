@@ -1,18 +1,29 @@
-"""Sistema de votación soberana y escrutinio democrático (LGSC Art. 36-40).
+"""Padrón de socios, votación y escrutinio de asamblea.
 
 Principios:
-- Un socio = Un voto (sin ponderación por capital ni aportaciones).
-- Cuórum estatutario mínimo (50% + 1 socios activos).
-- Invariantes estatutarias: Veto a propuestas que diluyan capital o liquiden fondos irrepartibles.
-- Generación formal de Acta de Escrutinio con trazabilidad y hash de verificación.
+- Un socio, un voto (sin ponderación por capital ni aportaciones).
+- Cuórum: votan más de la mitad del padrón activo.
+- Mayoría según el perfil (`governance.mayoria`): simple o de dos tercios de los votos válidos.
+- Veto a propuestas que diluyan capital o liquiden fondos irrepartibles.
+- El escrutinio cierra la propuesta, guarda el resultado con su huella SHA-256 completa
+  y registra el acuerdo; repetirlo devuelve la misma acta.
 """
 from __future__ import annotations
 
 import hashlib
+import json
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
+
 from coopexecutive.memory.episodic import get_db_conn, initialize_db
 from coopexecutive.utils.fechas import ahora_local
+
+Mayoria = Literal["simple", "dos_tercios"]
+
+REGLAS: dict[str, str] = {
+    "simple": "mayoría simple de los votos válidos (más votos a favor que en contra)",
+    "dos_tercios": "mayoría de dos tercios de los votos válidos",
+}
 
 
 class VoteChoice(str, Enum):
@@ -21,7 +32,7 @@ class VoteChoice(str, Enum):
     ABSTENCION = "ABSTENCION"
 
 
-# Palabras clave prohibidas por estatutos cooperativos y LGSC
+# Conceptos que los estatutos cooperativos y la LGSC no permiten someter a votación.
 PROHIBITED_CONCEPTS = [
     "vender acciones",
     "dilucion de capital",
@@ -37,11 +48,58 @@ PROHIBITED_CONCEPTS = [
 ]
 
 
+# --- Padrón ------------------------------------------------------------------------
+
+
+def alta_socio(socio_id: str, nombre: str) -> dict[str, Any]:
+    """Da de alta (o reactiva) a un socio en el padrón."""
+    socio_id, nombre = socio_id.strip(), nombre.strip()
+    if not socio_id or not nombre:
+        raise ValueError("El socio necesita identificador y nombre.")
+    initialize_db()
+    with get_db_conn() as conn:
+        fila = conn.execute("SELECT activo FROM socios WHERE socio_id = ?", (socio_id,)).fetchone()
+        if fila is not None and fila["activo"]:
+            raise ValueError(f"El socio {socio_id} ya está activo en el padrón.")
+        if fila is not None:
+            conn.execute(
+                "UPDATE socios SET nombre = ?, activo = 1, baja_en = NULL WHERE socio_id = ?", (nombre, socio_id)
+            )
+        else:
+            conn.execute("INSERT INTO socios (socio_id, nombre) VALUES (?, ?)", (socio_id, nombre))
+    return {"socio_id": socio_id, "nombre": nombre, "activo": True}
+
+
+def baja_socio(socio_id: str) -> None:
+    """Da de baja a un socio; sus votos ya emitidos se conservan."""
+    initialize_db()
+    with get_db_conn() as conn:
+        cambio = conn.execute(
+            "UPDATE socios SET activo = 0, baja_en = CURRENT_TIMESTAMP WHERE socio_id = ? AND activo = 1",
+            (socio_id.strip(),),
+        )
+        if cambio.rowcount == 0:
+            raise ValueError(f"No hay un socio activo con el identificador {socio_id}.")
+
+
+def listar_socios(solo_activos: bool = True) -> list[dict[str, Any]]:
+    initialize_db()
+    with get_db_conn() as conn:
+        filtro = "WHERE activo = 1 " if solo_activos else ""
+        return [dict(f) for f in conn.execute(f"SELECT * FROM socios {filtro}ORDER BY socio_id")]
+
+
+def padron_activo() -> int:
+    initialize_db()
+    with get_db_conn() as conn:
+        return conn.execute("SELECT COUNT(*) FROM socios WHERE activo = 1").fetchone()[0]
+
+
+# --- Propuestas y votos ------------------------------------------------------------
+
+
 def create_proposal(title: str, description: str, category: str = "subvencion") -> int:
-    """Registra una nueva propuesta a someter ante la Asamblea General.
-    
-    Verifica previamente las salvaguardas estatutarias.
-    """
+    """Registra una propuesta para la asamblea, después de revisar las salvaguardas estatutarias."""
     initialize_db()
     combined_text = f"{title} {description}".lower()
     for forbidden in PROHIBITED_CONCEPTS:
@@ -53,12 +111,8 @@ def create_proposal(title: str, description: str, category: str = "subvencion") 
             )
 
     with get_db_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO assembly_proposals (title, description, category, status)
-            VALUES (?, ?, ?, 'abierta')
-            """,
+        cursor = conn.execute(
+            "INSERT INTO assembly_proposals (title, description, category, status) VALUES (?, ?, ?, 'abierta')",
             (title.strip(), description.strip(), category.strip()),
         )
         return cursor.lastrowid
@@ -67,101 +121,144 @@ def create_proposal(title: str, description: str, category: str = "subvencion") 
 def cast_vote(
     proposal_id: int,
     member_id: str,
-    member_name: str,
-    choice: str | VoteChoice,
+    member_name: str = "",
+    choice: str | VoteChoice = VoteChoice.ABSTENCION,
     justification: str = "",
 ) -> dict[str, Any]:
-    """Emite el voto de un socio bajo el principio 'Un Socio = Un Voto'.
-    
-    Previene duplicados y valida que la propuesta esté abierta.
+    """Registra el voto de un socio: uno por propuesta y solo en propuestas abiertas.
+
+    Si hay padrón, el socio debe estar activo en él y su nombre sale del padrón.
     """
     initialize_db()
     if isinstance(choice, str):
         try:
             choice_enum = VoteChoice(choice.upper().strip())
         except ValueError:
-            raise ValueError(f"Opción de voto inválida '{choice}'. Opciones válidas: A_FAVOR, EN_CONTRA, ABSTENCION.")
+            raise ValueError(
+                f"Opción de voto inválida '{choice}'. Opciones válidas: A_FAVOR, EN_CONTRA, ABSTENCION."
+            ) from None
     else:
         choice_enum = choice
+    member_id = member_id.strip()
 
     with get_db_conn() as conn:
-        cursor = conn.cursor()
-        
-        # Verificar estado de la propuesta
-        cursor.execute("SELECT id, title, status FROM assembly_proposals WHERE id = ?", (proposal_id,))
-        prop = cursor.fetchone()
+        prop = conn.execute("SELECT id, status FROM assembly_proposals WHERE id = ?", (proposal_id,)).fetchone()
         if not prop:
             raise ValueError(f"La propuesta #{proposal_id} no existe.")
         if prop["status"] != "abierta":
             raise ValueError(f"La propuesta #{proposal_id} se encuentra '{prop['status']}'. No admite nuevos votos.")
 
-        # Verificar si el socio ya votó (1 socio = 1 voto)
-        cursor.execute(
-            "SELECT id FROM assembly_votes WHERE proposal_id = ? AND member_id = ?",
-            (proposal_id, member_id.strip()),
-        )
-        if cursor.fetchone():
+        hay_padron = conn.execute("SELECT COUNT(*) FROM socios").fetchone()[0] > 0
+        if hay_padron:
+            socio = conn.execute(
+                "SELECT nombre FROM socios WHERE socio_id = ? AND activo = 1", (member_id,)
+            ).fetchone()
+            if socio is None:
+                raise ValueError(f"El socio {member_id} no está activo en el padrón.")
+            member_name = socio["nombre"]
+        if not member_name.strip():
+            raise ValueError("Sin padrón registrado, indique el nombre del socio.")
+
+        if conn.execute(
+            "SELECT id FROM assembly_votes WHERE proposal_id = ? AND member_id = ?", (proposal_id, member_id)
+        ).fetchone():
             raise ValueError(
                 f"El socio '{member_name}' (ID: {member_id}) ya ha emitido su voto en la propuesta #{proposal_id}. "
                 f"Principio LGSC: Un socio, un voto."
             )
 
-        cursor.execute(
-            """
-            INSERT INTO assembly_votes (proposal_id, member_id, member_name, choice, justification)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (proposal_id, member_id.strip(), member_name.strip(), choice_enum.value, justification.strip()),
-        )
-        vote_id = cursor.lastrowid
+        vote_id = conn.execute(
+            "INSERT INTO assembly_votes (proposal_id, member_id, member_name, choice, justification) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (proposal_id, member_id, member_name.strip(), choice_enum.value, justification.strip()),
+        ).lastrowid
 
     return {
         "vote_id": vote_id,
         "proposal_id": proposal_id,
         "member_id": member_id,
-        "member_name": member_name,
+        "member_name": member_name.strip(),
         "choice": choice_enum.value,
         "status": "registrado",
     }
 
 
-def tally_votes(proposal_id: int, total_census_members: int = 12) -> dict[str, Any]:
-    """Realiza el escrutinio formal de una propuesta y emite el Acta de Acuerdo."""
+# --- Escrutinio --------------------------------------------------------------------
+
+
+def _aprobada(a_favor: int, en_contra: int, mayoria: str) -> bool:
+    if mayoria == "dos_tercios":
+        return a_favor > 0 and 3 * a_favor >= 2 * (a_favor + en_contra)
+    return a_favor > en_contra
+
+
+def _pct(parte: int, total: int) -> float:
+    return round(parte / total * 100, 1) if total else 0.0
+
+
+def tally_votes(
+    proposal_id: int,
+    total_census_members: int | None = None,
+    mayoria: Mayoria = "simple",
+) -> dict[str, Any]:
+    """Escruta una propuesta, la cierra y emite el acta.
+
+    Sin `total_census_members` se usa el padrón activo; si no hay padrón, falla.
+    Una propuesta ya cerrada devuelve el resultado guardado sin volver a contar.
+    """
+    if mayoria not in REGLAS:
+        raise ValueError(f"Regla de mayoría desconocida: {mayoria}.")
     initialize_db()
     with get_db_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM assembly_proposals WHERE id = ?", (proposal_id,))
-        prop = cursor.fetchone()
+        prop = conn.execute("SELECT * FROM assembly_proposals WHERE id = ?", (proposal_id,)).fetchone()
         if not prop:
             raise ValueError(f"La propuesta #{proposal_id} no existe.")
+        if prop["cerrada_en"] and prop["resultado_json"]:
+            return {**json.loads(prop["resultado_json"]), "ya_cerrada": True}
 
-        cursor.execute("SELECT * FROM assembly_votes WHERE proposal_id = ?", (proposal_id,))
-        votes = [dict(row) for row in cursor.fetchall()]
+        if total_census_members is None:
+            total_census_members = conn.execute("SELECT COUNT(*) FROM socios WHERE activo = 1").fetchone()[0]
+            origen_padron = "padrón activo registrado"
+        else:
+            origen_padron = "indicado en el escrutinio"
+        if total_census_members <= 0:
+            raise ValueError(
+                "No hay padrón de socios activos. Registre socios (coopexecutive socios alta) "
+                "o indique el padrón con --padron."
+            )
 
-    total_votes = len(votes)
-    a_favor = sum(1 for v in votes if v["choice"] == VoteChoice.A_FAVOR.value)
-    en_contra = sum(1 for v in votes if v["choice"] == VoteChoice.EN_CONTRA.value)
-    abstencion = sum(1 for v in votes if v["choice"] == VoteChoice.ABSTENCION.value)
+        votes = [dict(r) for r in conn.execute(
+            "SELECT member_id, choice FROM assembly_votes WHERE proposal_id = ? ORDER BY member_id", (proposal_id,)
+        )]
+        total_votes = len(votes)
+        a_favor = sum(1 for v in votes if v["choice"] == VoteChoice.A_FAVOR.value)
+        en_contra = sum(1 for v in votes if v["choice"] == VoteChoice.EN_CONTRA.value)
+        abstencion = total_votes - a_favor - en_contra
 
-    quorum_pct = round((total_votes / total_census_members) * 100, 2) if total_census_members > 0 else 0.0
-    quorum_reached = total_votes > (total_census_members / 2.0)  # 50% + 1 socio
+        quorum_pct = round(total_votes / total_census_members * 100, 2)
+        quorum_reached = total_votes > total_census_members / 2
+        is_approved = quorum_reached and _aprobada(a_favor, en_contra, mayoria)
+        status_str = "APROBADA" if is_approved else "RECHAZADA"
+        if not quorum_reached:
+            fundamento = "No hubo cuórum: votaron la mitad del padrón o menos."
+        elif is_approved:
+            fundamento = f"Con cuórum, la propuesta alcanzó la {REGLAS[mayoria]}."
+        else:
+            fundamento = f"Con cuórum, la propuesta no alcanzó la {REGLAS[mayoria]}."
 
-    valid_votes = a_favor + en_contra
-    majority_pct = round((a_favor / valid_votes) * 100, 2) if valid_votes > 0 else 0.0
-    is_approved = quorum_reached and a_favor > en_contra
+        cerrada_en = ahora_local()
+        canonico = json.dumps(
+            {"propuesta": proposal_id, "titulo": prop["title"], "descripcion": prop["description"],
+             "padron": total_census_members, "mayoria": mayoria, "votos": votes, "resultado": status_str},
+            ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+        )
+        resolution_hash = hashlib.sha256(canonico.encode("utf-8")).hexdigest()
+        folio = f"ASAMBLEA-{proposal_id:04d}-{resolution_hash[:8].upper()}"
 
-    status_str = "APROBADA" if is_approved else "RECHAZADA"
-
-    # Generar Hash Criptográfico del Acta de Acuerdo
-    raw_hash_data = f"{proposal_id}-{prop['title']}-{total_votes}-{a_favor}-{en_contra}-{abstencion}"
-    resolution_hash = hashlib.sha256(raw_hash_data.encode()).hexdigest()[:16].upper()
-
-    acta_md = f"""# Acta de Escrutinio y Resolución de Asamblea
-**Acuerdo Folio:** ASAMBLEA-{proposal_id:04d}-{resolution_hash}  
-**Fecha de Escrutinio:** {ahora_local().strftime('%Y-%m-%d %H:%M:%S %Z')}
-**Órgano Resolutivo:** Asamblea General de Socios (Principio: Un Socio = Un Voto)
-
----
+        acta_md = f"""# Acta de Escrutinio y Resolución de Asamblea
+**Acuerdo Folio:** {folio}
+**Fecha de Escrutinio:** {cerrada_en.strftime('%Y-%m-%d %H:%M:%S %Z')}
+**Órgano Resolutivo:** Asamblea General de Socios (un socio, un voto)
 
 ## 1. Identificación de la Propuesta
 * **Folio Propuesta:** #{proposal_id}
@@ -169,68 +266,71 @@ def tally_votes(proposal_id: int, total_census_members: int = 12) -> dict[str, A
 * **Categoría:** {prop['category'].upper()}
 * **Materia del Acuerdo:** {prop['description']}
 
----
+## 2. Cuórum
+* **Padrón activo:** {total_census_members} socios ({origen_padron})
+* **Votos emitidos:** {total_votes}
+* **Participación:** {quorum_pct}%
+* **Cuórum:** {'ACREDITADO (más de la mitad del padrón)' if quorum_reached else 'NO ACREDITADO'}
 
-## 2. Certificación de Cuórum Legal (LGSC Art. 36-40)
-* **Padrón Activo Total:** {total_census_members} socios acreditados
-* **Cédulas de Voto Emitidas:** {total_votes} votos
-* **Porcentaje de Participación:** {quorum_pct}%
-* **Estatus de Cuórum:** {'✓ CUÓRUM LEGAL ACREDITADO (>50%)' if quorum_reached else '✗ SIN CUÓRUM LEGAL REQUERIDO'}
-
----
-
-## 3. Cómputo de Votos y Resultados
-| Sentido del Voto | Conteo | Porcentaje s/ Votantes |
+## 3. Cómputo de Votos
+| Sentido del Voto | Conteo | Porcentaje de votantes |
 | :--- | :--- | :--- |
-| **A Favor** | {a_favor} | {round((a_favor/total_votes)*100, 1) if total_votes else 0}% |
-| **En Contra** | {en_contra} | {round((en_contra/total_votes)*100, 1) if total_votes else 0}% |
-| **Abstención** | {abstencion} | {round((abstencion/total_votes)*100, 1) if total_votes else 0}% |
-| **Total Cédulas** | {total_votes} | 100.0% |
+| **A Favor** | {a_favor} | {_pct(a_favor, total_votes)}% |
+| **En Contra** | {en_contra} | {_pct(en_contra, total_votes)}% |
+| **Abstención** | {abstencion} | {_pct(abstencion, total_votes)}% |
+| **Total** | {total_votes} | {100.0 if total_votes else 0.0}% |
+
+## 4. Resolución
+**Resolución:** **{status_str}**
+**Regla aplicada:** {REGLAS[mayoria]}.
+*Fundamentación:* {fundamento}
 
 ---
-
-## 4. Dictamen Resolutivo de la Mesa Directiva
-**Resolución:** **{status_str}**  
-*Fundamentación:* {'La propuesta alcanzó mayoría calificada con validez estatutaria.' if is_approved else 'La propuesta no alcanzó los votos favorables suficientes o carece de cuórum.'}
-
----
-*Firma Digital del Escrutinio: `SHA256:{resolution_hash}` — Certificado por CoopExecutive Engine.*
+*Huella del escrutinio: `SHA256:{resolution_hash}`*
 """
 
-    return {
-        "proposal_id": proposal_id,
-        "title": prop["title"],
-        "total_census": total_census_members,
-        "total_votes": total_votes,
-        "quorum_pct": quorum_pct,
-        "quorum_reached": quorum_reached,
-        "a_favor": a_favor,
-        "en_contra": en_contra,
-        "abstencion": abstencion,
-        "status": status_str,
-        "is_approved": is_approved,
-        "resolution_hash": resolution_hash,
-        "acta_md": acta_md,
-    }
+        resultado = {
+            "proposal_id": proposal_id,
+            "title": prop["title"],
+            "total_census": total_census_members,
+            "total_votes": total_votes,
+            "quorum_pct": quorum_pct,
+            "quorum_reached": quorum_reached,
+            "a_favor": a_favor,
+            "en_contra": en_contra,
+            "abstencion": abstencion,
+            "mayoria": mayoria,
+            "status": status_str,
+            "is_approved": is_approved,
+            "folio": folio,
+            "resolution_hash": resolution_hash,
+            "acta_md": acta_md,
+        }
+        conn.execute(
+            "UPDATE assembly_proposals SET status = ?, cerrada_en = CURRENT_TIMESTAMP, resultado_json = ?, hash = ? "
+            "WHERE id = ?",
+            (status_str.lower(), json.dumps(resultado, ensure_ascii=False), resolution_hash, proposal_id),
+        )
+        conn.execute(
+            "INSERT INTO assembly_decisions (session_id, decision_text, organ, proposal_id) VALUES (?, ?, ?, ?)",
+            (folio, acta_md, "Asamblea General", proposal_id),
+        )
+    return {**resultado, "ya_cerrada": False}
 
 
 def list_proposals(status: str | None = None) -> list[dict[str, Any]]:
-    """Lista las propuestas registradas en la memoria del sistema."""
+    """Lista las propuestas registradas, de la más reciente a la más antigua."""
     initialize_db()
     with get_db_conn() as conn:
-        cursor = conn.cursor()
         if status:
-            cursor.execute("SELECT * FROM assembly_proposals WHERE status = ? ORDER BY id DESC", (status,))
+            filas = conn.execute("SELECT * FROM assembly_proposals WHERE status = ? ORDER BY id DESC", (status,))
         else:
-            cursor.execute("SELECT * FROM assembly_proposals ORDER BY id DESC")
-        return [dict(row) for row in cursor.fetchall()]
+            filas = conn.execute("SELECT * FROM assembly_proposals ORDER BY id DESC")
+        return [dict(row) for row in filas]
 
 
 def get_proposal(proposal_id: int) -> dict[str, Any] | None:
-    """Obtiene el detalle de una propuesta."""
     initialize_db()
     with get_db_conn() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM assembly_proposals WHERE id = ?", (proposal_id,))
-        row = cursor.fetchone()
+        row = conn.execute("SELECT * FROM assembly_proposals WHERE id = ?", (proposal_id,)).fetchone()
         return dict(row) if row else None

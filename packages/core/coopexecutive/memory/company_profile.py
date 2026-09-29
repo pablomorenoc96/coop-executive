@@ -51,6 +51,8 @@ class Governance(BaseModel):
     executive_body: str = "Consejo de Administración"
     supervisory_body: str = "Consejo de Vigilancia"
     committees: list[str] = Field(default_factory=list)
+    # Regla para aprobar en asamblea, sobre los votos válidos (a favor + en contra).
+    mayoria: Literal["simple", "dos_tercios"] = "simple"
 
 
 class RangoPresupuesto(BaseModel):
@@ -66,7 +68,7 @@ class RangoPresupuesto(BaseModel):
         return validar_moneda(v)
 
     @model_validator(mode="after")
-    def _orden(self) -> "RangoPresupuesto":
+    def _orden(self) -> RangoPresupuesto:
         for valor in (self.minimo, self.maximo):
             if valor is not None and valor < 0:
                 raise ValueError("El rango de presupuesto no admite montos negativos.")
@@ -162,7 +164,7 @@ class CoopProfile(BaseModel):
     identidad: Identidad = Field(default_factory=Identidad)
 
     @model_validator(mode="after")
-    def _tipo(self) -> "CoopProfile":
+    def _tipo(self) -> CoopProfile:
         if self.tipo_organizacion is None:
             self.tipo_organizacion = inferir_tipo(self.legal_structure)
         if self.tipo_organizacion != "cooperativa" and "regime" not in self.model_fields_set:
@@ -188,7 +190,7 @@ class CoopProfile(BaseModel):
     def load_from_yaml(cls, path: Path) -> CoopProfile:
         if not path.exists():
             return cls()
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         return cls(**data)
 

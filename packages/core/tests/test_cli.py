@@ -8,7 +8,7 @@ from click.testing import CliRunner
 from coopexecutive.cli import _consola, cli, procuracion
 from coopexecutive.crm import cases, funders
 from coopexecutive.governance.voting import list_proposals
-from coopexecutive.orchestrator.coop_executive import CoopExecutive
+from coopexecutive.lectura import ErrorLectura
 
 
 def invocar(*args: str):
@@ -40,27 +40,36 @@ def test_propuestas_sin_registros(entorno_aislado):
     assert "No hay propuestas" in res.output
 
 
-def test_propuesta_prohibida_muestra_error(entorno_aislado):
+def test_propuesta_prohibida_falla(entorno_aislado):
     res = invocar("propuesta", "Venta", "-d", "Vender acciones de la cooperativa.")
-    assert res.exit_code == 0, res.output
+    assert res.exit_code == 1, res.output
     assert "Error Estatutario" in res.output
     assert "No hay propuestas" in invocar("propuestas").output
 
 
-def test_votar_y_escrutinio(entorno_aislado):
+def test_votar_y_escrutinio_con_padron_indicado(entorno_aislado):
     invocar("propuesta", "Fondo eolico", "-d", "Aprobar la contrapartida del proyecto.")
     for socio, voto in [("S1", "a_favor"), ("S2", "A_FAVOR"), ("S3", "EN_CONTRA")]:
         res = invocar("votar", "1", "-s", socio, "-n", f"Socio {socio}", "-v", voto)
         assert res.exit_code == 0, res.output
-        assert "Voto Recibida" in res.output
+        assert "Voto registrado" in res.output
 
     duplicado = invocar("votar", "1", "-s", "S1", "-n", "Socio S1", "-v", "EN_CONTRA")
-    assert "Rechazo de Cédula" in duplicado.output
+    assert duplicado.exit_code == 1
+    assert "Voto rechazado" in duplicado.output
 
     res = invocar("escrutinio", "1", "--padron", "5")
     assert res.exit_code == 0, res.output
     assert "APROBADA" in res.output
     assert "SHA256:" in res.output
+    assert "mayoría simple" in res.output
+
+    # La propuesta queda cerrada: no admite votos y el acta se repite igual.
+    assert invocar("votar", "1", "-s", "S4", "-n", "Socio S4", "-v", "A_FAVOR").exit_code == 1
+    otra = invocar("escrutinio", "1")
+    assert otra.exit_code == 0, otra.output
+    assert "ya estaba cerrada" in otra.output
+    assert "APROBADA" in invocar("propuestas").output
 
 
 def test_escrutinio_sin_cuorum_rechaza(entorno_aislado):
@@ -71,10 +80,68 @@ def test_escrutinio_sin_cuorum_rechaza(entorno_aislado):
     assert "RECHAZADA" in res.output
 
 
+def test_escrutinio_sin_padron_falla(entorno_aislado):
+    invocar("propuesta", "Fondo eolico", "-d", "Aprobar la contrapartida del proyecto.")
+    invocar("votar", "1", "-s", "S1", "-n", "Socio S1", "-v", "A_FAVOR")
+    res = invocar("escrutinio", "1")
+    assert res.exit_code == 1
+    assert "socios alta" in res.output
+
+
 def test_escrutinio_propuesta_inexistente(entorno_aislado):
-    res = invocar("escrutinio", "99")
-    assert res.exit_code == 0, res.output
+    res = invocar("escrutinio", "99", "--padron", "3")
+    assert res.exit_code == 1
     assert "no existe" in res.output
+
+
+def test_socios_padron_y_voto_por_identificador(entorno_aislado):
+    for socio, nombre in [("S1", "Ana"), ("S2", "Luis"), ("S3", "Rosa")]:
+        assert invocar("socios", "alta", socio, "-n", nombre).exit_code == 0
+    assert invocar("socios", "alta", "S1", "-n", "Ana").exit_code == 1
+    assert invocar("socios", "baja", "S3").exit_code == 0
+    listado = invocar("socios", "listar", "--todos")
+    assert "Ana" in listado.output and "baja" in listado.output
+
+    invocar("propuesta", "Fondo eolico", "-d", "Aprobar la contrapartida del proyecto.")
+    res = invocar("votar", "1", "-s", "S1", "-v", "A_FAVOR")
+    assert res.exit_code == 0, res.output
+    assert "Ana" in res.output
+    assert invocar("votar", "1", "-s", "S3", "-v", "A_FAVOR").exit_code == 1  # dado de baja
+    assert invocar("votar", "1", "-s", "S2", "-v", "EN_CONTRA").exit_code == 0
+
+    # Padrón activo = 2, votaron 2; mayoría simple con empate 1-1 no aprueba.
+    res = invocar("escrutinio", "1")
+    assert res.exit_code == 0, res.output
+    assert "RECHAZADA" in res.output
+    assert "padrón activo registrado" in res.output
+
+
+def test_escrutinio_aplica_dos_tercios_del_perfil(entorno_aislado):
+    perfil = entorno_aislado / "profile.yaml"
+    datos = yaml.safe_load(perfil.read_text(encoding="utf-8"))
+    datos.setdefault("governance", {})["mayoria"] = "dos_tercios"
+    perfil.write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+
+    invocar("propuesta", "Fondo eolico", "-d", "Aprobar la contrapartida del proyecto.")
+    for socio, voto in [("S1", "A_FAVOR"), ("S2", "A_FAVOR"), ("S3", "A_FAVOR"), ("S4", "EN_CONTRA"),
+                        ("S5", "EN_CONTRA")]:
+        invocar("votar", "1", "-s", socio, "-n", socio, "-v", voto)
+    res = invocar("escrutinio", "1", "--padron", "5")
+    assert res.exit_code == 0, res.output
+    assert "RECHAZADA" in res.output  # 3 de 5 no llega a dos tercios
+    assert "dos tercios" in res.output
+
+
+def test_asamblea_requiere_organo_colegiado(entorno_aislado):
+    perfil = entorno_aislado / "profile.yaml"
+    datos = yaml.safe_load(perfil.read_text(encoding="utf-8"))
+    datos.pop("governance", None)
+    datos["legal_structure"] = "Asociación Civil"
+    datos["tipo_organizacion"] = "asociacion_civil"
+    perfil.write_text(yaml.safe_dump(datos, allow_unicode=True), encoding="utf-8")
+    res = invocar("propuesta", "Fondo", "-d", "Aprobar la contrapartida.")
+    assert res.exit_code == 1
+    assert "no tiene asamblea" in res.output
 
 
 # --- Procuración -----------------------------------------------------------------
@@ -118,18 +185,6 @@ def con_rango(entorno_aislado):
 @pytest.fixture
 def hoy_fijo(monkeypatch):
     monkeypatch.setattr(procuracion, "hoy_local", lambda *_: HOY)
-
-
-@pytest.fixture
-def respuestas_modelo(monkeypatch):
-    """Sustituye al modelo: cada llamada a stream_chat devuelve la siguiente respuesta."""
-    cola: list[str] = []
-
-    async def falso(self, mensaje, history=None, specialist_focus=None):
-        yield cola.pop(0)
-
-    monkeypatch.setattr(CoopExecutive, "stream_chat", falso)
-    return cola
 
 
 def escribir_yaml(ruta, datos) -> str:
@@ -217,13 +272,18 @@ def test_evaluar_error_de_validacion(entorno_aislado, hoy_fijo):
     assert "ERROR_VALIDACION" in res.output
 
 
-def test_evaluar_expediente_inexistente_y_url(entorno_aislado):
+def test_evaluar_expediente_inexistente_y_url_caida(entorno_aislado, monkeypatch):
     res = invocar("evaluar-convocatoria", "--expediente", "EXP-2026-0099")
     assert res.exit_code == 1
     assert "No existe el expediente" in res.output
+
+    def caida(url):
+        raise ErrorLectura("El sitio respondió HTTP 404.")
+
+    monkeypatch.setattr(procuracion, "leer_url", caida)
     res = invocar("evaluar-convocatoria", "https://ejemplo.org/bases")
     assert res.exit_code == 1
-    assert "Origen no admitido" in res.output
+    assert "No se pudieron leer las bases" in res.output
 
 
 def test_evaluar_asistido_con_modelo_simulado(entorno_aislado, hoy_fijo, con_rango, respuestas_modelo):

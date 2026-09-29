@@ -1,22 +1,34 @@
 """Orquestador Ejecutivo Colegiado de CoopExecutive."""
 from __future__ import annotations
 
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
+
 from coopexecutive.config import get_settings
 from coopexecutive.memory.company_profile import CoopProfile
 from coopexecutive.memory.episodic import initialize_db
 from coopexecutive.prompts.cooperative_persona import COOPERATIVE_PERSONA_PROMPT, ORGANIZATION_PERSONA_PROMPT
 from coopexecutive.prompts.domain_prompts import (
-    VIGILANCIA_PROMPT,
-    LEGAL_SOCIAL_PROMPT,
-    FINANZAS_SOLIDARIAS_PROMPT,
-    DESARROLLO_TECNICO_PROMPT,
     COMUNICACION_SOCIAL_PROMPT,
+    DESARROLLO_TECNICO_PROMPT,
+    FINANZAS_SOLIDARIAS_PROMPT,
+    LEGAL_SOCIAL_PROMPT,
     SECRETARIA_ASAMBLEA_PROMPT,
+    VIGILANCIA_PROMPT,
 )
 from coopexecutive.prompts.grant_procurement import GRANT_PROCUREMENT_PROMPT
 from coopexecutive.providers.client import AIClient
 from coopexecutive.utils.fechas import fecha_larga, hoy_local
+
+# Especialistas que se pueden enfocar con --rol: nombre -> (título del modo, instrucciones).
+ROLES: dict[str, tuple[str, str]] = {
+    "procurador": ("Agente Procurador de Fondos", GRANT_PROCUREMENT_PROMPT),
+    "vigilancia": ("Consejo de Vigilancia", VIGILANCIA_PROMPT),
+    "legal": ("Asesoría Jurídica en Economía Social", LEGAL_SOCIAL_PROMPT),
+    "finanzas": ("Finanzas Solidarias y Fondos Estatutarios", FINANZAS_SOLIDARIAS_PROMPT),
+    "tecnico": ("Soberanía Técnica y Tecnológica", DESARROLLO_TECNICO_PROMPT),
+    "comunicacion": ("Comunicación Social y Rendición de Cuentas", COMUNICACION_SOCIAL_PROMPT),
+    "asamblea": ("Secretaría de Actas y Gobernanza", SECRETARIA_ASAMBLEA_PROMPT),
+}
 
 
 class CoopExecutive:
@@ -32,22 +44,11 @@ class CoopExecutive:
         else:
             base = ORGANIZATION_PERSONA_PROMPT
         profile_block = self.profile.to_prompt_block()
-        
+
         specialist_text = ""
-        if specialist_focus == "procurador":
-            specialist_text = f"\n\n### Modo Activo: Agente Procurador de Fondos\n{GRANT_PROCUREMENT_PROMPT}"
-        elif specialist_focus == "vigilancia":
-            specialist_text = f"\n\n### Modo Activo: Consejo de Vigilancia\n{VIGILANCIA_PROMPT}"
-        elif specialist_focus == "legal":
-            specialist_text = f"\n\n### Modo Activo: Asesoría Jurídica en Economía Social\n{LEGAL_SOCIAL_PROMPT}"
-        elif specialist_focus == "finanzas":
-            specialist_text = f"\n\n### Modo Activo: Finanzas Solidarias y Fondos Estatutarios\n{FINANZAS_SOLIDARIAS_PROMPT}"
-        elif specialist_focus == "tecnico":
-            specialist_text = f"\n\n### Modo Activo: Soberanía Técnica y Tecnológica\n{DESARROLLO_TECNICO_PROMPT}"
-        elif specialist_focus == "comunicacion":
-            specialist_text = f"\n\n### Modo Activo: Comunicación Social y Rendición de Cuentas\n{COMUNICACION_SOCIAL_PROMPT}"
-        elif specialist_focus == "asamblea":
-            specialist_text = f"\n\n### Modo Activo: Secretaría de Actas y Gobernanza\n{SECRETARIA_ASAMBLEA_PROMPT}"
+        if specialist_focus in ROLES:
+            titulo, prompt = ROLES[specialist_focus]
+            specialist_text = f"\n\n### Modo Activo: {titulo}\n{prompt}"
 
         zona = self.settings.user_timezone
         fecha = f"**Fecha de hoy:** {fecha_larga(hoy_local(zona))} (zona horaria {zona})."

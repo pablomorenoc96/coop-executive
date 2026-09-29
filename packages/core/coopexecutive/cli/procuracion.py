@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import re
 from pathlib import Path
 from typing import Any
@@ -15,12 +14,14 @@ from rich.panel import Panel
 from rich.table import Table
 
 from coopexecutive.cli._consola import console, fallar
+from coopexecutive.cli._modelo import consultar, ejecutar, extraer_json
 from coopexecutive.config import ARCHIVO_PERFIL, get_settings, usar_espacio
 from coopexecutive.crm import cases
+from coopexecutive.governance.voting import create_proposal
 from coopexecutive.grant_tools import matrix
 from coopexecutive.grant_tools.matrix import CRITERIOS, EntradaMatriz, ResultadoMatriz
-from coopexecutive.governance.voting import create_proposal
 from coopexecutive.guardrails import MONTO_POR_DEFINIR, agregar_leyenda, pendiente, revisar_respuesta
+from coopexecutive.lectura import ErrorLectura, leer_archivo, leer_url
 from coopexecutive.memory import onboarding
 from coopexecutive.memory.company_profile import TIPOS_ORGANIZACION, CoopProfile
 from coopexecutive.memory.episodic import initialize_db
@@ -144,20 +145,6 @@ def configurar(desde: Path | None) -> None:
 
 # --- evaluar-convocatoria ----------------------------------------------------------
 
-_BLOQUE_JSON = re.compile(r"\{.*\}", re.DOTALL)
-
-
-def _extraer_json(texto: str) -> dict[str, Any]:
-    texto = re.sub(r"```(?:json)?", "", texto)
-    encontrado = _BLOQUE_JSON.search(texto)
-    if not encontrado:
-        raise ValueError("El modelo no devolvió un objeto JSON.")
-    datos = json.loads(encontrado.group(0))
-    if not isinstance(datos, dict):
-        raise ValueError("El modelo no devolvió un objeto JSON.")
-    return datos
-
-
 def _instrucciones_json(bases: str) -> str:
     criterios = "\n".join(
         f'    "{clave}": {{"puntos": entero de 0 a {peso} o null, "evidencia": "cita o dato de las bases"}},'
@@ -185,15 +172,6 @@ def _instrucciones_json(bases: str) -> str:
         "Los puntos de tiempos dependen de los días que faltan desde la fecha de hoy.\n\n"
         f"Bases:\n{bases}"
     )
-
-
-async def _consultar(pregunta: str) -> tuple[str, str]:
-    """Devuelve (respuesta, bloque de perfil) usando el rol de procurador."""
-    from coopexecutive.orchestrator.coop_executive import CoopExecutive
-
-    executive = CoopExecutive()
-    partes = [chunk async for chunk in executive.stream_chat(pregunta, specialist_focus="procurador")]
-    return "".join(partes), executive.profile.to_prompt_block()
 
 
 def _mostrar_propuesta(entrada: EntradaMatriz) -> None:
@@ -244,18 +222,16 @@ def _entrada_interactiva() -> dict[str, Any]:
 
 
 def _leer_bases(origen: str) -> str:
-    if re.match(r"^https?://", origen.strip(), re.IGNORECASE):
-        fallar(
-            "No se descargan páginas web en este modo. Copie el texto de las bases en un archivo "
-            "y páselo como origen.",
-            "Origen no admitido",
-        )
-    ruta = Path(origen)
+    """Texto de las bases: una URL (página o PDF), un archivo local o el texto mismo."""
+    limpio = origen.strip()
     try:
-        if ruta.is_file():
-            return ruta.read_text(encoding="utf-8")
-    except OSError:
-        pass
+        if re.match(r"^https?://", limpio, re.IGNORECASE):
+            return leer_url(limpio)
+        ruta = Path(limpio)
+        if len(limpio) < 1024 and ruta.is_file():
+            return leer_archivo(ruta)
+    except ErrorLectura as exc:
+        fallar(str(exc), "No se pudieron leer las bases")
     return origen
 
 
@@ -267,7 +243,7 @@ def _analisis_redactado(resultado: ResultadoMatriz, bases: str) -> None:
         f"{resultado.to_markdown()}"
     )
     try:
-        texto, perfil = asyncio.run(_consultar(pedido))
+        texto, perfil = asyncio.run(consultar(pedido))
     except Exception as exc:  # el resultado de la matriz ya se mostró; el análisis es opcional
         console.print(f"[yellow]No se pudo redactar el análisis: {exc}[/yellow]")
         return
@@ -327,8 +303,8 @@ def evaluar_convocatoria(
         bases = _leer_bases(fuente)
         console.print("[dim]Pidiendo al modelo una propuesta de puntajes...[/dim]")
         try:
-            respuesta, _ = asyncio.run(_consultar(_instrucciones_json(bases)))
-            datos = _extraer_json(respuesta)
+            respuesta, _ = ejecutar(consultar(_instrucciones_json(bases)))
+            datos = extraer_json(respuesta)
             propuesta = EntradaMatriz.model_validate(datos)
         except (ValueError, ValidationError) as exc:
             fallar(f"La propuesta del modelo no es válida: {exc}", "Propuesta no válida")

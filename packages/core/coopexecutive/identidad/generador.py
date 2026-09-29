@@ -103,7 +103,7 @@ def a_cuadrantes(mascara, filas: int, umbral: float = UMBRAL_LOGO) -> list[str]:
         caracteres = []
         for col in range(columnas):
             bits = 0
-            for peso, (dx, dy) in zip((8, 4, 2, 1), ((0, 0), (1, 0), (0, 1), (1, 1))):
+            for peso, (dx, dy) in zip((8, 4, 2, 1), ((0, 0), (1, 0), (0, 1), (1, 1)), strict=True):
                 if reducida.getpixel((col * 2 + dx, fila * 2 + dy)) > limite:
                     bits |= peso
             caracteres.append(CUADRANTES[bits])
@@ -140,7 +140,7 @@ def generar_intro(
         mascara, color_medio = mascara_logo(logo)
         bloque_logo = a_cuadrantes(mascara, filas_logo)
         color_logo = color_logo or _color_visible(color_medio)
-    ancho_logo = max((len(l) for l in bloque_logo), default=0)
+    ancho_logo = max((len(linea) for linea in bloque_logo), default=0)
     margen = ancho_logo + SEPARACION if bloque_logo else 0
 
     mascara_nombre = mascara_texto(texto, fuente)
@@ -153,7 +153,7 @@ def generar_intro(
         bloque_texto = a_cuadrantes(mascara_nombre, filas * lineas_nombre, UMBRAL_TEXTO)
     ancho_texto = len(bloque_texto[0])
 
-    derecha = [_pintar(l, color_texto, negrita=True) for l in bloque_texto]
+    derecha = [_pintar(linea, color_texto, negrita=True) for linea in bloque_texto]
     if lema:
         lema_linea = lema if len(lema) <= ancho_texto else lema[: max(ancho_texto - 1, 1)] + "…"
         derecha += ["", _pintar(lema_linea, color_logo)]

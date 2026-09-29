@@ -1,18 +1,28 @@
-"""Módulo de gobernanza democrática y votaciones de asamblea (Un Socio = Un Voto)."""
+"""Gobernanza democrática: padrón de socios, votaciones y escrutinio (un socio, un voto)."""
 from coopexecutive.governance.voting import (
+    REGLAS,
     VoteChoice,
-    create_proposal,
+    alta_socio,
+    baja_socio,
     cast_vote,
-    tally_votes,
-    list_proposals,
+    create_proposal,
     get_proposal,
+    list_proposals,
+    listar_socios,
+    padron_activo,
+    tally_votes,
 )
 
 __all__ = [
+    "REGLAS",
     "VoteChoice",
-    "create_proposal",
+    "alta_socio",
+    "baja_socio",
     "cast_vote",
-    "tally_votes",
-    "list_proposals",
+    "create_proposal",
     "get_proposal",
+    "list_proposals",
+    "listar_socios",
+    "padron_activo",
+    "tally_votes",
 ]

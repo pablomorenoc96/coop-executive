@@ -7,6 +7,20 @@ on:
     branches: [ main, master ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Ruff
+        working-directory: packages/core
+        run: uv run --extra dev ruff check coopexecutive tests
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -28,8 +42,38 @@ jobs:
 
       - name: Install dependencies
         working-directory: packages/core
-        run: uv sync --all-groups --extra dev
+        run: uv sync --all-extras --all-groups --python ${{ matrix.python-version }}
 
       - name: Run tests
         working-directory: packages/core
-        run: uv run --extra dev pytest -v
+        run: uv run --python ${{ matrix.python-version }} pytest -v
+
+  wheel:
+    # Instala el paquete como lo haría un usuario, fuera del repositorio.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build
+        working-directory: packages/core
+        run: uv build --wheel --out-dir "${{ runner.temp }}/dist"
+
+      - name: Install in a clean environment and run
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        env:
+          COOPEXECUTIVE_HOME: ${{ runner.temp }}/usuario
+        run: |
+          uv venv limpio --python 3.12
+          if [ -d limpio/Scripts ]; then BIN=limpio/Scripts; else BIN=limpio/bin; fi
+          uv pip install --python limpio dist/*.whl
+          "$BIN/coopexecutive" --help
+          "$BIN/coopexecutive" iniciar espacio --nombre "Cooperativa de Prueba"
+          "$BIN/coopexecutive" --espacio espacio info

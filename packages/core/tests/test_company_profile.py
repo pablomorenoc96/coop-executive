@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from coopexecutive.memory.company_profile import CoopProfile
 
 

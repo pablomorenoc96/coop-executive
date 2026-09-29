@@ -1,5 +1,4 @@
-import pytest
-from coopexecutive.grant_tools.logical_framework import ProjectLogicalFramework, LogFrameRow
+from coopexecutive.grant_tools.logical_framework import LogFrameRow, ProjectLogicalFramework
 
 
 def test_logical_framework_markdown():

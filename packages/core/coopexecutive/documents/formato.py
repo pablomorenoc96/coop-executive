@@ -154,17 +154,17 @@ def _tabla(doc, bloque: Tabla, membrete: Membrete) -> None:
     total = sum(pesos)
     anchos = [Emu(int(ancho_util(doc) * p / total)) for p in pesos]
     tamano = max(membrete.tamano - 1, 7)
-    for celda, texto in zip(tabla.rows[0].cells, bloque.encabezados):
+    for celda, texto in zip(tabla.rows[0].cells, bloque.encabezados, strict=False):
         _texto_celda(celda, texto, tamano, negrita=True)
         _sombrear(celda, SOMBRA_ENCABEZADO)
     _marcar_fila(tabla.rows[0], "w:tblHeader")
     for fila in bloque.filas:
         nueva = tabla.add_row()
-        for celda, texto in zip(nueva.cells, fila):
+        for celda, texto in zip(nueva.cells, fila, strict=False):
             _texto_celda(celda, texto, tamano)
     for fila in tabla.rows:
         _marcar_fila(fila, "w:cantSplit")
-    for columna, ancho in zip(tabla.columns, anchos):
+    for columna, ancho in zip(tabla.columns, anchos, strict=False):
         columna.width = ancho
         for celda in columna.cells:
             celda.width = ancho

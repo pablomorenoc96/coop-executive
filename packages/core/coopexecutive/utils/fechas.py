@@ -1,7 +1,7 @@
 """Fechas en la zona horaria de la organización, sin depender del locale del sistema."""
 from __future__ import annotations
 
-from datetime import date, datetime, timezone, tzinfo
+from datetime import UTC, date, datetime, tzinfo
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 MESES = (
@@ -18,7 +18,7 @@ def _zona(zona: str | None) -> tzinfo:
     try:
         return ZoneInfo(zona)
     except (ZoneInfoNotFoundError, ValueError):
-        return timezone.utc
+        return UTC
 
 
 def ahora_local(zona: str | None = None) -> datetime:
@@ -33,7 +33,7 @@ def hoy_local(zona: str | None = None) -> date:
 
 def local_desde_utc(texto: str, zona: str | None = None) -> datetime:
     """Convierte un `CURRENT_TIMESTAMP` de SQLite (UTC, sin zona) a la zona de la organización."""
-    return datetime.fromisoformat(texto).replace(tzinfo=timezone.utc).astimezone(_zona(zona))
+    return datetime.fromisoformat(texto).replace(tzinfo=UTC).astimezone(_zona(zona))
 
 
 def fecha_larga(fecha: date) -> str:

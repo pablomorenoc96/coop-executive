@@ -28,7 +28,7 @@ flowchart LR
         subgraph SUBSYSTEMS["Execution & Deliberation Pillars"]
             direction LR
             MEM["<b>Episodic Memory (SQLite)</b><br/>• assembly_decisions<br/>• assembly_proposals<br/>• assembly_votes (1 Member = 1 Vote)<br/>• grant_evaluations<br/>• financiadores / expedientes / avances"]
-            INF["<b>Universal Inference</b><br/>• Free Cloud: OpenRouter (:free)<br/>• Offline Local: Ollama (llama3.1)<br/>• Commercial: OpenAI / Anthropic / Gemini<br/>• Resilience: HTTP 429 Fallback"]
+            INF["<b>Universal Inference</b><br/>• Free Cloud: OpenRouter (:free)<br/>• Offline Local: Ollama (granite4.1)<br/>• Commercial: OpenAI / Anthropic / Gemini<br/>• Resilience: HTTP 429 Fallback"]
             TOOL["<b>Deterministic Tools</b><br/>• 100-Point Matrix (8 Criteria + Evidence)<br/>• 4x4 Logical Framework (MIR)<br/>• Budget Builder & In-Kind Matcher<br/>• Quorum Engine (>50% + 1)"]
         end
 
@@ -82,9 +82,9 @@ flowchart LR
 
 3. **Universal Inference Engine (`coopexecutive.providers.client`):**
    - Unified multi-model routing:
-     - *Zero-Cost Cloud:* OpenRouter free tier (`minimax/minimax-m3:free`, `nvidia/nemotron-3-super-120b-a12b:free`).
-     - *Offline Local:* Private air-gapped execution via Ollama (`llama3.1`, `qwen2.5`).
-     - *Commercial Endpoints:* OpenAI (`gpt-4o`), Anthropic (`claude-3-7-sonnet`), Google Gemini, Groq, Mistral, and DeepSeek.
+     - *Zero-Cost Cloud:* OpenRouter free tier (`google/gemma-4-31b-it:free`, `nvidia/nemotron-3-super-120b-a12b:free`).
+     - *Offline Local:* Private air-gapped execution via Ollama (`granite4.1`, `qwen3.8`).
+     - *Commercial Endpoints:* OpenAI (`gpt-6.1-sol`), Anthropic (`claude-sonnet-5-5`), Google Gemini (`gemini-3.8-flash`), Groq, Mistral, and DeepSeek.
      - *Rate-Limit Resilience:* Automatic exponential backoff and transparent fallback to secondary models upon receiving HTTP 429 errors.
 
 4. **Deterministic Tool-Use Layer (`coopexecutive.grant_tools`):**

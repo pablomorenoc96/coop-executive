@@ -57,7 +57,7 @@ def test_logo_negro_usa_color_de_la_terminal(tmp_path):
 def test_logo_con_fondo_opaco(tmp_path):
     ruta = _logo(tmp_path / "opaco.png", color=(16, 185, 129, 255), fondo=(255, 255, 255, 255))
     texto = generar_intro("Org", logo=ruta, filas_logo=6)
-    lineas_logo = [l for l in texto.splitlines() if l.startswith("[#10B981]")]
+    lineas_logo = [linea for linea in texto.splitlines() if linea.startswith("[#10B981]")]
     assert len(lineas_logo) >= 5
 
 

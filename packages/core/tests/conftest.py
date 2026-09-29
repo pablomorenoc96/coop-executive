@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 import coopexecutive.config as config
+from coopexecutive.orchestrator.coop_executive import CoopExecutive
 
 PERFIL_PRUEBA = """name: "Cooperativa de Prueba"
 legal_structure: "S.C. de R.L."
@@ -27,8 +28,28 @@ def entorno_aislado(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 
 @pytest.fixture(autouse=True)
-def _sin_espacio_residual():
-    """`usar_espacio` escribe en os.environ; se limpia después de cada prueba."""
+def _sin_espacio_residual(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch):
+    """Ninguna prueba lee el .env real ni la carpeta de usuario; `usar_espacio` se limpia al final."""
+    monkeypatch.setenv("COOPEXECUTIVE_ENV_FILE", "")
+    monkeypatch.setenv("COOPEXECUTIVE_HOME", str(tmp_path_factory.mktemp("usuario")))
+    for variable in ("PROVIDER", "LOCAL_MODELS_ENABLED", "OPENROUTER_API_KEY", "OPENAI_API_KEY",
+                     "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "MISTRAL_API_KEY",
+                     "DEEPSEEK_API_KEY", "CUSTOM_API_KEY", "CUSTOM_BASE_URL", "DEFAULT_MODEL",
+                     "DEEP_REASONING_MODEL", "OPENROUTER_ENABLED"):
+        monkeypatch.delenv(variable, raising=False)
+    config._settings = None
     yield
     os.environ.pop("COOPEXECUTIVE_WORKSPACE", None)
     config._settings = None
+
+
+@pytest.fixture
+def respuestas_modelo(monkeypatch):
+    """Sustituye al modelo: cada llamada a stream_chat devuelve la siguiente respuesta."""
+    cola: list[str] = []
+
+    async def falso(self, mensaje, history=None, specialist_focus=None):
+        yield cola.pop(0)
+
+    monkeypatch.setattr(CoopExecutive, "stream_chat", falso)
+    return cola
