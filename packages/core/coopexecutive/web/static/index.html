@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>CoopExecutive</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="barra">
+    <div class="marca">
+      <span class="logo" aria-hidden="true">CE</span>
+      <div>
+        <h1 id="organizacion">CoopExecutive</h1>
+        <p id="subtitulo" class="tenue">Cargando…</p>
+      </div>
+    </div>
+    <div id="sello" class="sello" hidden></div>
+  </header>
+
+  <nav class="pestanas" role="tablist" aria-label="Secciones">
+    <button role="tab" data-vista="resumen" aria-selected="true">Resumen</button>
+    <button role="tab" data-vista="perfil">Perfil</button>
+    <button role="tab" data-vista="financiadores">Financiadores</button>
+    <button role="tab" data-vista="expedientes">Expedientes</button>
+    <button role="tab" data-vista="evaluaciones">Evaluaciones</button>
+    <button role="tab" data-vista="documentos">Documentos</button>
+    <button role="tab" data-vista="monitoreo">Monitoreo</button>
+    <button role="tab" data-vista="asamblea">Asamblea</button>
+    <button role="tab" data-vista="bitacora">Bitácora</button>
+    <button role="tab" data-vista="chat">Chat</button>
+  </nav>
+
+  <main>
+    <section id="aviso" class="aviso" hidden></section>
+    <section id="vista" aria-live="polite"></section>
+
+    <section id="chat" class="chat" hidden>
+      <div id="mensajes" class="mensajes" aria-live="polite"></div>
+      <form id="formulario" class="formulario">
+        <label class="solo-lectura"><input type="checkbox" id="soloLectura"> Solo consultas</label>
+        <textarea id="entrada" rows="2" maxlength="8000" placeholder="Pregunte o pida una acción: «¿Qué expedientes vencen este mes?»" required></textarea>
+        <button type="submit" id="enviar">Enviar</button>
+      </form>
+      <p class="tenue pie-chat">Las acciones que escriben (registrar, abrir, guardar, generar) piden su autorización antes de ejecutarse. Las respuestas son un borrador y requieren revisión humana.</p>
+    </section>
+  </main>
+
+  <dialog id="confirmacion">
+    <form method="dialog">
+      <h2>¿Autoriza esta acción?</h2>
+      <p id="confHerramienta" class="fuerte"></p>
+      <p id="confDescripcion" class="tenue"></p>
+      <pre id="confArgumentos"></pre>
+      <div class="botones">
+        <button value="no" class="secundario">No autorizar</button>
+        <button value="si" class="primario">Autorizar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="pie tenue" id="pie">Panel local · solo escucha en este equipo</footer>
+</body>
+</html>

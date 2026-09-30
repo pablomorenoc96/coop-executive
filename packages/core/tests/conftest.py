@@ -5,6 +5,8 @@ import pytest
 
 import coopexecutive.config as config
 from coopexecutive.orchestrator.coop_executive import CoopExecutive
+from coopexecutive.providers.client import AIClient
+from coopexecutive.providers.tipos import Fin, TextoDelta
 
 PERFIL_PRUEBA = """name: "Cooperativa de Prueba"
 legal_structure: "S.C. de R.L."
@@ -45,11 +47,24 @@ def _sin_espacio_residual(tmp_path_factory: pytest.TempPathFactory, monkeypatch:
 
 @pytest.fixture
 def respuestas_modelo(monkeypatch):
-    """Sustituye al modelo: cada llamada a stream_chat devuelve la siguiente respuesta."""
-    cola: list[str] = []
+    """Sustituye al modelo: cada llamada devuelve la siguiente respuesta de la cola.
+
+    Un texto es la respuesta completa. Una lista de eventos (`TextoDelta`,
+    `LlamadaHerramienta`) es un paso del agente con herramientas.
+    """
+    cola: list = []
 
     async def falso(self, mensaje, history=None, specialist_focus=None):
-        yield cola.pop(0)
+        siguiente = cola.pop(0)
+        yield siguiente if isinstance(siguiente, str) else "".join(
+            e.texto for e in siguiente if isinstance(e, TextoDelta))
+
+    async def eventos(self, messages, model=None, temperature=0.2, tools=None, max_tokens=4096):
+        siguiente = cola.pop(0)
+        for evento in [TextoDelta(siguiente)] if isinstance(siguiente, str) else siguiente:
+            yield evento
+        yield Fin(motivo="stop", modelo="falso", proveedor="prueba")
 
     monkeypatch.setattr(CoopExecutive, "stream_chat", falso)
+    monkeypatch.setattr(AIClient, "eventos", eventos)
     return cola

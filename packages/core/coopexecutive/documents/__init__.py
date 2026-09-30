@@ -20,7 +20,7 @@ from coopexecutive.memory.episodic import get_db_conn, initialize_db
 
 CARPETA_SIN_EXPEDIENTE = "general"
 
-__all__ = ["DocumentoPlano", "DocumentoGuardado", "a_markdown", "guardar", "documentos_de"]
+__all__ = ["DocumentoPlano", "DocumentoGuardado", "a_markdown", "guardar", "documentos_de", "recientes"]
 
 
 class DocumentoGuardado(BaseModel):
@@ -87,4 +87,12 @@ def documentos_de(folio: str) -> list[DocumentoGuardado]:
         filas = conn.execute(
             "SELECT * FROM documentos WHERE expediente_folio = ? ORDER BY id", (folio.strip().upper(),)
         ).fetchall()
+    return [DocumentoGuardado(**dict(f)) for f in filas]
+
+
+def recientes(limite: int = 50) -> list[DocumentoGuardado]:
+    """Los documentos generados más recientes, de cualquier expediente."""
+    initialize_db()
+    with get_db_conn() as conn:
+        filas = conn.execute("SELECT * FROM documentos ORDER BY id DESC LIMIT ?", (limite,)).fetchall()
     return [DocumentoGuardado(**dict(f)) for f in filas]

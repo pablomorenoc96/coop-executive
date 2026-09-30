@@ -1,6 +1,6 @@
 [project]
 name = "coopexecutive"
-version = "0.4.0"
+version = "0.5.0"
 description = "El Sistema Directivo Colegiado y Agente Procurador de Fondos con IA para Cooperativas y Asociaciones Civiles."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -28,14 +28,19 @@ web = [
     "fastapi>=0.115.0",
     "uvicorn>=0.30.0",
 ]
+mcp = [
+    "mcp>=2.2",
+]
 todo = [
-    "coopexecutive[identidad,pdf,web]",
+    "coopexecutive[identidad,pdf,web,mcp]",
 ]
 dev = [
     "pytest>=8.0.0",
     "pillow>=10.1.0",
     "pypdf>=5.0.0",
     "ruff>=0.15.0",
+    "fastapi>=0.115.0",
+    "mcp>=2.2",
 ]
 
 [dependency-groups]
@@ -44,6 +49,8 @@ dev = [
     "pillow>=10.1.0",
     "pypdf>=5.0.0",
     "ruff>=0.15.0",
+    "fastapi>=0.115.0",
+    "mcp>=2.2",
 ]
 
 [project.scripts]
@@ -63,3 +70,9 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
 ignore = ["E501", "B008", "UP042"]  # VoteChoice(str, Enum) conserva su str() histórico
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "evals"]
+markers = [
+    "eval: casos dorados de comportamiento (python -m coopexecutive.evals los resume)",
+]

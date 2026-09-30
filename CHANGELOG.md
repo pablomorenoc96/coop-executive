@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-09-29
+
+### Breaking changes
+- `dashboard` no longer opens a static mock-up with sample data. It is now an alias of `panel`, which serves the real local panel and needs the `web` extra.
+- The `mcp` extra requires `mcp>=2.2`.
+
+### Added
+- **Tool calling in `chat` and `ask`:** the model can check dates and deadlines, evaluate a call with the matrix, compare calls, look up funders, files, documents and monitoring, read the profile and search the knowledge base. Writing tools (register a funder, open a file, log progress, save an evaluation, generate a document) always ask for confirmation first; a denied action is reported back to the model, and the final review flags any answer that claims an action that did not run. `--sin-herramientas` turns tools off; if a provider rejects tools, the turn is retried once without them.
+- **Audit log:** every command that changes data and every tool call is recorded with its channel (cli, mcp, http, agente), censored parameters, result and a chained SHA-256 hash. `bitacora ver|verificar|exportar [--jsonl]`; `verificar` reports the first record where the chain breaks (an edited or deleted entry).
+- **MCP server:** `coopexecutive mcp` (alias `servidor-mcp`) exposes the same tools over stdio to any MCP client, with read-only and write hints. `--solo-lectura` hides the writing tools. Logs go to stderr only.
+- **Local panel and API:** `coopexecutive panel [--puerto 8765] [--no-abrir]` serves a panel with overview, profile, funders, files, evaluations, documents, monitoring, assembly, audit log and a chat that asks before writing. It listens on 127.0.0.1 only, uses a per-session token, checks `Host` and `Origin`, sends a strict Content-Security-Policy and loads nothing from the internet. Empty sections say so instead of showing sample data. Panel reads are not logged; writes through the API are, with channel `http`.
+- **Behaviour evals:** `python -m coopexecutive.evals` runs 22 golden cases without network or a real model: matrix decisions, invented amounts and dates, bank-account censoring, claimed actions, and tool routing with confirmation. They also run in the test suite under the `eval` marker.
+- `python -m coopexecutive` runs the CLI.
+- `monitorear` stores each run so the panel and the tools can show the latest one.
+
+### Removed
+- The static `web/dashboard.html` mock-up.
+
 ## [0.4.0] - 2026-09-29
 
 ### Added

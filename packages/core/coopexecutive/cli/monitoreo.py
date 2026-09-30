@@ -56,6 +56,7 @@ def monitorear(temas: tuple[str, ...], sin_cache: bool, todas: bool) -> None:
             )
         except ValueError as exc:
             fallar(str(exc), "Monitoreo")
+    monitoring.guardar_reporte(reporte)
 
     console.print(Panel(
         f"[bold]Temas:[/bold] {', '.join(reporte.temas)}\n"

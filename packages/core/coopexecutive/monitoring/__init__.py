@@ -12,7 +12,7 @@ los temas. Ningún dato del perfil ni de los financiadores sale del equipo.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -26,7 +26,7 @@ from coopexecutive.monitoring.lector import Entrada, descargar, leer_canal, nuev
 from coopexecutive.monitoring.temas import Tema, coincidencias, preparar_temas
 from coopexecutive.utils.texto import normalizar
 
-__all__ = ["Aviso", "Reporte", "cargar_catalogo", "monitorear"]
+__all__ = ["Aviso", "Reporte", "cargar_catalogo", "guardar_reporte", "monitorear", "ultimo_reporte"]
 
 MAX_PRIORIZADAS = 3
 ANTIGUEDAD_MAXIMA_DIAS = 120
@@ -201,3 +201,56 @@ def _explicar(exc: Exception) -> str:
     if isinstance(exc, httpx.HTTPError):
         return str(exc) or type(exc).__name__
     return str(exc)
+
+
+def _aviso_dict(aviso: Aviso) -> dict:
+    datos = asdict(aviso)
+    for campo in ("publicado", "cierre"):
+        datos[campo] = datos[campo].isoformat() if datos[campo] else None
+    datos["plazo"] = aviso.plazo
+    return datos
+
+
+def reporte_dict(reporte: Reporte) -> dict:
+    """El reporte en JSON: listas de avisos con su plazo ya calculado."""
+    return {
+        "hoy": reporte.hoy.isoformat(),
+        "temas": reporte.temas,
+        "priorizadas": [_aviso_dict(a) for a in reporte.priorizadas],
+        "por_revisar": [_aviso_dict(a) for a in reporte.por_revisar],
+        "cerradas": [_aviso_dict(a) for a in reporte.cerradas],
+        "consultadas": reporte.consultadas,
+        "manuales": [{"nombre": f.nombre, "url": f.url} for f in reporte.manuales],
+        "fallidas": [{"fuente": n, "motivo": m} for n, m in reporte.fallidas],
+        "notas": reporte.notas,
+        "leidos": reporte.leidos,
+        "antiguos": reporte.antiguos,
+    }
+
+
+def guardar_reporte(reporte: Reporte) -> int:
+    """Guarda el reporte para el panel y la API. Devuelve su id."""
+    from datetime import UTC, datetime
+
+    from coopexecutive.memory.episodic import get_db_conn, initialize_db
+
+    initialize_db()
+    with get_db_conn() as conn:
+        cursor = conn.execute(
+            "INSERT INTO monitoreos (ejecutado_en, temas, reporte_json) VALUES (?, ?, ?)",
+            (datetime.now(UTC).isoformat(timespec="seconds"), json.dumps(reporte.temas, ensure_ascii=False),
+             json.dumps(reporte_dict(reporte), ensure_ascii=False)),
+        )
+        return int(cursor.lastrowid)
+
+
+def ultimo_reporte() -> dict | None:
+    """El monitoreo más reciente, con la fecha en que se hizo, o None si nunca se ha corrido."""
+    from coopexecutive.memory.episodic import get_db_conn, initialize_db
+
+    initialize_db()
+    with get_db_conn() as conn:
+        fila = conn.execute("SELECT * FROM monitoreos ORDER BY id DESC LIMIT 1").fetchone()
+    if fila is None:
+        return None
+    return {"id": fila["id"], "ejecutado_en": fila["ejecutado_en"], **json.loads(fila["reporte_json"])}

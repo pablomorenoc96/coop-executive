@@ -36,7 +36,8 @@ _RECOMENDACION = re.compile(
 )
 _AFIRMA_ACCION = re.compile(
     r"\b(?:se\s+(?:ha|han)\s+|he\s+|ya\s+(?:fue|est[aá]|qued[oó])\s+|qued[oó]\s+|fue\s+)"
-    r"(?:guardad|registrad|enviad|cread|actualizad|publicad)\w*",
+    r"(?:guardad|registrad|enviad|cread|actualizad|publicad|generad|abiert)\w*"
+    r"|\b(?:registr|guard|gener|cre|envi|actualic|publiqu)é\b|\babrí\b",
     re.IGNORECASE,
 )
 

@@ -162,6 +162,26 @@ MIGRACIONES: tuple[str, ...] = (
     ALTER TABLE assembly_proposals ADD COLUMN hash TEXT;
     ALTER TABLE assembly_decisions ADD COLUMN proposal_id INTEGER REFERENCES assembly_proposals(id);
     """,
+    # 4. Bitácora encadenada de acciones y último resultado de cada monitoreo.
+    """
+    CREATE TABLE IF NOT EXISTS bitacora (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        registrado_en TEXT NOT NULL,
+        canal TEXT NOT NULL,
+        accion TEXT NOT NULL,
+        parametros TEXT NOT NULL DEFAULT '{}',
+        estado TEXT NOT NULL,
+        resultado TEXT NOT NULL DEFAULT '',
+        hash_previo TEXT NOT NULL,
+        hash TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS monitoreos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ejecutado_en TEXT NOT NULL,
+        temas TEXT NOT NULL,
+        reporte_json TEXT NOT NULL
+    );
+    """,
 )
 
 
