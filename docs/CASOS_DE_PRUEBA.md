@@ -7,7 +7,7 @@ Las evaluaciones automáticas no usan la red ni un modelo real. Corren en un esp
 ```bash
 cd packages/core
 uv run --all-extras python -m coopexecutive.evals     # resumen; sale con código 1 si algo falla
-uv run --all-extras --extra dev pytest -m eval        # las mismas, como pruebas
+uv run --all-extras --group dev pytest -m eval        # las mismas, como pruebas
 ```
 
 ## 1. Matriz de evaluación (10 casos automáticos)

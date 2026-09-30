@@ -83,7 +83,8 @@ def test_marco_logico_desde_yaml_y_salida_sin_sobrescribir(entorno_aislado):
     assert "Salud comunitaria" in salida.read_text(encoding="utf-8")
     otra = invocar("marco-logico", "Agua", "--desde", datos, "--salida", str(salida))
     assert otra.exit_code == 1
-    assert "ya existe" in otra.output
+    # El panel parte las rutas largas en varias líneas; se compara el texto sin bordes ni saltos.
+    assert "ya existe" in " ".join(otra.output.replace("│", " ").split())
 
 
 def test_marco_logico_yaml_invalido(entorno_aislado):

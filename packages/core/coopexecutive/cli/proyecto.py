@@ -29,6 +29,7 @@ from coopexecutive.guardrails import revisar_respuesta
 from coopexecutive.guardrails.marcadores import pendiente
 from coopexecutive.memory.company_profile import CoopProfile
 from coopexecutive.utils.fechas import hoy_local
+from coopexecutive.utils.rutas import para_mostrar
 
 _SALIDA = click.option(
     "--salida", "-o", type=click.Path(dir_okay=False, path_type=Path), default=None,
@@ -72,7 +73,7 @@ def _entregar(markdown: str, salida: Path | None, contexto: str | None = None) -
             with open(salida, "x", encoding="utf-8") as archivo:
                 archivo.write(markdown + "\n")
         except FileExistsError:
-            fallar(f"{salida} ya existe; elija otro nombre.", "No se sobrescribe")
+            fallar(f"{para_mostrar(salida)} ya existe; elija otro nombre.", "No se sobrescribe")
         console.print(f"[green]Guardado en[/green] {salida}", highlight=False)
 
 
