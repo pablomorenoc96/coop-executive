@@ -22,7 +22,7 @@ from coopexecutive.grant_tools import matrix
 from coopexecutive.grant_tools.matrix import CRITERIOS, EntradaMatriz, ResultadoMatriz
 from coopexecutive.guardrails import MONTO_POR_DEFINIR, agregar_leyenda, pendiente, revisar_respuesta
 from coopexecutive.lectura import ErrorLectura, leer_archivo, leer_url
-from coopexecutive.memory import onboarding
+from coopexecutive.memory import desde_sitio, onboarding
 from coopexecutive.memory.company_profile import TIPOS_ORGANIZACION, CoopProfile
 from coopexecutive.memory.episodic import initialize_db
 from coopexecutive.utils.fechas import hoy_local
@@ -97,16 +97,106 @@ def _como_texto(valor: Any) -> str:
     return str(valor)
 
 
-def _preguntar(actuales: dict[str, Any]) -> dict[str, Any]:
+ORIGEN_USUARIO = "Dato del usuario"
+_EN_EL_SITIO = re.compile(r"^(esta|está)?\s*en (nuestro|el) sitio( web)?\.?$", re.IGNORECASE)
+
+
+def _responder_modelo(pedido: str) -> str:
+    texto, _ = ejecutar(consultar(pedido, None))
+    return texto
+
+
+class _Sitio:
+    """Lee el sitio una sola vez, sea por --sitio o porque una respuesta dice «está en nuestro sitio»."""
+
+    def __init__(self, url: str | None = None) -> None:
+        self.url = url
+        self.paginas: list[desde_sitio.Pagina] | None = None
+
+    def leer(self) -> list[desde_sitio.Pagina]:
+        if self.paginas is None:
+            if not self.url:
+                self.url = click.prompt("  Enlace del sitio web de la organización").strip()
+            with console.status("Leyendo el sitio..."):
+                try:
+                    rastreo = desde_sitio.rastrear(self.url)
+                except ErrorLectura as exc:
+                    fallar(str(exc), "No se pudo leer el sitio")
+            self.paginas = rastreo.paginas
+            console.print(f"[dim]Páginas leídas: {', '.join(p.url for p in rastreo.paginas)}[/dim]",
+                          highlight=False)
+            for omitida in rastreo.omitidas:
+                console.print(f"[dim]Omitida: {omitida}[/dim]", highlight=False)
+        return self.paginas
+
+    def proponer(self, numeros: set[int] | None = None) -> dict[str, desde_sitio.Propuesta]:
+        paginas = self.leer()
+        with console.status("Preparando la propuesta..."):
+            return desde_sitio.proponer(paginas, _responder_modelo, numeros)
+
+
+def _revisar_propuesta(campo: str, propuesta: desde_sitio.Propuesta | None, actual: Any,
+                       respuestas: dict[str, Any], origenes: dict[str, str]) -> None:
+    """«sí» acepta, otro texto corrige y Enter deja el campo como estaba (pendiente si estaba vacío)."""
+    if propuesta is None or propuesta.pendiente:
+        console.print(f"  {ETIQUETAS[campo]}: [yellow]Pendiente[/yellow] [dim](sin evidencia en el sitio)[/dim]")
+        valor = click.prompt("    Escriba el dato o Enter para no cambiarlo", default="", show_default=False)
+        if valor.strip():
+            respuestas[campo], origenes[campo] = valor, ORIGEN_USUARIO
+        return
+    console.print(f"  {ETIQUETAS[campo]}: [bold]{_como_texto(propuesta.valor)}[/bold]", highlight=False)
+    console.print(f"    [dim]Evidencia: «{propuesta.evidencia}» ({propuesta.url})[/dim]", highlight=False)
+    if actual not in (None, "", []):
+        console.print(f"    [dim]Valor actual: {_como_texto(actual)}[/dim]", highlight=False)
+    valor = click.prompt("    «sí» acepta, otro texto corrige, Enter no lo cambia",
+                         default="", show_default=False).strip()
+    if valor.lower() in {"sí", "si", "s"}:
+        respuestas[campo], origenes[campo] = propuesta.valor, propuesta.url
+    elif valor:
+        respuestas[campo], origenes[campo] = valor, ORIGEN_USUARIO
+
+
+def _preguntar(actuales: dict[str, Any], sitio: _Sitio) -> tuple[dict[str, Any], dict[str, str]]:
     respuestas: dict[str, Any] = {}
-    console.print("[dim]Enter conserva el valor entre corchetes. Lo que no sepa, déjelo vacío.[/dim]")
+    origenes: dict[str, str] = {}
+    console.print("[dim]Enter conserva el valor entre corchetes. Lo que no sepa, déjelo vacío. "
+                  "Si el dato está publicado, responda «está en nuestro sitio».[/dim]")
     for pregunta in onboarding.PREGUNTAS:
         console.print(f"\n[bold cyan]{pregunta.numero}. {pregunta.texto}[/bold cyan]")
         for campo in pregunta.campos:
-            respuestas[campo] = click.prompt(
+            valor = click.prompt(
                 f"  {ETIQUETAS[campo]}", default=_como_texto(actuales.get(campo)), show_default=True
             )
-    return respuestas
+            if not _EN_EL_SITIO.match(valor.strip()):
+                respuestas[campo] = valor
+                continue
+            propuestas = sitio.proponer({pregunta.numero})
+            pendientes = [c for c in pregunta.campos if c not in respuestas]
+            for otro in pendientes:
+                if otro in desde_sitio.CAMPOS_PRIVADOS:
+                    respuestas[otro] = click.prompt(f"  {ETIQUETAS[otro]}", default=_como_texto(actuales.get(otro)))
+                else:
+                    _revisar_propuesta(otro, propuestas.get(otro), actuales.get(otro), respuestas, origenes)
+            break
+    return respuestas, origenes
+
+
+def _desde_sitio(actuales: dict[str, Any], sitio: _Sitio) -> tuple[dict[str, Any], dict[str, str]]:
+    propuestas = sitio.proponer()
+    respuestas: dict[str, Any] = {}
+    origenes: dict[str, str] = {}
+    console.print("\n[dim]Cada propuesta cita la página de donde sale. Montos, moneda y aprobadores "
+                  "no se toman del sitio.[/dim]")
+    for pregunta in onboarding.PREGUNTAS:
+        console.print(f"\n[bold cyan]{pregunta.numero}. {pregunta.texto}[/bold cyan]")
+        for campo in pregunta.campos:
+            if campo in desde_sitio.CAMPOS_PRIVADOS:
+                respuestas[campo] = click.prompt(
+                    f"  {ETIQUETAS[campo]}", default=_como_texto(actuales.get(campo)), show_default=True
+                )
+                continue
+            _revisar_propuesta(campo, propuestas.get(campo), actuales.get(campo), respuestas, origenes)
+    return respuestas, origenes
 
 
 @click.command("configurar")
@@ -116,18 +206,25 @@ def _preguntar(actuales: dict[str, Any]) -> dict[str, Any]:
     default=None,
     help="Archivo YAML con las respuestas; guarda sin preguntar.",
 )
-def configurar(desde: Path | None) -> None:
-    """Completar el perfil con diez preguntas. Respalda el perfil antes de escribir."""
+@click.option("--sitio", default=None,
+              help="Enlace del sitio web de la organización: propone cada respuesta con su evidencia.")
+def configurar(desde: Path | None, sitio: str | None) -> None:
+    """Completar el perfil con diez preguntas o a partir del sitio web. Respalda el perfil antes de escribir."""
+    if desde is not None and sitio is not None:
+        fallar("Use --desde o --sitio, no ambos.")
     ruta = get_settings().company_profile_path
+    origenes: dict[str, str] = {}
     try:
         datos = onboarding.leer_perfil_crudo(ruta)
         if desde is not None:
             respuestas = yaml.safe_load(desde.read_text(encoding="utf-8")) or {}
             if not isinstance(respuestas, dict):
                 fallar(f"{desde.name} debe contener pares campo: valor.")
+        elif sitio is not None:
+            respuestas, origenes = _desde_sitio(onboarding.respuestas_actuales(datos), _Sitio(sitio))
         else:
-            respuestas = _preguntar(onboarding.respuestas_actuales(datos))
-        nuevo = onboarding.aplicar_respuestas(datos, respuestas)
+            respuestas, origenes = _preguntar(onboarding.respuestas_actuales(datos), _Sitio())
+        nuevo = onboarding.aplicar_respuestas(datos, respuestas, origenes)
     except (ValueError, yaml.YAMLError) as exc:
         fallar(str(exc), "Perfil no válido")
 

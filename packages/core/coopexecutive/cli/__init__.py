@@ -18,12 +18,14 @@ from rich.prompt import Prompt
 from rich.table import Table
 
 from coopexecutive import identidad as _identidad
+from coopexecutive.cli import analisis as _analisis
 from coopexecutive.cli import asamblea as _asamblea
 from coopexecutive.cli import crm as _crm
 from coopexecutive.cli import documentos as _documentos
 from coopexecutive.cli import monitoreo as _monitoreo
 from coopexecutive.cli import procuracion as _procuracion
 from coopexecutive.cli import proyecto as _proyecto
+from coopexecutive.cli import redaccion as _redaccion
 from coopexecutive.cli._consola import console, fallar
 from coopexecutive.cli._modelo import ejecutar
 from coopexecutive.config import env_cargados, get_settings, usar_espacio
@@ -240,6 +242,7 @@ def modelos(herramientas: bool) -> None:
 for _comando in (
     *_procuracion.COMANDOS, *_proyecto.COMANDOS, *_asamblea.COMANDOS,
     *_crm.COMANDOS, *_documentos.COMANDOS, *_monitoreo.COMANDOS,
+    *_analisis.COMANDOS, *_redaccion.COMANDOS,
 ):
     cli.add_command(_comando)
 

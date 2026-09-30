@@ -134,6 +134,8 @@ class Procuracion(BaseModel):
     mecanismos_cobro: list[str] = Field(default_factory=list)
     aprobadores: list[str] = Field(default_factory=list)
     membrete: Membrete = Field(default_factory=Membrete)
+    # Campo de onboarding -> fuente (URL o «Dato del usuario»).
+    origenes: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("moneda_base")
     @classmethod

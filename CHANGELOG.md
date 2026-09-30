@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-09-29
+
+### Added
+- **Setup from the website:** `configurar --sitio URL` reads the home page and up to six pages of the same site (about, programmes, transparency, contact, donate), respects robots.txt and proposes each profile answer with a quote and the page it comes from. Answer «sí» to accept, type to correct, or press Enter to leave it unchanged. A proposal whose quote is not on the page stays pending. Amounts, currency and approvers are never taken from the site, and only the type of donation mechanism is kept. In the manual mode, answering «está en nuestro sitio» reads the site for that question only. The source of each field is stored in `procuracion.origenes`.
+- **Sensitive data:** bank accounts (CLABE, valid IBAN, cards that pass the Luhn check), RFC and CURP are removed from everything read from the web, from sources and from model answers. Personal e-mail addresses and phone numbers are removed from web pages. The profile rejects account numbers.
+- **Source labels and markers:** DATO DEL USUARIO, DATO INSTITUCIONAL, DATO PÚBLICO VERIFICADO, SUPUESTO, INFERENCIA ESTRATÉGICA, NO VERIFICADO and PENDIENTE, plus `RESPONSABLE POR CONFIRMAR`, `ESTATUS FISCAL PENDIENTE` and `MECANISMO DE DONACIÓN PENDIENTE`.
+- `fecha [--cierre …]`: today in the configured time zone and the calendar days left to each deadline; 13 days or fewer is flagged as urgent.
+- `comparar-convocatorias [IDS] [--expediente …] [--orden plazo|puntaje] [--word]`: compares saved evaluations with the days recomputed for today and says which one to handle first. The priority does not depend on the sort order.
+- `consultar "pregunta" [--redactar]`: searches the profile, the workspace `conocimiento/` folder and the bundled guides, without network or model, and cites the source. With `--redactar` the model answers only from the passages found.
+- `revisar URL|ARCHIVO [--pregunta] [--sin-modelo]`: summarises a page, PDF, Word or text file, quoting the source.
+- `redactar propuesta|carta-intencion|nota-conceptual|justificacion|correo-seguimiento [--expediente] [--bases] [--word]`: drafts for third parties. Amounts and dates without support are replaced by markers before they are shown or saved.
+- `reunion preparar ENTIDAD [--sitio] [--financiador] [--expediente] [--objetivo] [--word]`: public profile (only what the pages read support), the organisation's own facts from the profile, common ground, risks, agenda and questions, each with its source label.
+- New Word documents: `documento carta-intencion`, `nota-conceptual`, `reporte-monitoreo` and `reporte-evaluacion`.
+- Bundled guide on documents, source labels, markers and deadlines for `consultar`.
+
 ## [0.3.3] - 2026-09-29
 
 ### Breaking changes

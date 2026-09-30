@@ -14,16 +14,16 @@ from coopexecutive.cli._consola import console, fallar
 from coopexecutive.config import get_settings
 from coopexecutive.crm import cases
 from coopexecutive.crm.cases import Expediente
-from coopexecutive.documents import generador
+from coopexecutive.documents import cartas, generador
 from coopexecutive.documents.contenido import DocumentoPlano
-from coopexecutive.grant_tools import matrix
+from coopexecutive.grant_tools import comparar, matrix
 from coopexecutive.memory.company_profile import CoopProfile, Membrete
 from coopexecutive.utils.fechas import hoy_local
 
 
 @click.group("documento")
 def documento() -> None:
-    """Generar la solicitud, el documento institucional o la ficha de una oportunidad en Word."""
+    """Generar documentos Word: solicitud, carta, nota conceptual, ficha, reportes e institucional."""
 
 
 def _perfil() -> tuple[CoopProfile, Path]:
@@ -131,6 +131,85 @@ def documento_ficha(folio: str | None, id_evaluacion: int | None, aceptar: bool)
     plano = generador.ficha_oportunidad(perfil, guardada.resultado, e)
     _escribir(plano, perfil, carpeta, aceptar, expediente_folio=e.folio if e else None,
               evaluacion_id=guardada.id)
+
+
+def _contenido(ruta: Path | None, modelo):
+    if ruta is None:
+        return None
+    try:
+        crudo = yaml.safe_load(ruta.read_text(encoding="utf-8")) or {}
+        return modelo.model_validate(crudo)
+    except (yaml.YAMLError, ValidationError, ValueError) as exc:
+        fallar(f"{ruta.name} no es válido: {exc}", "Contenido no válido")
+
+
+_CONTENIDO = click.option("--contenido", type=click.Path(exists=True, dir_okay=False, path_type=Path), default=None,
+                          help="YAML con el contenido; lo que falte queda marcado.")
+_SI = click.option("--si", "aceptar", is_flag=True, help="Guardar sin pedir confirmación.")
+
+
+@documento.command("carta-intencion")
+@click.option("--expediente", "folio", default=None, help="Folio EXP-AAAA-NNNN: toma destinatario, proyecto y monto.")
+@_CONTENIDO
+@_SI
+def documento_carta(folio: str | None, contenido: Path | None, aceptar: bool) -> None:
+    """Carta de intención para el financiador. Firmante y monto quedan marcados si faltan."""
+    perfil, carpeta = _perfil()
+    e = _expediente(folio) if folio else None
+    plano = cartas.carta_intencion(perfil, e, _contenido(contenido, cartas.ContenidoCarta),
+                                   hoy_local(get_settings().user_timezone))
+    _escribir(plano, perfil, carpeta, aceptar, expediente_folio=e.folio if e else None)
+
+
+@documento.command("nota-conceptual")
+@click.option("--expediente", "folio", default=None, help="Folio EXP-AAAA-NNNN de la oportunidad.")
+@_CONTENIDO
+@_SI
+def documento_nota(folio: str | None, contenido: Path | None, aceptar: bool) -> None:
+    """Nota conceptual breve (acepta el mismo YAML que la solicitud)."""
+    perfil, carpeta = _perfil()
+    e = _expediente(folio) if folio else None
+    plano = cartas.nota_conceptual(perfil, e, _contenido(contenido, generador.ContenidoSolicitud),
+                                   hoy_local(get_settings().user_timezone))
+    _escribir(plano, perfil, carpeta, aceptar, expediente_folio=e.folio if e else None)
+
+
+@documento.command("reporte-monitoreo")
+@click.option("--tema", "temas", multiple=True, help="Tema a buscar (repetible); por omisión, los ejes del perfil.")
+@click.option("--sin-cache", is_flag=True, help="Descarga todo de nuevo aunque haya una copia reciente.")
+@_SI
+def documento_monitoreo(temas: tuple[str, ...], sin_cache: bool, aceptar: bool) -> None:
+    """Corre el monitoreo y guarda el resultado como reporte interno."""
+    from coopexecutive import monitoring
+
+    settings = get_settings()
+    perfil, carpeta = _perfil()
+    with console.status("Consultando fuentes..."):
+        try:
+            reporte = monitoring.monitorear(
+                list(temas) or perfil.focus_areas, hoy_local(settings.user_timezone), settings.carpeta_base,
+                cache=settings.cache_dir / "monitoreo", usar_cache=not sin_cache,
+            )
+        except ValueError as exc:
+            fallar(str(exc), "Monitoreo")
+    _escribir(cartas.reporte_monitoreo(perfil, reporte), perfil, carpeta, aceptar)
+
+
+@documento.command("reporte-evaluacion")
+@click.argument("ids", nargs=-1, type=int)
+@click.option("--expediente", "folios", multiple=True, help="Usa la evaluación más reciente de cada expediente.")
+@click.option("--orden", type=click.Choice(["plazo", "puntaje"]), default="plazo", show_default=True)
+@_SI
+def documento_reporte_evaluacion(ids: tuple[int, ...], folios: tuple[str, ...], orden: str, aceptar: bool) -> None:
+    """Comparación de evaluaciones guardadas y cuál atender primero (reporte interno)."""
+    perfil, carpeta = _perfil()
+    hoy = hoy_local(get_settings().user_timezone)
+    try:
+        elegidos = list(ids) + comparar.ultimas_por_expediente(list(folios))
+        comparacion = comparar.comparar(comparar.cargar_varias(elegidos or comparar.recientes()), hoy, orden)
+    except ValueError as exc:
+        fallar(str(exc))
+    _escribir(cartas.reporte_evaluacion(perfil, comparacion, hoy), perfil, carpeta, aceptar)
 
 
 COMANDOS = (documento,)

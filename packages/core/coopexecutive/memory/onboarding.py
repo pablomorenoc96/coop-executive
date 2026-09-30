@@ -4,7 +4,6 @@ La lógica vive aquí, sin consola, para que la CLI y otros canales la compartan
 """
 from __future__ import annotations
 
-import re
 import shutil
 from dataclasses import dataclass
 from datetime import datetime
@@ -14,6 +13,7 @@ from typing import Any
 import yaml
 
 from coopexecutive.config import ARCHIVO_PERFIL
+from coopexecutive.guardrails.sensibles import IDENTIFICADOR, contiene_dato_bancario
 from coopexecutive.memory.company_profile import CoopProfile, TipoOrganizacion, inferir_tipo
 
 
@@ -54,7 +54,8 @@ PREGUNTAS: tuple[Pregunta, ...] = (
     Pregunta(9, "¿Con qué alianzas y financiadores ha trabajado?", ("alianzas", "financiadores")),
     Pregunta(
         10,
-        "¿Quién aprueba las solicitudes y por qué medios recibe donativos o pagos?",
+        "¿Quién aprueba las solicitudes y qué tipo de mecanismo usa para recibir donativos o pagos? "
+        "Por ejemplo: transferencia, plataforma en línea o recibo deducible. No escriba números de cuenta.",
         ("aprobadores", "mecanismos_cobro"),
     ),
 )
@@ -71,12 +72,6 @@ FIGURA_POR_TIPO: dict[str, str] = {
     "empresa": "Sociedad mercantil",
     "persona_fisica": "Persona física con actividad empresarial",
 }
-
-# RFC de persona física o moral y CURP: no se guardan en el perfil.
-_IDENTIFICADOR = re.compile(
-    r"\b[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\b|\b[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d\b", re.IGNORECASE
-)
-
 
 def _lista(valor: Any) -> list[str]:
     if valor is None:
@@ -99,9 +94,16 @@ def _revisar_identificadores(respuestas: dict[str, Any]) -> None:
     for campo, valor in respuestas.items():
         textos = valor if isinstance(valor, list) else [valor]
         for texto in textos:
-            if isinstance(texto, str) and _IDENTIFICADOR.search(texto):
+            if not isinstance(texto, str):
+                continue
+            if IDENTIFICADOR.search(texto):
                 raise ValueError(
                     f"{campo}: parece contener un RFC o una CURP. El perfil no guarda identificadores fiscales."
+                )
+            if contiene_dato_bancario(texto):
+                raise ValueError(
+                    f"{campo}: parece contener una cuenta bancaria o una tarjeta. "
+                    "Indique solo el tipo de mecanismo, sin números."
                 )
 
 
@@ -138,8 +140,14 @@ def respuestas_actuales(datos: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def aplicar_respuestas(datos: dict[str, Any], respuestas: dict[str, Any]) -> dict[str, Any]:
-    """Combina las respuestas con el perfil existente. Un campo ausente conserva su valor."""
+def aplicar_respuestas(
+    datos: dict[str, Any], respuestas: dict[str, Any], origenes: dict[str, str] | None = None
+) -> dict[str, Any]:
+    """Combina las respuestas con el perfil existente. Un campo ausente conserva su valor.
+
+    `origenes` registra de dónde salió cada campo (por ejemplo, la URL de la página
+    del sitio web); se guarda en `procuracion.origenes`.
+    """
     desconocidos = set(respuestas) - {c for p in PREGUNTAS for c in p.campos} - {"tipo"}
     if desconocidos:
         raise ValueError(f"Campos desconocidos en las respuestas: {', '.join(sorted(desconocidos))}.")
@@ -183,6 +191,9 @@ def aplicar_respuestas(datos: dict[str, Any], respuestas: dict[str, Any]) -> dic
             rango["moneda"] = str(r["moneda"]).strip().upper()
             proc["moneda_base"] = rango["moneda"]
         proc["rango_presupuesto"] = rango
+
+    if origenes:
+        proc["origenes"] = {**(proc.get("origenes") or {}), **origenes}
 
     if "tipo" in r and r["tipo"]:
         nuevo["tipo_organizacion"] = r["tipo"]

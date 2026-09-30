@@ -9,9 +9,9 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-MARCADORES = re.compile(
-    r"\[PENDIENTE: [^\]]+\]|MONTO POR DEFINIR|COSTO POR COTIZAR|VIGENCIA NO VERIFICADA"
-)
+from coopexecutive.guardrails.marcadores import MARCADORES as _FIJOS
+
+MARCADORES = re.compile(r"\[PENDIENTE: [^\]]+\]|" + "|".join(re.escape(m) for m in _FIJOS))
 
 
 @dataclass
@@ -84,7 +84,7 @@ def a_markdown(doc: DocumentoPlano) -> str:
         if isinstance(b, Titulo):
             lineas.append(f"{'#' * (b.nivel + 1)} {b.texto}")
         elif isinstance(b, Parrafo):
-            lineas.append(b.texto)
+            lineas.append(b.texto.replace("\n", "  \n"))
         elif isinstance(b, Lista):
             lineas.extend(f"- {e}" for e in b.elementos)
         else:

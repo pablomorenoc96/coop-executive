@@ -2,7 +2,8 @@
 
 Señala montos y fechas que no aparecen en el contexto (entrada, perfil o evidencia),
 emojis, respuestas demasiado largas, recomendaciones sin contrapunto y frases que
-afirman haber guardado algo cuando no se ejecutó ninguna acción.
+afirman haber guardado algo cuando no se ejecutó ninguna acción. Las cuentas
+bancarias y los números de tarjeta se censuran siempre, también sin `estricto`.
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ from dataclasses import dataclass, field
 from datetime import date
 
 from coopexecutive.guardrails.marcadores import LEYENDA_BORRADOR, MONTO_POR_DEFINIR, pendiente
+from coopexecutive.guardrails.sensibles import censurar_datos_bancarios
 from coopexecutive.utils.fechas import MESES
 
 LIMITE_PALABRAS = 900
@@ -96,6 +98,9 @@ def revisar_respuesta(
     La fecha de hoy siempre se considera conocida.
     """
     observaciones: list[str] = []
+    texto, censurados = censurar_datos_bancarios(texto)
+    if censurados:
+        observaciones.append(f"Se omitieron {censurados} dato(s) bancario(s): cuentas o tarjetas no se muestran.")
     cifras = _cifras_en(contexto)
     fechas = _fechas_en(contexto)
     if hoy is not None:
