@@ -11,6 +11,7 @@ from coopexecutive import bitacora as _bitacora
 from coopexecutive.cli._consola import console, fallar
 from coopexecutive.config import get_settings
 from coopexecutive.utils.fechas import hoy_local
+from coopexecutive.utils.rutas import para_mostrar
 
 # Comandos que solo muestran información: no se registran para no llenar la bitácora de ruido.
 SIN_REGISTRO = frozenset({"bitacora", "info", "intro", "modelos", "fecha", "panel", "dashboard", "mcp",
@@ -99,7 +100,7 @@ def exportar(destino: Path | None, jsonl: bool) -> None:
         total = _bitacora.exportar_jsonl(destino)
     except FileExistsError:
         fallar(f"Ya existe {destino}; elija otro nombre.", "No se exportó")
-    console.print(f"[green]{total} registro(s) exportado(s) a[/green] {destino}", highlight=False)
+    console.print(f"[green]{total} registro(s) exportado(s) a[/green] {para_mostrar(destino)}", highlight=False)
 
 
 COMANDOS = (bitacora,)

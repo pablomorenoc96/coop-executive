@@ -36,3 +36,7 @@ scratch/
 *.bak-*
 salidas/
 .cache/
+
+# Third-party agent skills (not part of the product)
+.agents/
+skills-lock.json

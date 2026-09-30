@@ -39,3 +39,12 @@ def carpeta_usuario() -> Path:
         return Path(os.environ["APPDATA"]) / "CoopExecutive"
     base = os.environ.get("XDG_CONFIG_HOME") or str(Path.home() / ".config")
     return Path(base).expanduser() / "coopexecutive"
+
+
+def para_mostrar(ruta: Path | str) -> str:
+    """Ruta relativa a la carpeta actual si está dentro de ella; si no, la absoluta."""
+    absoluta = Path(ruta).resolve()
+    try:
+        return str(absoluta.relative_to(Path.cwd().resolve()))
+    except ValueError:
+        return str(absoluta)

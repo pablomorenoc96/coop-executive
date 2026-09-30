@@ -19,6 +19,7 @@ from coopexecutive.documents.contenido import DocumentoPlano
 from coopexecutive.grant_tools import comparar, matrix
 from coopexecutive.memory.company_profile import CoopProfile, Membrete
 from coopexecutive.utils.fechas import hoy_local
+from coopexecutive.utils.rutas import para_mostrar
 
 
 @click.group("documento")
@@ -71,7 +72,7 @@ def _escribir(
         fallar(str(exc), "No se generó el documento")
     vinculo = f"\nRegistrado en el expediente {expediente_folio}." if expediente_folio else ""
     console.print(
-        f"[bold green]Documento guardado[/bold green] en {guardado.ruta}\n"
+        f"[bold green]Documento guardado[/bold green] en {para_mostrar(guardado.ruta)}\n"
         f"[dim]Huella SHA-256: {guardado.sha256}[/dim]{vinculo}"
     )
 

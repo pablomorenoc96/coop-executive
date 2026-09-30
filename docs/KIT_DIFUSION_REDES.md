@@ -25,14 +25,14 @@ En CoopExecutive la gobernanza es asamblearia:
 Las cooperativas y ONGs no subsisten con rondas Serie A; necesitan fondos no reembolsables.
 
 CoopExecutive incluye un agente que:
-- Evalúa convocatorias de @FundsforNGOs con una rúbrica técnica de 100 puntos.
-- Estructura propuestas bajo Metodología de Marco Lógico (MML) 4x4 alineadas a los ODS.
-- Desglosa presupuestos auditables.
+- Evalúa convocatorias con una matriz de 100 puntos donde cada puntaje exige evidencia.
+- Arma el marco lógico y el presupuesto sin inventar montos: lo que falta queda por definir.
+- Funciona desde la terminal, un panel local o cualquier cliente MCP, y pide confirmación antes de escribir.
 
 ### Tweet 4 (Independencia y Cero Costo):
 Cero licencias privativas. Cero vendor lock-in.
 
-- Corre en la nube con modelos gratuitos de @OpenRouterAI (con conmutación automática ante saturación).
+- Corre en la nube con modelos gratuitos de @OpenRouterAI, con reintentos y modelo de respaldo.
 - Corre 100% desconectado en tu propia máquina con @Ollama.
 - Licencia MIT.
 
@@ -54,12 +54,12 @@ Para responder a esta brecha, desarrollamos **CoopExecutive**: una plataforma de
 
 **Aspectos centrales del proyecto:**
 1. **Gobernanza Colegiada:** Asistencia para el Consejo de Administración y Consejo de Vigilancia, asegurando la observancia estatutaria y la preparación formal de actas asamblearias.
-2. **Procuración de Fondos y Subvenciones:** Evaluación sistemática de convocatorias internacionales (multilaterales, agencias de cooperación y plataformas como FundsforNGOs) mediante una matriz multicriterio de 100 puntos, formulación de matrices de Marco Lógico 4x4 y construcción de presupuestos auditables.
-3. **Blindaje de Fondos Estatutarios:** Supervisión y separación legal de los fondos de reserva, previsión social y educación cooperativa.
+2. **Procuración de Fondos y Subvenciones:** Evaluación de convocatorias con una matriz de 100 puntos basada en evidencia, comparación de plazos, seguimiento de financiadores y expedientes, y documentos Word que marcan como pendiente todo dato que no consta.
+3. **Asamblea verificable:** Padrón de socios, un socio un voto, cuórum y mayoría del estatuto, y actas con huella SHA-256. Rechaza propuestas que reparten fondos estatutarios o venden participación.
 4. **Acceso Universal y Soberanía Tecnológica:** Distribuido bajo licencia MIT, compatible con modelos gratuitos en la nube y ejecución totalmente local/offline mediante Ollama, eliminando cualquier barrera de costo para organizaciones comunitarias.
 
-El repositorio se encuentra disponible con documentación técnica y suite de pruebas:
-🔗 https://github.com/pablomorenoc96/coop-executive
+El repositorio se encuentra disponible con documentación técnica, guías de uso y pruebas:
+https://github.com/pablomorenoc96/coop-executive
 
 Invitamos a cooperativistas, gestores de organizaciones civiles y desarrolladores a evaluar la herramienta, aportar mejoras y sumarse a la iniciativa.
 
@@ -75,8 +75,8 @@ Les compartimos el lanzamiento de **CoopExecutive**, una herramienta de código 
 
 A diferencia del software administrativo convencional, CoopExecutive incorpora la lógica de la Ley General de Sociedades Cooperativas y los principios de la economía social:
 * **Asamblea y Vigilancia:** Asiste en la redacción de convocatorias, órdenes del día y control interno democrático.
-* **Postulación a Subvenciones:** Cuenta con un agente que revisa convocatorias de fondos internacionales, calcula la viabilidad institucional y ayuda a redactar la propuesta en formato de Marco Lógico multilateral (árbol de problemas, objetivos e indicadores ODS).
-* **Protección de Fondos:** Vigila la integridad de los fondos de reserva, previsión social y educación cooperativa.
+* **Postulación a Subvenciones:** Cuenta con un agente que revisa las bases de una convocatoria, la califica con evidencia, prepara reuniones con financiadores y redacta la propuesta sin inventar montos ni fechas.
+* **Protección de Fondos:** Rechaza propuestas de asamblea que liquiden o repartan los fondos de reserva, previsión social y educación cooperativa.
 * **Cero Costo:** Funciona sin pagar licencias de software, utilizando modelos de IA gratuitos o ejecutándose de manera local sin conexión a internet.
 
 Pueden consultar el código fuente, la guía de instalación y el manual de uso en:

@@ -2,170 +2,203 @@
 
 ![CoopExecutive Banner](assets/banner_en.png)
 
-> **Collegiate Executive Board & Grant Procurement AI Agent for Cooperatives, Civil Associations (Non-Profits / NGOs), and Social Economy Organizations.**
+> **Grant procurement agent and collegiate board for cooperatives, civil associations and other social economy organisations.** It runs on your machine, works with free or local models, and never invents amounts, dates or partners.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
-[![Free & Paid AI](https://img.shields.io/badge/Models-Free%20%26%20Commercial-orange.svg)](#ai-model-setup-free-local-and-paid-options)
-[![Social Economy Principles](https://img.shields.io/badge/Document-Principles%20%26%20Governance-darkgreen.svg)](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md)
+[![Free & Paid AI](https://img.shields.io/badge/Models-Free%2C%20local%20%26%20paid-orange.svg)](#ai-models-free-local-and-paid)
+[![MCP](https://img.shields.io/badge/MCP-server-6f42c1.svg)](#mcp-server)
 
-[🇲🇽 Leer en Español](README.es.md) | [📢 Outreach & Social Media Kit](docs/KIT_DIFUSION_REDES.md)
+[Leer en español](README.es.md) · [User guide](docs/GUIA_DE_USO.en.md) · [Test cases](docs/CASOS_DE_PRUEBA.md) · [Architecture](ARCHITECTURE.md) · [Changelog](CHANGELOG.md)
 
-**CoopExecutive** is an open-source tool built for democratic organizations. Unlike traditional corporate management software focused on shareholder equity, venture rounds, and private profit extraction, CoopExecutive is designed for sovereign assemblies (*one member, one vote*), protected statutory reserves, and non-reimbursable grant funding.
+![CoopExecutive demo](assets/demo_en.gif)
 
----
-
-## What is CoopExecutive Technically?
-
-In software architecture terms, **CoopExecutive is an Autonomous Vertical AI Agent**. Rather than an open-ended conversational bot, it is a structured system composed of modular layers designed to process environment inputs, apply legal and business rules, and produce auditable technical outputs.
-
-![CoopExecutive Architecture](assets/architecture.png)
-
-### Architectural Components
-
-1. **Environment & Perception:**
-   - **Inputs:** Ingests the institutional profile (`company/profile.yaml`), grant notices from international donors, and applicable legal statutes (Cooperative Law / LGSC).
-   - **Channels:** Accepts inputs via command-line interface (CLI) and an interactive local web dashboard.
-
-2. **Collegiate Orchestrator (Role Router):**
-   - Routes requests to specialized functional roles:
-     - *Grant Procurement:* Opportunity evaluation and proposal drafting.
-     - *Vigilance Board:* Internal democratic audit and compliance oversight.
-     - *Legal Counsel:* Cooperative statutes, non-profit tax exemptions, and open licensing.
-     - *Solidarity Finance:* Cash flow oversight and statutory fund protection.
-     - *Open Technology:* Open-source software, accessible technical infrastructure, and industry standards (ISO/IEC/NOM).
-     - *Assembly Secretariat:* Agendas, accredited roll, legal quorum, and minutes.
-
-3. **Persistent Episodic Memory (SQLite):**
-   - Local database (`coop_memory.db`) maintaining an auditable relational record of:
-     - Historical assembly agreements.
-     - Assembly proposals.
-     - Registered member ballots (with strict deduplication per proposal).
-     - Grant opportunity evaluations, with the full result and its SHA-256 hash.
-     - Funders, procurement cases and their progress log.
-
-4. **Universal Inference Engine:**
-   - Flexible routing across three compute tiers:
-     - *Zero-cost cloud tier ($0.00):* Free OpenRouter models with 429 rate-limit fallback.
-     - *Local offline tier:* Fully private execution via Ollama (`granite4.1`, `qwen3.8`).
-     - *Commercial APIs (optional):* OpenAI, Anthropic, Google Gemini, Groq, Mistral, and DeepSeek.
-
-5. **Deterministic Tool-Use Layer:**
-   - Deterministic 100-point matrix: 8 criteria with required evidence, deadline bands and decision precedence (*APLICAR*, *EXPLORAR*, *CONDICIONAL*, *DESCARTAR*, or a verification step when eligibility, validity or evidence is missing).
-   - 4x4 Logical Framework Matrix (Goals, Indicators, Verification Means, Assumptions).
-   - Budget builder with explicit cash and in-kind matching funds calculations.
-   - Multilateral proposal dossier compiler for major funding bodies (IDB, Horizon, foundations).
-
-6. **Hard Statutory Guardrails (Invariants):**
-   - Code-level checks that immediately reject any proposal attempting to:
-     - Sell equity, issue corporate shares, or dilute member ownership.
-     - Liquidate or privatize protected statutory funds (Reserve, Social Welfare, Education).
-     - Enforce mandatory unpaid labor or waive fundamental member rights.
+*The demo runs real commands in a temporary workspace: create the organisation, load its profile, evaluate two calls, compare them, check deadlines, generate a Word sheet and verify the audit log. No model response is simulated.*
 
 ---
 
-## Structural Comparison
+## What it is
 
-| Dimension | Traditional Corporate Approach | CoopExecutive |
-| :--- | :--- | :--- |
-| **Decision Authority** | Capital-weighted (*one dollar, one vote*). | Democratic (*one member, one vote* in General Assembly). |
-| **Oversight** | Board of directors representing private shareholders. | Independent **Vigilance Board** elected by members. |
-| **Financing** | Equity sales, commercial debt, and acquisition targets. | Sustainable operations and **non-reimbursable grants**. |
-| **Surplus** | Maximization of private dividends. | **Protected Statutory Funds:** Reserve (15%), Welfare (10%), Education (10%). |
-| **Legal Structure** | For-profit corporations (C-Corp, S.A. de C.V.). | Cooperative Societies and Non-Profit Civil Associations. |
-| **Infrastructure** | Proprietary SaaS with subscription lock-in. | **100% Open Source (MIT), free ($0.00) models and optional commercial APIs.** |
+Most organisations look for funding with a spreadsheet, a shared folder and whoever remembers the deadlines. Generic chatbots help to draft, but they fill gaps with plausible numbers, forget what was decided and leave no record.
 
----
+CoopExecutive keeps the parts that must be exact in code and uses the model only where it adds value:
 
-## Visual Demo
+| Usual approach | CoopExecutive |
+|---|---|
+| A score "by feel" for each call | A 100-point matrix with evidence per criterion, computed in code and sealed with SHA-256 |
+| Deadlines in someone's calendar | Days to close counted from today in your time zone; 13 days or fewer is flagged URGENT |
+| A chatbot that fills gaps | Unsupported amounts and dates are replaced with `MONTO POR DEFINIR` and `[PENDIENTE: …]` before you see them |
+| Files named `final_v3_ok.docx` | Word documents with your letterhead, filed by year and case, never overwritten |
+| Nobody knows who changed what | A chained audit log of every command and tool call, with `bitacora verificar` to detect edits |
+| Paid SaaS that holds your data | MIT licence, local SQLite and YAML, free cloud or fully local models |
+| Assembly votes on paper | Member roll, quorum, one member one vote, and minutes that state the rule applied |
 
-![CoopExecutive Demo](assets/demo_en.gif)
-
----
-
-## Core Capabilities
-
-### 1. Multilateral Grant Procurement
-* **100-Point Evaluation Rubric:** Analyzes text or PDF calls to extract deadlines, budgets, eligibility, and strategic fit.
-* **Logical Framework Matrix (LFM / RBM):** Builds 4x4 Results Matrices and connects activities to UN SDGs.
-* **Multilateral Proposal Dossier:** Generates audit-ready project documentation for international funding bodies.
-
-### 2. Democratic Assembly Voting (One Member = One Vote)
-* **Ballot Casting:** Registers votes individually, rejecting duplicate ballots automatically.
-* **Live Quorum Calculation:** Computes whether statutory attendance (>50% + 1 members) has been met.
-* **Cryptographic Minutes:** Issues formal certificates with SHA-256 digital hashes for audit trails.
-* **Statutory Invariant Verification:** Blocks motions violating cooperative principles or labor rights.
-
-### 3. Collegiate Board Advisory
-* Answers operational, technical, and legal questions regarding cooperative law and tax exemption.
-* Generates clear documentation for internal assembly review.
-
-### 4. Procurement Workspace (0.2.0)
-* **One workspace per organisation:** `iniciar` creates a folder with the profile, the database and an outputs folder. One installation serves several organisations, and their data stays outside the repository.
-* **Guided profile setup:** `configurar` asks ten questions (or reads them from a YAML file), shows a summary, and backs up the previous profile before writing. Tax identifiers are rejected.
-* **Organisation types:** cooperatives, civil associations, companies and self-employed individuals. Statutory funds and the one-member-one-vote assembly apply only to cooperatives.
-* **Deterministic evaluation matrix:** eight criteria with mandatory evidence; an empty criterion stays pending instead of counting as zero. Deadline bands, decision precedence (eligibility, validity, tensions, completeness, score) and a counterpoint are computed in code, and every result is sealed with a SHA-256 hash. The same matrix serves calls, scholarships, awards and loans.
-* **Three input modes:** interactive, `--archivo` (YAML) or assisted, where the model only proposes scores with evidence as JSON; pydantic validates the proposal, you confirm it, the matrix decides and the model drafts the analysis.
-* **Funders and cases:** a funder base (`FIN-YYYY-NNNN`) with duplicate detection by normalised name and amounts in any ISO 4217 currency, and cases (`EXP-YYYY-NNNN`) with a progress log, data origin and linked evaluations.
-* **No invented data:** answers are reviewed after generation. Unsupported amounts and dates are flagged (or replaced with `MONTO POR DEFINIR` / `[PENDIENTE: fecha]` with `--estricto`), as are emojis, answers over 900 words, recommendations without a counterpoint and claims that something was saved when no command ran.
-
-### 5. Documents, Monitoring and Assembly (0.3.0)
-* **Word documents:** `documento solicitud`, `documento institucional` and `documento ficha` build an application, an institutional document and an opportunity sheet from the profile, the case and the evaluation. Missing data stays as `[PENDIENTE: …]`. You review the content before it is saved to `salidas/YYYY/EXP-…/`; files are never overwritten and each one is logged in its case.
-* **Letterhead per organisation:** header image, footer, font and size come from `procuracion.membrete` in the profile. Default: Arial 11, 1.15 line spacing, 6 pt after, justified text, tables at page width.
-* **Opportunity monitoring:** `monitorear` reads public RSS/Atom feeds and returns up to three prioritised notices, notices to review and closed ones. Topics come from the profile's focus areas (or `--tema`), in Spanish or English; a notice is kept only when it contains every significant word of at least one topic. A closing date is only accepted when it follows a closing keyword; otherwise the notice is marked `VIGENCIA NO VERIFICADA`.
-* **Your own sources:** add a `fuentes.yaml` to the workspace (see the built-in `knowledge/builtin/procuracion_fondos/fuentes.yaml` for the format: `nombre`, `tipo`, `region`, `idioma`, `url`, `rss`). Optional keys: `temas`, `buscador` (your own SearXNG with JSON enabled) and `solo_propias`. A source without `rss` is listed for manual review.
-* **Privacy:** only feed requests leave the machine, plus the topics if a search engine is configured. No profile or funder data is sent. Downloads are cached for 12 hours in `.cache/`, and the cached copy is used if a source is down.
-* **Assembly:** `evaluar-convocatoria --proponer-asamblea` turns an APLICAR decision into a `subvencion` proposal that cites the case folio and the evaluation hash. Organisations without an assembly are pointed to their approvers.
-* **Terminal intro:** `coopexecutive` shows the organisation's intro, or the built-in one. `intro generar` draws it from the `identidad` block (logo, font, motto, colours) and needs the optional `identidad` extra (`uv sync --extra identidad`). The built-in intro was generated from `assets/isotipo.png` with Arial Bold, 12 logo rows and 6 text rows.
+It serves cooperatives, civil associations, companies and self-employed people. Statutory funds and the one-member-one-vote assembly apply only to cooperatives. The interface and the documents it produces are in Spanish; the models answer in the language you write in.
 
 ---
 
-## Quickstart
+## What you can ask, what you get
+
+### Grant procurement
+
+| Area | Ask | You get |
+|---|---|---|
+| Date and deadlines | `coopexecutive fecha --cierre 2026-10-09` | Today's date in your zone and days left, with URGENT at 13 days or fewer |
+| Evaluate a call | `coopexecutive evaluar-convocatoria https://example.org/call.pdf` | Decision (APLICAR, EXPLORAR, CONDICIONAL, DESCARTAR or a verification step), score per criterion with evidence, counterpoint and next step |
+| Compare calls | `coopexecutive comparar-convocatorias --orden plazo` | A table of saved evaluations and which one to handle first |
+| Monitor calls | `coopexecutive monitorear --tema "renewable energy"` | Up to three prioritised open calls, calls to review and closed ones, from public RSS feeds |
+| Funders | `coopexecutive financiadores registrar "Example Foundation" …` | A funder base with folios `FIN-YYYY-NNNN` and duplicate detection |
+| Cases | `coopexecutive expedientes abrir "Example Foundation" --tipo Convocatoria` | A case `EXP-YYYY-NNNN` with a progress log and the origin of each entry |
+| Meetings | `coopexecutive reunion preparar "Example Foundation" --sitio https://…` | Public profile (only from the pages read), common ground, risks, agenda and questions, each item labelled |
+| Drafting | `coopexecutive redactar carta-intencion --expediente EXP-2026-0001 --word` | A proposal, letter of intent, concept note, justification or follow-up email, reviewed before display |
+| Word documents | `coopexecutive documento ficha --expediente EXP-2026-0001` | Application, institutional document, sheet, letter, concept note, monitoring or evaluation report |
+| Project design | `coopexecutive proyecto marco-logico "Community microgrids" --desde marco.yaml` | Logical framework, budget with `COSTO POR COTIZAR`, and an application dossier where anything missing stays pending |
+| Organisation info | `coopexecutive consultar "what is our legal status?"` | Passages from the profile, your `conocimiento/` folder and the built-in guides, with their source; "not recorded" if nothing matches |
+| Web and files | `coopexecutive revisar https://… --pregunta "who can apply?"` | A summary of a page, PDF, Word or HTML file that cites its source |
+
+### Assembly and board
+
+| Area | Ask | You get |
+|---|---|---|
+| Member roll | `coopexecutive socios alta SOC-001 -n "Member one"` | Active members, the base for quorum |
+| Motions and votes | `coopexecutive propuesta …`, `coopexecutive votar 1 -s SOC-001 -v a_favor` | One ballot per member and motion |
+| Count | `coopexecutive escrutinio 1` | Closes the motion, checks quorum, applies simple or two-thirds majority as set in the profile, and issues minutes with a SHA-256 hash |
+| Board advice | `coopexecutive chat --rol legal` | Roles: procurement, oversight, legal, finance, technical, communication and assembly |
+
+### Platform
+
+| Area | Ask | You get |
+|---|---|---|
+| Agent with tools | `coopexecutive chat` or `coopexecutive ask "which cases close this month?"` | The model queries your data with 19 tools; the 5 that write ask for confirmation first |
+| Local panel | `coopexecutive panel` | A browser dashboard with real data and a chat, served on 127.0.0.1 |
+| Local API | `GET /api/expedientes`, `POST /api/chat` | JSON and streaming chat with the same tools |
+| MCP server | `coopexecutive mcp` | The same tools in Claude Desktop, Claude Code or any MCP client |
+| Audit log | `coopexecutive bitacora verificar` | Confirms the chain is intact or names the first altered record |
+| Behaviour evals | `python -m coopexecutive.evals` | 22 golden cases for the matrix, the review and the tool calls |
+
+---
+
+## Source labels and markers
+
+Every important fact in an answer or document carries its origin:
+
+| Label | Meaning |
+|---|---|
+| `DATO DEL USUARIO` | You provided it |
+| `DATO INSTITUCIONAL` | It comes from the organisation profile |
+| `DATO PÚBLICO VERIFICADO` | Read from a public source that is cited |
+| `SUPUESTO` | An explicit assumption to confirm |
+| `INFERENCIA ESTRATÉGICA` | The agent's reasoning, not a fact |
+| `NO VERIFICADO` | Seen but not confirmed |
+| `PENDIENTE` | Missing |
+
+When a fact is missing, the agent leaves a marker instead of inventing it:
+
+| Marker | Used for |
+|---|---|
+| `MONTO POR DEFINIR` | Amounts with no source |
+| `COSTO POR COTIZAR` | Budget lines without a quote |
+| `[PENDIENTE: dato]` | Any other missing fact, such as a date |
+| `VIGENCIA NO VERIFICADA` | Calls whose closing date could not be confirmed |
+| `RESPONSABLE POR CONFIRMAR` | Tasks without an owner |
+| `ESTATUS FISCAL PENDIENTE` | Tax status not confirmed |
+| `MECANISMO DE DONACIÓN PENDIENTE` | How the organisation receives donations |
+
+Bank account numbers (CLABE, IBAN, cards) are always censored, in answers and in the profile.
+
+---
+
+## Installation
+
+You need Python 3.11 or later.
+
+**As a user, with pipx:**
+
+```bash
+pipx install "coopexecutive[web,mcp,pdf] @ git+https://github.com/pablomorenoc96/coop-executive.git#subdirectory=packages/core"
+coopexecutive --help
+```
+
+**From the repository, with uv:**
 
 ```bash
 git clone https://github.com/pablomorenoc96/coop-executive.git
 cd coop-executive/packages/core
-
-# Install dependencies with uv:
-uv sync --all-groups --extra dev
-
-# Configure environment variables:
-cp ../../.env.example .env
-
-# Create a workspace for your organisation (keep it outside the repository):
-uv run coopexecutive iniciar ~/procuracion/my-org --nombre "My Organisation" --tipo asociacion_civil
-uv run coopexecutive --espacio ~/procuracion/my-org configurar --desde ../../company/examples/respuestas_perfil.yaml
-
-# Evaluate an opportunity with the deterministic 100-point matrix:
-uv run coopexecutive --espacio ~/procuracion/my-org evaluar-convocatoria --archivo ../../company/examples/convocatoria_ejemplo.yaml
-
-# Track funders and cases:
-uv run coopexecutive --espacio ~/procuracion/my-org financiadores registrar "Example Foundation" --proyecto "Community microgrids" --tipo "Fundación" --canal "Correo" --moneda USD
-uv run coopexecutive --espacio ~/procuracion/my-org expedientes abrir "Example Foundation" --tipo Convocatoria
-
-# Monitor open opportunities and generate Word documents for a case:
-uv run coopexecutive --espacio ~/procuracion/my-org monitorear
-uv run coopexecutive --espacio ~/procuracion/my-org documento ficha --expediente EXP-2026-0001
-
-# Generate a complete multilateral proposal dossier:
-uv run coopexecutive dossier "Community Clean Microgrids" --donante "IDB"
-
-# Register and vote on a General Assembly motion (One Member = One Vote):
-uv run coopexecutive propuesta "IDB Clean Energy Proposal Approval" -d "Approval of technical matching commitment"
-uv run coopexecutive votar 1 --socio-id "SOC-001" --socio-nombre "Elena Gomez" --voto "A_FAVOR"
-uv run coopexecutive escrutinio 1 --padron 12
-
-# Open the interactive Web Dashboard:
-uv run coopexecutive dashboard
-
-# Start an interactive session with the collegiate board:
-uv run coopexecutive chat
+uv sync --all-extras
+uv run coopexecutive --help
 ```
+
+Optional extras: `web` (panel and API), `mcp` (MCP server), `pdf` (reading PDFs), `identidad` (drawing the terminal intro) and `todo` (all of them).
 
 ---
 
-## AI Model Setup (Free, Local, and Paid Options)
+## Setting up your organisation
+
+Create one workspace per organisation, outside the repository. It holds the profile, the database and the `salidas/` folder:
+
+```bash
+coopexecutive iniciar ~/procuracion/my-org --nombre "My Organisation" --tipo asociacion_civil
+export COOPEXECUTIVE_WORKSPACE=~/procuracion/my-org   # or pass --espacio on each command
+```
+
+Then complete the profile in one of two ways.
+
+**From your website.** The agent reads the home page and up to six pages of the same domain (about, contact, programmes, join, transparency), respects robots.txt and proposes an answer to each question with its evidence and URL. Reply "sí" to accept, type a correction, or press Enter to keep the current value (pending if it was empty). Bank accounts, tax IDs, personal emails and phone numbers are removed before anything is proposed.
+
+```bash
+coopexecutive configurar --sitio https://www.example.org/
+```
+
+**Manually.** Ten questions in the terminal, or a YAML file with the answers. If an answer is "it's on our website", the agent asks for the link once and reads it only for that question.
+
+```bash
+coopexecutive configurar
+coopexecutive configurar --desde company/examples/respuestas_perfil.yaml
+```
+
+Either way, the previous profile is backed up before writing, and the profile records which URL each fact came from.
+
+---
+
+## Quick tour
+
+```bash
+# Deadlines and evaluation
+coopexecutive fecha --cierre 2026-10-09
+coopexecutive evaluar-convocatoria --archivo company/examples/convocatoria_ejemplo.yaml
+coopexecutive evaluar-convocatoria https://example.org/call.pdf --expediente EXP-2026-0001
+coopexecutive comparar-convocatorias --orden plazo
+
+# Funders, cases and documents
+coopexecutive financiadores registrar "Example Foundation" --proyecto "Community microgrids" --tipo "Fundación" --canal "Correo" --moneda USD
+coopexecutive expedientes abrir "Example Foundation" --tipo Convocatoria
+coopexecutive expedientes avance EXP-2026-0001 --estado "Concept note sent" --siguiente "Call the programme officer"
+coopexecutive documento ficha --expediente EXP-2026-0001
+coopexecutive redactar nota-conceptual --expediente EXP-2026-0001 --word
+
+# Project design without invented figures
+coopexecutive proyecto marco-logico "Community microgrids" --plantilla
+coopexecutive proyecto presupuesto "Community microgrids" --desde presupuesto.yaml --tope-indirectos 10
+coopexecutive proyecto dossier "Community microgrids" --expediente EXP-2026-0001
+
+# Assembly (cooperatives)
+coopexecutive socios alta SOC-001 -n "Member one"
+coopexecutive propuesta "Apply to the energy fund" -d "Approve the application and its matching funds" -c subvencion
+coopexecutive votar 1 -s SOC-001 -v a_favor
+coopexecutive escrutinio 1
+
+# Agent, panel and audit log
+coopexecutive chat --rol procurador
+coopexecutive panel
+coopexecutive bitacora verificar
+```
+
+The [user guide](docs/GUIA_DE_USO.en.md) walks through each area with full examples.
+
+---
+
+## AI models: free, local and paid
 
 Copy `.env.example` to `.env` in your user folder (`%APPDATA%\CoopExecutive` or `~/.config/coopexecutive`), the repository root or the folder you run from; `coopexecutive info` shows which files were loaded. Model names below were checked on 29/09/2026 and change often: any compatible model works, and `coopexecutive modelos --herramientas` lists the free ones available today.
 
@@ -181,18 +214,86 @@ Copy `.env.example` to `.env` in your user folder (`%APPDATA%\CoopExecutive` or 
 | Paid | DeepSeek | `DEEPSEEK_API_KEY` | `deepseek-flash`, `deepseek-v4-pro` | Provider terms |
 | Any | OpenAI-compatible (Azure, vLLM, LiteLLM, LM Studio) | `CUSTOM_BASE_URL`, `CUSTOM_API_KEY` | The one you host | Yours |
 
-With `PROVIDER=auto` the first key present is used. Rate limits (429), server errors and dropped connections are retried up to `MAX_REINTENTOS` times with backoff before moving to the fallback model.
----
+With `PROVIDER=auto` the first key present is used. Rate limits (429), server errors and dropped connections are retried up to `MAX_REINTENTOS` times with backoff before moving to the fallback model. If a model rejects tool definitions, the turn is retried once without tools.
 
-## Technical Documentation
-* [Architecture & Data Flow Specification](ARCHITECTURE.md)
-* [Social Economy & Governance Principles](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md) | [🇲🇽 Español](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md)
-* [Logical Framework Practical Guide](docs/GUIA_MARCO_LOGICO.md)
-* [Statutory Funds & Cooperative Governance Guide](docs/GUIA_FONDOS_ESTATUTARIOS.md)
-* [Contributing Guide](CONTRIBUTING.md)
-* [Changelog](CHANGELOG.md)
+Many commands need no model at all: `fecha`, `evaluar-convocatoria --archivo`, `comparar-convocatorias`, `documento`, `consultar`, `financiadores`, `expedientes`, the assembly and the audit log.
 
 ---
+
+## Local panel and API
+
+![CoopExecutive local panel](assets/panel.png)
+
+```bash
+coopexecutive panel               # opens http://127.0.0.1:8765/#token=…
+coopexecutive panel --puerto 9000 --no-abrir
+```
+
+Tabs: summary, profile, funders, cases, evaluations, documents, monitoring, assembly, audit log and chat. An empty section says so instead of showing sample data. The panel loads nothing from the internet, so it works offline.
+
+The same server exposes a JSON API under `/api/`: `estado`, `perfil`, `financiadores`, `expedientes`, `evaluaciones`, `documentos`, `monitoreo`, `asamblea`, `bitacora` and `herramientas`, plus `POST /api/chat` (server-sent events). Every request needs `Authorization: Bearer <token>`, the token printed when the panel starts. A write tool called through `POST /api/herramientas/{name}` answers 409 with a summary until you repeat the call with `"confirmar": true`.
+
+---
+
+## MCP server
+
+`coopexecutive mcp` publishes the 19 tools over stdio. Write tools are announced without `readOnlyHint`, so the client asks before running them; `--solo-lectura` hides them. Example for Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "coopexecutive": {
+      "command": "coopexecutive",
+      "args": ["mcp"],
+      "env": { "COOPEXECUTIVE_WORKSPACE": "/path/to/procuracion/my-org" }
+    }
+  }
+}
+```
+
+With Claude Code: `claude mcp add coopexecutive -e COOPEXECUTIVE_WORKSPACE=/path/to/my-org -- coopexecutive mcp`.
+
+| Read tools (14) | Write tools (5, need confirmation) |
+|---|---|
+| `fecha_y_plazos`, `ver_perfil`, `buscar_conocimiento`, `evaluar_oportunidad`, `listar_evaluaciones`, `comparar_evaluaciones`, `buscar_financiadores`, `ver_financiador`, `listar_expedientes`, `ver_expediente`, `listar_documentos`, `monitorear_convocatorias`, `ultimo_monitoreo`, `listar_propuestas_asamblea` | `registrar_financiador`, `abrir_expediente`, `registrar_avance`, `guardar_evaluacion`, `generar_documento` |
+
+---
+
+## Architecture
+
+![CoopExecutive architecture](assets/architecture.png)
+
+Channels (CLI, panel, API, MCP) share one tool registry. Decisions that must be exact are computed in code: the matrix, deadlines, comparison, quorum and majority, logical framework and budget. The model drafts and chooses tools; a post-generation review then checks amounts, dates, claimed actions and account numbers. Data lives in your workspace as YAML, SQLite and Word files. See [ARCHITECTURE.md](ARCHITECTURE.md) for the data flow.
+
+---
+
+## Security and privacy
+
+- **Local by default.** The profile, the database, the audit log and the documents stay in your workspace. The panel and API listen only on 127.0.0.1, with a per-session token, a Host allow list, an Origin check and a strict content security policy.
+- **What leaves your machine:** requests to the model you choose, your own website when you run `configurar --sitio`, public RSS feeds when monitoring, and call documents you give by URL. Monitoring sends no organisation data.
+- **Writes need your OK.** In the chat, the panel, the API and MCP, a tool that writes asks first. A denial is reported to the model, and the review reflects what actually ran.
+- **Tamper-evident log.** Each command and tool call is stored with a SHA-256 hash chained to the previous one. Parameters are censored before storing.
+- **Web reading limits.** Downloads have a byte cap and a content-type check; requests from MCP or the API cannot reach private network addresses.
+- **Secrets.** API keys are censored in errors and logs.
+
+## What it does not do
+
+- It does not submit applications, send emails, sign documents or make payments on your behalf.
+- It does not guarantee that a call is open: a closing date is only accepted when the source states it, otherwise it is marked `VIGENCIA NO VERIFICADA`.
+- It does not replace legal, tax or accounting advice.
+- It does not invent amounts, dates, partners or results. Every draft needs human review before it goes out.
+
+---
+
+## Documentation
+
+- [User guide](docs/GUIA_DE_USO.en.md) · [Guía de uso](docs/GUIA_DE_USO.md)
+- [Test cases and expected results](docs/CASOS_DE_PRUEBA.md)
+- [Architecture and data flow](ARCHITECTURE.md)
+- [Logical framework guide](docs/GUIA_MARCO_LOGICO.md) · [Statutory funds guide](docs/GUIA_FONDOS_ESTATUTARIOS.md)
+- [Social economy and governance principles](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md)
+- [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
 
 ## License
-Distributed under the [MIT](LICENSE) License. Free for open use and community ownership.
+
+[MIT](LICENSE). Free to use, study, modify and share.

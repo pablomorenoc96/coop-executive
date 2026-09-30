@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.1] - 2026-09-29
+
+### Documentation
+- README and README.es rewritten: what CoopExecutive does compared with the usual approach, tables of what you can ask and what you get (grant procurement, assembly and board, platform), source labels and markers, installation with pipx or uv, both setup modes, model table, local panel and API, MCP setup for Claude Desktop and Claude Code, security and privacy, and what it does not do.
+- New user guide in Spanish and English (`docs/GUIA_DE_USO.md`, `docs/GUIA_DE_USO.en.md`) with copyable examples for every area and a troubleshooting table.
+- New `docs/CASOS_DE_PRUEBA.md`: the 22 automatic eval cases with their expected results, plus prompts to check a real model by hand.
+- `ARCHITECTURE.md` rewritten to match the code: channels, tool registry, agent loop, the seven real roles, post-generation review, deterministic modules, local data, network traffic and a Mermaid diagram. Removed claims about features that do not exist.
+- `packages/core/README.md` shortened, with absolute image links so it renders on package indexes.
+- `CONTRIBUTING.md`: `uv sync --all-extras --all-groups`, lint and eval commands, and ground rules for code.
+- Outreach kit updated to describe current features only.
+
+### Added
+- New demo GIFs recorded from real, deterministic commands in a temporary workspace (no simulated model output), a new architecture diagram in English and Spanish, and a screenshot of the local panel. `scripts/demo/grabar.py` and `scripts/diagrama.py` regenerate them.
+- `tests/test_docs.py`: every `coopexecutive` command, subcommand and long option cited in the READMEs and guides must exist in the CLI.
+
+### Changed
+- Paths shown by the CLI are relative to the current folder when possible, instead of absolute paths.
+- CI lints the `evals` folder too.
+
+### Removed
+- The renamed-document stub `docs/MANIFIESTO_ECONOMIA_SOCIAL.md`, the old Excalidraw diagram and the MP4 demos.
+- Third-party agent skills (`.agents/`, `skills-lock.json`) that were not part of the product; both are now ignored.
+
 ## [0.5.0] - 2026-09-29
 
 ### Breaking changes
@@ -14,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Tool calling in `chat` and `ask`:** the model can check dates and deadlines, evaluate a call with the matrix, compare calls, look up funders, files, documents and monitoring, read the profile and search the knowledge base. Writing tools (register a funder, open a file, log progress, save an evaluation, generate a document) always ask for confirmation first; a denied action is reported back to the model, and the final review flags any answer that claims an action that did not run. `--sin-herramientas` turns tools off; if a provider rejects tools, the turn is retried once without them.
-- **Audit log:** every command that changes data and every tool call is recorded with its channel (cli, mcp, http, agente), censored parameters, result and a chained SHA-256 hash. `bitacora ver|verificar|exportar [--jsonl]`; `verificar` reports the first record where the chain breaks (an edited or deleted entry).
+- **Audit log:** every command that changes data and every tool call is recorded with its channel (cli, mcp, http, agente), censored parameters, result and a chained SHA-256 hash. `bitacora ver|verificar|exportar [DESTINO]`; `verificar` reports the first record where the chain breaks (an edited or deleted entry).
 - **MCP server:** `coopexecutive mcp` (alias `servidor-mcp`) exposes the same tools over stdio to any MCP client, with read-only and write hints. `--solo-lectura` hides the writing tools. Logs go to stderr only.
 - **Local panel and API:** `coopexecutive panel [--puerto 8765] [--no-abrir]` serves a panel with overview, profile, funders, files, evaluations, documents, monitoring, assembly, audit log and a chat that asks before writing. It listens on 127.0.0.1 only, uses a per-session token, checks `Host` and `Origin`, sends a strict Content-Security-Policy and loads nothing from the internet. Empty sections say so instead of showing sample data. Panel reads are not logged; writes through the API are, with channel `http`.
 - **Behaviour evals:** `python -m coopexecutive.evals` runs 22 golden cases without network or a real model: matrix decisions, invented amounts and dates, bank-account censoring, claimed actions, and tool routing with confirmation. They also run in the test suite under the `eval` marker.

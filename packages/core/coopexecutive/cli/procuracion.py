@@ -26,6 +26,7 @@ from coopexecutive.memory import desde_sitio, onboarding
 from coopexecutive.memory.company_profile import TIPOS_ORGANIZACION, CoopProfile
 from coopexecutive.memory.episodic import initialize_db
 from coopexecutive.utils.fechas import hoy_local
+from coopexecutive.utils.rutas import para_mostrar
 
 # --- iniciar -------------------------------------------------------------------
 
@@ -54,10 +55,10 @@ def iniciar(ctx: click.Context, ruta: Path | None, nombre: str, tipo: str) -> No
     perfil = "creado" if espacio.perfil_creado else "ya existía; no se modificó"
     console.print(Panel(
         f"[bold green]Espacio listo[/bold green]\n\n"
-        f"Carpeta: {espacio.ruta}\n"
+        f"Carpeta: {para_mostrar(espacio.ruta)}\n"
         f"Perfil ({ARCHIVO_PERFIL}): {perfil}\n"
         f"Base de datos: {settings.episodic_db_path.name}\n\n"
-        f"Siguiente paso: [cyan]coopexecutive --espacio \"{espacio.ruta}\" configurar[/cyan]",
+        f"Siguiente paso: [cyan]coopexecutive --espacio \"{para_mostrar(espacio.ruta)}\" configurar[/cyan]",
         title="Espacio de trabajo",
         border_style="green",
     ))
@@ -234,7 +235,7 @@ def configurar(desde: Path | None, sitio: str | None) -> None:
         console.print("[dim]No se guardó ningún cambio.[/dim]")
         return
     respaldo = onboarding.guardar_perfil(ruta, nuevo)
-    mensaje = f"[bold green]Perfil guardado[/bold green] en {ruta}"
+    mensaje = f"[bold green]Perfil guardado[/bold green] en {para_mostrar(ruta)}"
     if respaldo is not None:
         mensaje += f"\nRespaldo del perfil anterior: {respaldo.name}"
     console.print(mensaje)

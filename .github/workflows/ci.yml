@@ -19,7 +19,7 @@ jobs:
 
       - name: Ruff
         working-directory: packages/core
-        run: uv run --extra dev ruff check coopexecutive tests
+        run: uv run --extra dev ruff check coopexecutive tests evals
 
   test:
     runs-on: ${{ matrix.os }}

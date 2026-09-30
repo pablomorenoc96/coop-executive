@@ -43,6 +43,7 @@ from coopexecutive.providers import ErrorProveedor
 from coopexecutive.providers.tipos import TextoDelta
 from coopexecutive.registro import configurar_registro
 from coopexecutive.utils.fechas import hoy_local
+from coopexecutive.utils.rutas import para_mostrar
 
 
 @click.group(invoke_without_command=True)
@@ -89,7 +90,7 @@ def intro_generar() -> None:
     except (RuntimeError, OSError, ValueError) as exc:
         fallar(str(exc), "No se generó la intro")
     _mostrar_intro()
-    console.print(f"[green]Intro guardada en[/green] {destino}", highlight=False)
+    console.print(f"[green]Intro guardada en[/green] {para_mostrar(destino)}", highlight=False)
 
 
 _ROL = click.option("--rol", default=None, type=click.Choice(sorted(ROLES)), help="Especialista a enfocar.")

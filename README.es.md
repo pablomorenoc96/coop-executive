@@ -2,169 +2,203 @@
 
 ![CoopExecutive Banner](assets/banner.png)
 
-> **Sistema Directivo Colegiado y Agente de Procuración de Fondos para Cooperativas, Asociaciones Civiles (A.C. / ONGs) y Organizaciones de la Economía Social.**
+> **Agente procurador de fondos y consejo directivo colegiado para cooperativas, asociaciones civiles y otras organizaciones de la economía social.** Corre en su equipo, funciona con modelos gratuitos o locales y nunca inventa montos, fechas ni alianzas.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml/badge.svg)](https://github.com/pablomorenoc96/coop-executive/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-brightgreen.svg)](https://www.python.org/)
-[![Modelos Libres](https://img.shields.io/badge/Modelos-Gratis%20y%20Comerciales-orange.svg)](#configuración-de-modelos-de-ia-gratis-locales-y-de-pago)
-[![Principios de Economía Social](https://img.shields.io/badge/Documento-Principios%20y%20Gobernanza-darkgreen.svg)](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md)
+[![Modelos](https://img.shields.io/badge/Modelos-Gratis%2C%20locales%20y%20de%20pago-orange.svg)](#modelos-de-ia-gratis-locales-y-de-pago)
+[![MCP](https://img.shields.io/badge/MCP-servidor-6f42c1.svg)](#servidor-mcp)
 
-[🇺🇸 Read in English](README.md) | [📢 Kit de Difusión en Redes](docs/KIT_DIFUSION_REDES.md)
-
-**CoopExecutive** es una herramienta de software de código abierto diseñada para organizaciones con toma de decisiones democrática. A diferencia de los sistemas de gestión tradicionales orientados a sociedades anónimas, capital de riesgo y reparto de utilidades privadas, CoopExecutive opera bajo el principio de asambleas soberanas (*un socio, un voto*), salvaguarda de fondos de reserva irrepartibles y postulación a financiamiento no reembolsable.
-
----
-
-## ¿Qué es técnicamente CoopExecutive?
-
-En términos de arquitectura de software, **CoopExecutive es un Agente de IA Vertical Autónomo**. No es un simple chatbot de conversación libre: es un sistema estructurado en componentes específicos para procesar datos, tomar decisiones operativas bajo reglas legales y generar entregables técnicos auditables.
-
-![Arquitectura de CoopExecutive](assets/architecture_es.png)
-
-### Componentes de la Arquitectura
-
-1. **Entorno Operativo y Percepción:**
-   - **Entradas:** Ingesta el perfil institucional de la organización (`company/profile.yaml`), bases de convocatorias internacionales de financiamiento y la normativa aplicable (Ley General de Sociedades Cooperativas).
-   - **Canales:** Recibe comandos mediante terminal (CLI) y un panel web local interactivo.
-
-2. **Orquestador Colegiado (Router de Roles):**
-   - Enruta cada solicitud al rol correspondiente según el área técnica requerida:
-     - *Procurador de Fondos:* Evaluación y redacción de propuestas de subvención.
-     - *Consejo de Vigilancia:* Auditoría interna y observancia de estatutos.
-     - *Asesor Jurídico:* Marco legal cooperativo, donatarias autorizadas y licencias abiertas.
-     - *Finanzas Solidarias:* Supervisión del flujo de efectivo y custodia de fondos estatutarios.
-     - *Desarrollo Técnico:* Herramientas y tecnologías abiertas, infraestructura técnica y normas (ISO/NOM).
-     - *Secretaría de Actas:* Convocatorias, registro de asistencia, cuórum legal y minutas.
-
-3. **Memoria Episódica Persistente (SQLite):**
-   - Base de datos local (`coop_memory.db`) que almacena y enlaza:
-     - Acuerdos de asamblea histórica.
-     - Propuestas sometidas a votación.
-     - Cédulas de votación emitidas por socio (con garantía técnica de unicidad de voto).
-     - Evaluaciones de convocatorias previas.
-
-4. **Inferencia Universal con Conmutación de Proveedores:**
-   - Conexión flexible a tres niveles de cómputo:
-     - *Nube sin costo ($0.00):* Modelos libres en OpenRouter con conmutación ante errores 429.
-     - *Local desconectado:* Ejecución 100% privada con Ollama (`granite4.1`, `qwen3.8`).
-     - *APIs comerciales (opcional):* OpenAI, Anthropic, Google Gemini, Groq, Mistral y DeepSeek.
-
-5. **Espacio de Herramientas Deterministas (*Tool-Use*):**
-   - Rúbrica multicriterio de 100 puntos (evalúa 8 dimensiones para dictaminar *APLICAR*, *OBSERVAR* o *RECHAZAR*).
-   - Matriz de Marco Lógico 4x4 con Objetivos, Indicadores, Medios de Verificación y Supuestos.
-   - Generador de presupuestos con cálculo de contrapartidas en efectivo y en especie.
-   - Compilador de expedientes técnicos listos para convocatorias internacionales (BID, Horizon, fundaciones).
-
-6. **Salvaguardas Estatutarias Duras (Invariantes):**
-   - Reglas inmutables implementadas a nivel de código que bloquean automáticamente cualquier propuesta que intente:
-     - Vender acciones, emitir títulos de deuda o diluir la propiedad social.
-     - Liquidar o repartir fondos estatutarios protegidos (Fondo de Reserva, Previsión Social, Educación).
-     - Imponer trabajo no remunerado obligatorio o cláusulas de renuncia de derechos.
-
----
-
-## Comparativa Estructural
-
-| Dimensión | Enfoque Corporativo Tradicional | CoopExecutive |
-| :--- | :--- | :--- |
-| **Poder de Decisión** | Ponderado por capital (*un dólar, un voto*). | Democrático (*un socio, un voto* en Asamblea General). |
-| **Supervisión** | Comité de auditoría de accionistas privados. | **Consejo de Vigilancia** electo por la base. |
-| **Financiamiento** | Venta de acciones, deuda comercial y absorción. | Fondos operativos propios y **subvenciones no reembolsables**. |
-| **Excedentes** | Maximización de dividendos privados. | **Fondos Estatutarios:** Reserva (15%), Previsión Social (10%), Educación (10%). |
-| **Régimen Legal** | S.A., S.A.P.I., Delaware C-Corp. | Sociedades Cooperativas (LGSC) y Asociaciones Civiles (A.C.). |
-| **Infraestructura** | Software privativo con suscripciones cerradas. | **Código abierto (MIT), modelos libres sin costo y de pago opcionales.** |
-
----
-
-## Demostración Visual
+[Read in English](README.md) · [Guía de uso](docs/GUIA_DE_USO.md) · [Casos de prueba](docs/CASOS_DE_PRUEBA.md) · [Arquitectura](ARCHITECTURE.md) · [Registro de versiones](CHANGELOG.md)
 
 ![Demostración de CoopExecutive](assets/demo.gif)
 
----
-
-## Capacidades Principales
-
-### 1. Procuración de Fondos y Subvenciones
-* **Evaluación de Convocatorias (Rúbrica de 100 Puntos):** Procesa bases en texto o PDF y califica alineación, viabilidad técnica, presupuesto y requisitos legales.
-* **Metodología de Marco Lógico (MML):** Genera la Matriz de Indicadores de Resultados (MIR) 4x4 y alinea las actividades a los ODS de la ONU.
-* **Expediente Técnico Multilateral:** Compila documentos completos con justificación, presupuesto auditable y plan de monitoreo.
-
-### 2. Votación y Gobernanza Democrática (Un Socio = Un Voto)
-* **Emisión de Votos:** Registro individual de socios con validación estricta contra duplicados.
-* **Cálculo de Cuórum Legal:** Monitoreo en tiempo real del umbral legal mínimo (50% + 1 socios).
-* **Escrutinio Digital:** Emisión de actas oficiales con firma hash SHA-256 para trazabilidad.
-* **Filtro de Invariantes Estatutarias:** Rechazo automático de propuestas contrarias a la ley cooperativa.
-
-### 3. Asesoría Directiva Colegiada
-* Respuestas técnicas fundamentadas en la LGSC, régimen de Donatarias Autorizadas (SAT) y normas ISO/NOM.
-* Consultas operativas sobre fondos de reserva, balances y presupuestos de proyecto.
-
-### 4. Espacio de Procuración (0.2.0)
-* **Un espacio por organización:** `iniciar` crea una carpeta con el perfil, la base de datos y una carpeta de salidas. Una sola instalación atiende a varias organizaciones y sus datos quedan fuera del repositorio.
-* **Autoconfiguración:** `configurar` hace diez preguntas (o las lee de un YAML), muestra un resumen y respalda el perfil anterior antes de escribir. Rechaza RFC y CURP.
-* **Tipos de organización:** cooperativa, asociación civil, empresa y persona física con actividad empresarial. Los fondos estatutarios y la asamblea de un socio, un voto aplican solo a cooperativas.
-* **Matriz determinista:** ocho criterios con evidencia obligatoria; un criterio vacío queda pendiente y no cuenta como cero. Las bandas de plazo, el orden de decisión (elegibilidad, vigencia, tensiones, completitud y puntaje) y el contrapunto se calculan en código, y cada resultado lleva una huella SHA-256. Sirve para convocatorias, becas, premios y créditos.
-* **Tres modos de entrada:** interactivo, `--archivo` (YAML) o asistido: el modelo solo propone puntajes con evidencia en JSON, pydantic valida, usted confirma, la matriz decide y el modelo redacta el análisis.
-* **Financiadores y expedientes:** base de financiadores (`FIN-AAAA-NNNN`) que detecta duplicados por nombre normalizado y registra montos en cualquier moneda ISO 4217; expedientes (`EXP-AAAA-NNNN`) con bitácora de avances, origen del dato y evaluaciones vinculadas.
-* **Sin datos inventados:** cada respuesta se revisa después de generarse. Se señalan montos y fechas sin respaldo (con `--estricto` se sustituyen por `MONTO POR DEFINIR` o `[PENDIENTE: fecha]`), emojis, respuestas de más de 900 palabras, recomendaciones sin contrapunto y frases que dan por guardado algo que no se ejecutó.
-
-### 5. Documentos, Monitoreo y Asamblea (0.3.0)
-* **Documentos Word:** `documento solicitud`, `documento institucional` y `documento ficha` arman la solicitud, el documento institucional y la ficha de la oportunidad a partir del perfil, el expediente y la evaluación. Lo que falta queda como `[PENDIENTE: …]`. Usted revisa el contenido antes de guardarlo en `salidas/AAAA/EXP-…/`; nunca se sobrescribe un archivo y cada uno queda registrado en su expediente.
-* **Membrete de cada organización:** imagen de encabezado, pie, fuente y tamaño se toman de `procuracion.membrete` en el perfil. Por omisión: Arial 11, interlineado 1.15, 6 pt posteriores, texto justificado y tablas al ancho de la página.
-* **Monitoreo de convocatorias:** `monitorear` lee canales RSS/Atom públicos y entrega hasta tres avisos priorizados, avisos por revisar y convocatorias cerradas. Los temas salen de los ejes de trabajo del perfil (o de `--tema`), en español o inglés; un aviso se conserva solo si contiene todas las palabras significativas de al menos un tema. Una fecha de cierre solo se acepta si sigue a una palabra de cierre; si no, el aviso queda como `VIGENCIA NO VERIFICADA`.
-* **Fuentes propias:** agregue un `fuentes.yaml` al espacio (el formato está en `knowledge/builtin/procuracion_fondos/fuentes.yaml`: `nombre`, `tipo`, `region`, `idioma`, `url`, `rss`). Claves opcionales: `temas`, `buscador` (un SearXNG propio con JSON activado) y `solo_propias`. Una fuente sin `rss` se lista para revisión manual.
-* **Privacidad:** del equipo solo salen las solicitudes a los canales y, si hay buscador, los temas. No se envía ningún dato del perfil ni de los financiadores. Las descargas se guardan 12 horas en `.cache/`, y si una fuente falla se usa la copia guardada.
-* **Asamblea:** `evaluar-convocatoria --proponer-asamblea` convierte una decisión APLICAR en una propuesta de categoría `subvencion` que cita el folio del expediente y la huella de la evaluación. Si la organización no tiene asamblea, se remite a sus aprobadores.
-* **Intro de la terminal:** `coopexecutive` muestra la intro de la organización o la incluida. `intro generar` la dibuja a partir del bloque `identidad` (logo, fuente, lema y colores) y requiere el extra opcional `identidad` (`uv sync --extra identidad`). La intro incluida se generó con `assets/isotipo.png`, Arial Bold, 12 filas de logo y 6 de texto.
+*La demostración corre comandos reales en un espacio temporal: crea la organización, carga su perfil, evalúa dos convocatorias, las compara, revisa plazos, genera una ficha en Word y verifica la bitácora. No se simula ninguna respuesta del modelo.*
 
 ---
 
-## Inicio Rápido
+## Qué es
+
+La mayoría de las organizaciones buscan fondos con una hoja de cálculo, una carpeta compartida y la memoria de quien lleva los plazos. Los chatbots genéricos ayudan a redactar, pero rellenan huecos con cifras verosímiles, olvidan lo que se decidió y no dejan registro.
+
+CoopExecutive resuelve en código lo que debe ser exacto y usa el modelo solo donde aporta:
+
+| Forma habitual | CoopExecutive |
+|---|---|
+| Un puntaje «a ojo» para cada convocatoria | Matriz de 100 puntos con evidencia por criterio, calculada en código y sellada con SHA-256 |
+| Los plazos en la agenda de alguien | Días al cierre contados desde hoy en su zona horaria; con 13 días o menos se marca URGENTE |
+| Un chatbot que rellena huecos | Montos y fechas sin respaldo se sustituyen por `MONTO POR DEFINIR` y `[PENDIENTE: …]` antes de mostrarse |
+| Archivos llamados `final_v3_ok.docx` | Documentos Word con su membrete, ordenados por año y expediente, sin sobrescribir |
+| Nadie sabe quién cambió qué | Bitácora encadenada de cada comando y herramienta; `bitacora verificar` detecta ediciones |
+| Software de pago que guarda sus datos | Licencia MIT, SQLite y YAML locales, modelos gratuitos en la nube o totalmente locales |
+| Votaciones de asamblea en papel | Padrón, cuórum, un socio un voto y actas que dicen qué regla se aplicó |
+
+Atiende a cooperativas, asociaciones civiles, empresas y personas físicas con actividad empresarial. Los fondos estatutarios y la asamblea de un socio, un voto aplican solo a cooperativas.
+
+---
+
+## Qué puede pedirle y qué recibe
+
+### Procuración de fondos
+
+| Área | Pida | Recibe |
+|---|---|---|
+| Fecha y plazos | `coopexecutive fecha --cierre 2026-10-09` | La fecha de hoy en su zona y los días restantes, con URGENTE a 13 días o menos |
+| Evaluar una convocatoria | `coopexecutive evaluar-convocatoria https://ejemplo.org/bases.pdf` | Decisión (APLICAR, EXPLORAR, CONDICIONAL, DESCARTAR o un paso de verificación), puntaje por criterio con evidencia, contrapunto y siguiente paso |
+| Comparar convocatorias | `coopexecutive comparar-convocatorias --orden plazo` | Tabla de las evaluaciones guardadas y cuál atender primero |
+| Monitorear convocatorias | `coopexecutive monitorear --tema "energía renovable"` | Hasta tres convocatorias abiertas priorizadas, las que hay que revisar y las cerradas, desde canales RSS públicos |
+| Financiadores | `coopexecutive financiadores registrar "Fundación Ejemplo" …` | Base de financiadores con folios `FIN-AAAA-NNNN` y detección de duplicados |
+| Expedientes | `coopexecutive expedientes abrir "Fundación Ejemplo" --tipo Convocatoria` | Expediente `EXP-AAAA-NNNN` con bitácora de avances y el origen de cada registro |
+| Reuniones | `coopexecutive reunion preparar "Fundación Ejemplo" --sitio https://…` | Perfil público (solo de las páginas leídas), puntos en común, riesgos, agenda y preguntas, cada dato con su etiqueta |
+| Redacción | `coopexecutive redactar carta-intencion --expediente EXP-2026-0001 --word` | Propuesta, carta de intención, nota conceptual, justificación o correo de seguimiento, revisados antes de mostrarse |
+| Documentos Word | `coopexecutive documento ficha --expediente EXP-2026-0001` | Solicitud, documento institucional, ficha, carta, nota conceptual, reporte de monitoreo o de evaluación |
+| Diseño de proyecto | `coopexecutive proyecto marco-logico "Microrredes comunitarias" --desde marco.yaml` | Marco lógico, presupuesto con `COSTO POR COTIZAR` y dossier de postulación donde lo faltante queda pendiente |
+| Información de la organización | `coopexecutive consultar "¿cuál es nuestra figura jurídica?"` | Pasajes del perfil, de su carpeta `conocimiento/` y de las guías incluidas, con su fuente; «no consta» si nada coincide |
+| Sitios y archivos | `coopexecutive revisar https://… --pregunta "¿quién puede postular?"` | Resumen de una página, PDF, Word o HTML que cita su fuente |
+
+### Asamblea y consejo
+
+| Área | Pida | Recibe |
+|---|---|---|
+| Padrón | `coopexecutive socios alta SOC-001 -n "Socia uno"` | Socios activos, base del cuórum |
+| Propuestas y votos | `coopexecutive propuesta …`, `coopexecutive votar 1 -s SOC-001 -v a_favor` | Un voto por socio y propuesta |
+| Escrutinio | `coopexecutive escrutinio 1` | Cierra la propuesta, revisa el cuórum, aplica mayoría simple o de dos tercios según el perfil y emite el acta con huella SHA-256 |
+| Asesoría del consejo | `coopexecutive chat --rol legal` | Roles: procurador, vigilancia, legal, finanzas, técnico, comunicación y asamblea |
+
+### Plataforma
+
+| Área | Pida | Recibe |
+|---|---|---|
+| Agente con herramientas | `coopexecutive chat` o `coopexecutive ask "¿qué expedientes vencen este mes?"` | El modelo consulta sus datos con 19 herramientas; las 5 que escriben piden confirmación antes |
+| Panel local | `coopexecutive panel` | Tablero en el navegador con datos reales y un chat, servido en 127.0.0.1 |
+| API local | `GET /api/expedientes`, `POST /api/chat` | JSON y chat en streaming con las mismas herramientas |
+| Servidor MCP | `coopexecutive mcp` | Las mismas herramientas en Claude Desktop, Claude Code o cualquier cliente MCP |
+| Bitácora | `coopexecutive bitacora verificar` | Confirma que la cadena está íntegra o señala el primer registro alterado |
+| Evaluaciones de comportamiento | `python -m coopexecutive.evals` | 22 casos dorados de la matriz, la revisión y las llamadas a herramientas |
+
+---
+
+## Etiquetas de origen y marcadores
+
+Cada dato importante de una respuesta o documento lleva su origen:
+
+| Etiqueta | Significa |
+|---|---|
+| `DATO DEL USUARIO` | Usted lo dio |
+| `DATO INSTITUCIONAL` | Viene del perfil de la organización |
+| `DATO PÚBLICO VERIFICADO` | Se leyó en una fuente pública que se cita |
+| `SUPUESTO` | Un supuesto explícito que hay que confirmar |
+| `INFERENCIA ESTRATÉGICA` | Razonamiento del agente, no un hecho |
+| `NO VERIFICADO` | Se vio, pero no se confirmó |
+| `PENDIENTE` | Falta |
+
+Cuando falta un dato, el agente deja un marcador en lugar de inventarlo:
+
+| Marcador | Se usa para |
+|---|---|
+| `MONTO POR DEFINIR` | Montos sin fuente |
+| `COSTO POR COTIZAR` | Partidas de presupuesto sin cotización |
+| `[PENDIENTE: dato]` | Cualquier otro dato faltante, como una fecha |
+| `VIGENCIA NO VERIFICADA` | Convocatorias cuya fecha de cierre no se pudo confirmar |
+| `RESPONSABLE POR CONFIRMAR` | Tareas sin responsable |
+| `ESTATUS FISCAL PENDIENTE` | Situación fiscal sin confirmar |
+| `MECANISMO DE DONACIÓN PENDIENTE` | Cómo recibe donativos la organización |
+
+Los números de cuenta (CLABE, IBAN, tarjetas) siempre se censuran, en las respuestas y en el perfil.
+
+---
+
+## Instalación
+
+Necesita Python 3.11 o posterior.
+
+**Como usuario, con pipx:**
+
+```bash
+pipx install "coopexecutive[web,mcp,pdf] @ git+https://github.com/pablomorenoc96/coop-executive.git#subdirectory=packages/core"
+coopexecutive --help
+```
+
+**Desde el repositorio, con uv:**
 
 ```bash
 git clone https://github.com/pablomorenoc96/coop-executive.git
 cd coop-executive/packages/core
-
-# Instalar dependencias con uv:
-uv sync --all-groups --extra dev
-
-# Configurar variables de entorno:
-cp ../../.env.example .env
-
-# Crear el espacio de su organización (fuera del repositorio):
-uv run coopexecutive iniciar ~/procuracion/mi-org --nombre "Mi Organización" --tipo asociacion_civil
-uv run coopexecutive --espacio ~/procuracion/mi-org configurar --desde ../../company/examples/respuestas_perfil.yaml
-
-# Evaluar una oportunidad con la matriz determinista de 100 puntos:
-uv run coopexecutive --espacio ~/procuracion/mi-org evaluar-convocatoria --archivo ../../company/examples/convocatoria_ejemplo.yaml
-
-# Registrar financiadores y expedientes:
-uv run coopexecutive --espacio ~/procuracion/mi-org financiadores registrar "Fundación Ejemplo" --proyecto "Microrredes comunitarias" --tipo "Fundación" --canal "Correo" --moneda USD
-uv run coopexecutive --espacio ~/procuracion/mi-org expedientes abrir "Fundación Ejemplo" --tipo Convocatoria
-
-# Monitorear convocatorias abiertas y generar documentos Word de un expediente:
-uv run coopexecutive --espacio ~/procuracion/mi-org monitorear
-uv run coopexecutive --espacio ~/procuracion/mi-org documento ficha --expediente EXP-2026-0001
-
-# Generar un expediente técnico completo para postulación multilateral:
-uv run coopexecutive dossier "Microrredes Rurales Comunitarias" --donante "BID"
-
-# Registrar y votar una propuesta en Asamblea General (Un Socio = Un Voto):
-uv run coopexecutive propuesta "Postulación al Fondo BID 2026" -d "Aprobación de la contrapartida técnica comunal"
-uv run coopexecutive votar 1 --socio-id "SOC-001" --socio-nombre "Elena Gómez" --voto "A_FAVOR"
-uv run coopexecutive escrutinio 1 --padron 12
-
-# Abrir el Panel de Control Web interactivo:
-uv run coopexecutive dashboard
-
-# Iniciar sesión interactiva con el consejo directivo:
-uv run coopexecutive chat
+uv sync --all-extras
+uv run coopexecutive --help
 ```
+
+Extras opcionales: `web` (panel y API), `mcp` (servidor MCP), `pdf` (lectura de PDF), `identidad` (dibujar la intro de la terminal) y `todo` (todos).
 
 ---
 
-## Configuración de modelos de IA (gratis, locales y de pago)
+## Configurar su organización
+
+Cree un espacio por organización, fuera del repositorio. Ahí quedan el perfil, la base de datos y la carpeta `salidas/`:
+
+```bash
+coopexecutive iniciar ~/procuracion/mi-org --nombre "Mi Organización" --tipo asociacion_civil
+export COOPEXECUTIVE_WORKSPACE=~/procuracion/mi-org   # o use --espacio en cada comando
+```
+
+Después complete el perfil de una de dos formas.
+
+**Desde su sitio web.** El agente lee la portada y hasta seis páginas del mismo dominio (nosotros, contacto, programas, únete, transparencia), respeta robots.txt y propone una respuesta a cada pregunta con su evidencia y su URL. Responda «sí» para aceptarla, escriba la corrección o pulse Enter para conservar el valor actual (pendiente si estaba vacío). Antes de proponer nada se quitan cuentas bancarias, RFC, CURP, correos personales y teléfonos.
+
+```bash
+coopexecutive configurar --sitio https://www.ejemplo.org/
+```
+
+**A mano.** Diez preguntas en la terminal, o un YAML con las respuestas. Si una respuesta es «está en nuestro sitio», el agente pide el enlace una sola vez y lo consulta solo para esa pregunta.
+
+```bash
+coopexecutive configurar
+coopexecutive configurar --desde company/examples/respuestas_perfil.yaml
+```
+
+En ambos casos se respalda el perfil anterior antes de escribir, y el perfil guarda de qué URL salió cada dato.
+
+---
+
+## Recorrido rápido
+
+```bash
+# Plazos y evaluación
+coopexecutive fecha --cierre 2026-10-09
+coopexecutive evaluar-convocatoria --archivo company/examples/convocatoria_ejemplo.yaml
+coopexecutive evaluar-convocatoria https://ejemplo.org/bases.pdf --expediente EXP-2026-0001
+coopexecutive comparar-convocatorias --orden plazo
+
+# Financiadores, expedientes y documentos
+coopexecutive financiadores registrar "Fundación Ejemplo" --proyecto "Microrredes comunitarias" --tipo "Fundación" --canal "Correo" --moneda USD
+coopexecutive expedientes abrir "Fundación Ejemplo" --tipo Convocatoria
+coopexecutive expedientes avance EXP-2026-0001 --estado "Nota conceptual enviada" --siguiente "Llamar a la oficial de programa"
+coopexecutive documento ficha --expediente EXP-2026-0001
+coopexecutive redactar nota-conceptual --expediente EXP-2026-0001 --word
+
+# Diseño de proyecto sin cifras inventadas
+coopexecutive proyecto marco-logico "Microrredes comunitarias" --plantilla
+coopexecutive proyecto presupuesto "Microrredes comunitarias" --desde presupuesto.yaml --tope-indirectos 10
+coopexecutive proyecto dossier "Microrredes comunitarias" --expediente EXP-2026-0001
+
+# Asamblea (cooperativas)
+coopexecutive socios alta SOC-001 -n "Socia uno"
+coopexecutive propuesta "Postular al fondo de energía" -d "Aprobar la postulación y su contrapartida" -c subvencion
+coopexecutive votar 1 -s SOC-001 -v a_favor
+coopexecutive escrutinio 1
+
+# Agente, panel y bitácora
+coopexecutive chat --rol procurador
+coopexecutive panel
+coopexecutive bitacora verificar
+```
+
+La [guía de uso](docs/GUIA_DE_USO.md) recorre cada área con ejemplos completos.
+
+---
+
+## Modelos de IA: gratis, locales y de pago
 
 Copie `.env.example` como `.env` en su carpeta de usuario (`%APPDATA%\CoopExecutive` o `~/.config/coopexecutive`), en la raíz del repositorio o en la carpeta desde la que ejecuta; `coopexecutive info` muestra qué archivos se cargaron. Los nombres se verificaron el 29/09/2026 y cambian seguido: cualquier modelo compatible sirve, y `coopexecutive modelos --herramientas` lista los gratuitos disponibles hoy.
 
@@ -180,18 +214,86 @@ Copie `.env.example` como `.env` en su carpeta de usuario (`%APPDATA%\CoopExecut
 | De pago | DeepSeek | `DEEPSEEK_API_KEY` | `deepseek-flash`, `deepseek-v4-pro` | Términos del proveedor |
 | Cualquiera | Compatible con OpenAI (Azure, vLLM, LiteLLM, LM Studio) | `CUSTOM_BASE_URL`, `CUSTOM_API_KEY` | El que usted aloje | Suya |
 
-Con `PROVIDER=auto` se usa la primera clave presente. Ante límites de uso (429), errores del servidor o caídas de conexión se reintenta hasta `MAX_REINTENTOS` veces con espera creciente antes de pasar al modelo de respaldo.
----
+Con `PROVIDER=auto` se usa la primera clave presente. Ante límites de uso (429), errores del servidor o caídas de conexión se reintenta hasta `MAX_REINTENTOS` veces con espera creciente antes de pasar al modelo de respaldo. Si un modelo rechaza la definición de herramientas, el turno se repite una vez sin ellas.
 
-## Documentación Técnica
-* [Arquitectura del Sistema y Flujo de Datos](ARCHITECTURE.md)
-* [Principios de Economía Social y Gobernanza](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md) | [🇺🇸 English](docs/PRINCIPIOS_ECONOMIA_SOCIAL.en.md)
-* [Guía Práctica de Marco Lógico](docs/GUIA_MARCO_LOGICO.md)
-* [Guía de Fondos Estatutarios y Gobernanza LGSC](docs/GUIA_FONDOS_ESTATUTARIOS.md)
-* [Guía para Contribuir](CONTRIBUTING.md)
-* [Registro de Versiones](CHANGELOG.md)
+Muchos comandos no necesitan modelo: `fecha`, `evaluar-convocatoria --archivo`, `comparar-convocatorias`, `documento`, `consultar`, `financiadores`, `expedientes`, la asamblea y la bitácora.
 
 ---
+
+## Panel local y API
+
+![Panel local de CoopExecutive](assets/panel.png)
+
+```bash
+coopexecutive panel               # abre http://127.0.0.1:8765/#token=…
+coopexecutive panel --puerto 9000 --no-abrir
+```
+
+Pestañas: resumen, perfil, financiadores, expedientes, evaluaciones, documentos, monitoreo, asamblea, bitácora y chat. Una sección vacía lo dice, en lugar de mostrar datos de ejemplo. El panel no carga nada de internet, así que funciona sin conexión.
+
+El mismo servidor ofrece una API JSON bajo `/api/`: `estado`, `perfil`, `financiadores`, `expedientes`, `evaluaciones`, `documentos`, `monitoreo`, `asamblea`, `bitacora` y `herramientas`, además de `POST /api/chat` (eventos enviados por el servidor). Toda petición necesita `Authorization: Bearer <token>`, el token que se imprime al arrancar el panel. Una herramienta que escribe, llamada por `POST /api/herramientas/{nombre}`, responde 409 con un resumen hasta que se repite la llamada con `"confirmar": true`.
+
+---
+
+## Servidor MCP
+
+`coopexecutive mcp` publica las 19 herramientas por stdio. Las que escriben se anuncian sin `readOnlyHint`, de modo que el cliente pide permiso antes de ejecutarlas; `--solo-lectura` las oculta. Ejemplo para Claude Desktop (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "coopexecutive": {
+      "command": "coopexecutive",
+      "args": ["mcp"],
+      "env": { "COOPEXECUTIVE_WORKSPACE": "/ruta/a/procuracion/mi-org" }
+    }
+  }
+}
+```
+
+Con Claude Code: `claude mcp add coopexecutive -e COOPEXECUTIVE_WORKSPACE=/ruta/a/mi-org -- coopexecutive mcp`.
+
+| De consulta (14) | De escritura (5, piden confirmación) |
+|---|---|
+| `fecha_y_plazos`, `ver_perfil`, `buscar_conocimiento`, `evaluar_oportunidad`, `listar_evaluaciones`, `comparar_evaluaciones`, `buscar_financiadores`, `ver_financiador`, `listar_expedientes`, `ver_expediente`, `listar_documentos`, `monitorear_convocatorias`, `ultimo_monitoreo`, `listar_propuestas_asamblea` | `registrar_financiador`, `abrir_expediente`, `registrar_avance`, `guardar_evaluacion`, `generar_documento` |
+
+---
+
+## Arquitectura
+
+![Arquitectura de CoopExecutive](assets/architecture_es.png)
+
+Los canales (CLI, panel, API y MCP) comparten un solo registro de herramientas. Lo que debe ser exacto se calcula en código: la matriz, los plazos, la comparación, el cuórum y la mayoría, el marco lógico y el presupuesto. El modelo redacta y elige herramientas; después, una revisión comprueba montos, fechas, acciones afirmadas y números de cuenta. Los datos viven en su espacio como YAML, SQLite y archivos Word. El flujo de datos está en [ARCHITECTURE.md](ARCHITECTURE.md).
+
+---
+
+## Seguridad y privacidad
+
+- **Local por omisión.** El perfil, la base de datos, la bitácora y los documentos se quedan en su espacio. El panel y la API solo escuchan en 127.0.0.1, con token por sesión, lista de `Host` permitidos, revisión de `Origin` y una política de seguridad de contenido estricta.
+- **Lo que sale de su equipo:** las consultas al modelo que usted elija, su propio sitio cuando corre `configurar --sitio`, los canales RSS públicos al monitorear y las bases que usted da por URL. El monitoreo no envía datos de la organización.
+- **Escribir requiere su visto bueno.** En el chat, el panel, la API y MCP, una herramienta que escribe pregunta antes. Si usted la niega, se le informa al modelo y la revisión refleja lo que de verdad se ejecutó.
+- **Bitácora a prueba de alteraciones.** Cada comando y herramienta se guarda con una huella SHA-256 encadenada a la anterior. Los parámetros se censuran antes de guardarse.
+- **Límites al leer la web.** Las descargas tienen tope de bytes y revisión del tipo de contenido; las peticiones desde MCP o la API no pueden llegar a direcciones de red privadas.
+- **Secretos.** Las claves de API se censuran en errores y registros.
+
+## Lo que no hace
+
+- No envía postulaciones ni correos, no firma documentos ni hace pagos en su nombre.
+- No garantiza que una convocatoria siga abierta: una fecha de cierre solo se acepta si la fuente la dice; si no, se marca `VIGENCIA NO VERIFICADA`.
+- No sustituye la asesoría legal, fiscal ni contable.
+- No inventa montos, fechas, alianzas ni resultados. Todo borrador necesita revisión humana antes de salir.
+
+---
+
+## Documentación
+
+- [Guía de uso](docs/GUIA_DE_USO.md) · [User guide](docs/GUIA_DE_USO.en.md)
+- [Casos de prueba y resultados esperados](docs/CASOS_DE_PRUEBA.md)
+- [Arquitectura y flujo de datos](ARCHITECTURE.md)
+- [Guía de marco lógico](docs/GUIA_MARCO_LOGICO.md) · [Guía de fondos estatutarios](docs/GUIA_FONDOS_ESTATUTARIOS.md)
+- [Principios de economía social y gobernanza](docs/PRINCIPIOS_ECONOMIA_SOCIAL.md)
+- [Cómo contribuir](CONTRIBUTING.md) · [Registro de versiones](CHANGELOG.md)
 
 ## Licencia
-Distribuido bajo licencia [MIT](LICENSE). Código abierto para uso libre y autogestión comunitaria.
+
+[MIT](LICENSE). Libre para usar, estudiar, modificar y compartir.
